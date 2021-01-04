@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="RBig92" name="dinverno_system" projectType="guiapp" displaySplashScreen="1"
+              jucerFormatVersion="1">
+  <MAINGROUP id="cGttSq" name="dinverno_system">
+    <GROUP id="{5D1A3CD8-A23B-4F86-E8E5-728180E9EB43}" name="Source">
+      <FILE id="hUU2J7" name="DinvernoCCMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoCCMarkov.cpp"/>
+      <FILE id="SVs29W" name="MusicCircleClient.cpp" compile="1" resource="0"
+            file="Source/MusicCircleClient.cpp"/>
+      <FILE id="Lbule0" name="MusicCircleClient.h" compile="0" resource="0"
+            file="Source/MusicCircleClient.h"/>
+      <FILE id="rDftnr" name="RecordWidget.h" compile="0" resource="0" file="Source/RecordWidget.h"/>
+      <FILE id="RG67Dw" name="LogginManager.cpp" compile="1" resource="0"
+            file="Source/LogginManager.cpp"/>
+      <FILE id="LxiQy1" name="LogginManager.h" compile="0" resource="0" file="Source/LogginManager.h"/>
+      <FILE id="FiRqkM" name="DinvernoPolyMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoPolyMarkov.cpp"/>
+      <FILE id="pgi3oo" name="DinvernoRandom.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandom.cpp"/>
+      <FILE id="JrZdgO" name="DinvernoRandomEnergy.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandomEnergy.cpp"/>
+      <FILE id="uSQ2b6" name="PlayRateModel.h" compile="1" resource="0" file="Source/PlayRateModel.h"/>
+      <FILE id="sRuZX8" name="ChordDetector.cpp" compile="1" resource="0"
+            file="Source/ChordDetector.cpp"/>
+      <FILE id="lAF2rN" name="ChordDetector.h" compile="1" resource="0" file="Source/ChordDetector.h"/>
+      <FILE id="y00i98" name="dinvernoSystem.cpp" compile="1" resource="0"
+            file="Source/dinvernoSystem.cpp"/>
+      <FILE id="QVvtTM" name="dinvernoSystem.h" compile="1" resource="0"
+            file="Source/dinvernoSystem.h"/>
+      <FILE id="ItDwnv" name="MarkovManager.cpp" compile="1" resource="0"
+            file="Source/MarkovManager.cpp"/>
+      <FILE id="bGgQeH" name="MarkovManager.h" compile="1" resource="0" file="Source/MarkovManager.h"/>
+      <FILE id="JSLNUh" name="PlayRateModel.cpp" compile="1" resource="0"
+            file="Source/PlayRateModel.cpp"/>
+      <FILE id="jr7KZB" name="MarkovChain.cpp" compile="1" resource="0" file="Source/MarkovChain.cpp"/>
+      <FILE id="zIfTrO" name="MarkovChain.h" compile="1" resource="0" file="Source/MarkovChain.h"/>
+      <FILE id="p9ph5y" name="MidiReceiver.h" compile="1" resource="0" file="Source/MidiReceiver.h"/>
+      <FILE id="yj6gFL" name="MidiSetupComponent.h" compile="1" resource="0"
+            file="Source/MidiSetupComponent.h"/>
+      <FILE id="jW7wSu" name="MainComponent.h" compile="1" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="aGquX8" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="vr4w1I" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../juce/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../juce/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <XCODE_MAC targetFolder="Builds/MacOSX" microphonePermissionNeeded="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_cryptography" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <LINUX/>
+    <OSX/>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>
