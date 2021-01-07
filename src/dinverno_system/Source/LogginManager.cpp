@@ -275,8 +275,9 @@ juce::String LogginManager::httpGetRequestForThreadPool(const std::string &apiMe
  juce::String LogginManager::httpPostRequestForThreadPool(const std::string &apiMenu, std::queue<std::pair<std::string,std::string>> postFields, std::string postdata)
 {
     juce::URL url{ urlBase + apiMenu };
-    WebInputStream* inStream;
-
+    //WebInputStream* inStream;
+    juce::String result = "error";
+    
     if(sessionId != "") {
         juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
         extraHeaders += "\nContent-Type: application/json";
@@ -289,6 +290,9 @@ juce::String LogginManager::httpGetRequestForThreadPool(const std::string &apiMe
             nullptr, //void *    progressCallbackContext = nullptr,
             extraHeaders
         ));
+        
+        // Read Result
+        result = inStream->readEntireStreamAsString();
     }
     
     if(!postFields.empty()) {
@@ -301,12 +305,14 @@ juce::String LogginManager::httpGetRequestForThreadPool(const std::string &apiMe
         }
         // POST the details
         std::unique_ptr<InputStream> inStream = (url.createInputStream(true));
+        // inStream = dynamic_cast<WebInputStream*>(url.createInputStream(true));
         
-       // inStream = dynamic_cast<WebInputStream*>(url.createInputStream(true));
+        // Read Result
+        result = inStream->readEntireStreamAsString();
     }
-        
-    juce::String result = inStream->readEntireStreamAsString();
-   // delete inStream;
+    
+    //juce::String result = inStream->readEntireStreamAsString();
+    // delete inStream;
 
     /* TODO: Check if the request was successful */
     //if (http_code == 200 && res != CURLE_ABORTED_BY_CALLBACK)
