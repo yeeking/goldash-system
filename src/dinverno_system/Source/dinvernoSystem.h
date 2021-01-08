@@ -37,12 +37,13 @@ public:
     virtual void tick() = 0;
     virtual void addMidiMessage(const MidiMessage& msg) = 0;
     virtual void reset() = 0;
-    MidiBuffer getPendingMidiMessages();
+    virtual MidiBuffer getPendingMidiMessages();
     void setLogginManager(LogginManager* loggin);
     LogginManager* loggin;
     bool isReadyToLog();
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
    
+    
 protected:
   double getElapsedTimeSamples();   
   double sampleRate;
@@ -169,7 +170,8 @@ public:
     ~DinvernoCCMarkov();
     virtual void tick() override; 
     virtual void addMidiMessage(const MidiMessage& msg) override;
-    virtual void reset() override; 
+    virtual void reset() override;
+    virtual MidiBuffer getPendingMidiMessages() override;
 
 private:
     /** we use this to model the midi notes */

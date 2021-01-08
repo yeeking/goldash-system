@@ -164,6 +164,51 @@ DinvernoCCMarkov::~DinvernoCCMarkov()
 //    }// end if it is midi CC data
 //  }
  
+    
+// this function
+// finds messages with a time stamp older than 'now'
+// and returns them
+// call this to ask the parrot for messages that are due to be sent.
+// a fair bit of this code hacked from here:
+// based on https://docs.juce.com/master/tutorial_midi_message.html#tutorial_midi_message_midi_buffer
+MidiBuffer DinvernoCCMarkov::getPendingMidiMessages()
+{
+   // Get Midi Note Messages from child ployMarkovDelegate.pendingMessages as well as this.pendingMessages
+    MidiBuffer messagesToSend = polyMarkovDelegate.getPendingMidiMessages();
+    int pendingMessageCount = pendingMessages.getNumEvents() + messagesToSend.getNumEvents();
+    if (pendingMessageCount == 0) {
+        return messagesToSend;
+    }
+    
+    // Messages pending
+    auto currentSampleNumber = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
+    int sampleNumber;
+    int oldest = 0;
+    MidiMessage message;
+    
+    // identify the messages we want to send and add them to the secondary buffer
+    oldest = 0;
+    MidiBuffer::Iterator iterator (pendingMessages);
+    while (iterator.getNextEvent (message, sampleNumber))
+    {
+        // sampleNumber is the sampleNumber assigned to this message.
+        // is sample Number in the future?
+        if (sampleNumber > currentSampleNumber)  // we are in the future. STOP!
+            break;
+        // remember the oldest one we processed
+        if (oldest == 0) oldest = sampleNumber;
+        //std::cout << "parrot adding ts: " << message.getTimeStamp() << std::endl;
+        messagesToSend.addEvent(message, sampleNumber);
+    }
+    //std::cout << "DinvernoImproviser::getPendingMidiMessages sending " << messagesToSend.getNumEvents() << " events " << std::endl;
+    // now claer any sent messages from pendingMessages
+    // oldst is the oldest one we processed,currentSampleNumber
+    // is the newest one
+    // https://docs.juce.com/master/classMidiBuffer.html#aacd8382869c865bb8d15c0cfffe9dff1
+    pendingMessages.clear (oldest, (currentSampleNumber - oldest) + 1); // [8]
+    return messagesToSend;
+}
+    
 void DinvernoCCMarkov::addCCsToModel(std::vector<std::pair<int, int>> ccs)
 {
   // convert the pairs 
