@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="gng6Ei" name="diverno_plugin" projectType="audioplug" displaySplashScreen="1"
+              jucerFormatVersion="1" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn">
+  <MAINGROUP id="y3iYVo" name="diverno_plugin">
+    <GROUP id="{1603BC85-35A2-1DEA-6ACC-23390878DA8B}" name="Source">
+      <FILE id="XwYTDA" name="ChordDetector.cpp" compile="1" resource="0"
+            file="Source/ChordDetector.cpp"/>
+      <FILE id="W2zQMR" name="ChordDetector.h" compile="0" resource="0" file="Source/ChordDetector.h"/>
+      <FILE id="OMEkBz" name="ChordDetectorTest.cpp" compile="1" resource="0"
+            file="Source/ChordDetectorTest.cpp"/>
+      <FILE id="N7KUv8" name="DinvernoCCMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoCCMarkov.cpp"/>
+      <FILE id="VCoV1X" name="DinvernoPolyMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoPolyMarkov.cpp"/>
+      <FILE id="z0c2lY" name="DinvernoRandom.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandom.cpp"/>
+      <FILE id="sLf0O5" name="DinvernoRandomEnergy.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandomEnergy.cpp"/>
+      <FILE id="kNYC4c" name="dinvernoSystem.cpp" compile="1" resource="0"
+            file="Source/dinvernoSystem.cpp"/>
+      <FILE id="J1h4yl" name="dinvernoSystem.h" compile="0" resource="0"
+            file="Source/dinvernoSystem.h"/>
+      <FILE id="A6nRnV" name="LogginManager.cpp" compile="1" resource="0"
+            file="Source/LogginManager.cpp"/>
+      <FILE id="veMq5F" name="LogginManager.h" compile="0" resource="0" file="Source/LogginManager.h"/>
+      <FILE id="ssBQyZ" name="MarkovChain.cpp" compile="1" resource="0" file="Source/MarkovChain.cpp"/>
+      <FILE id="d5G3NZ" name="MarkovChain.h" compile="0" resource="0" file="Source/MarkovChain.h"/>
+      <FILE id="romBB9" name="MarkovManager.cpp" compile="1" resource="0"
+            file="Source/MarkovManager.cpp"/>
+      <FILE id="JXGohD" name="MarkovManager.h" compile="0" resource="0" file="Source/MarkovManager.h"/>
+      <FILE id="d58IwN" name="MarkovTest.cpp" compile="1" resource="0" file="Source/MarkovTest.cpp"/>
+      <FILE id="qzX9G8" name="MidiReceiver.h" compile="0" resource="0" file="Source/MidiReceiver.h"/>
+      <FILE id="ZdvysB" name="MidiSetupComponent.h" compile="0" resource="0"
+            file="Source/MidiSetupComponent.h"/>
+      <FILE id="rHsHzW" name="MusicCircleClient.cpp" compile="1" resource="0"
+            file="Source/MusicCircleClient.cpp"/>
+      <FILE id="xBSAmG" name="MusicCircleClient.h" compile="0" resource="0"
+            file="Source/MusicCircleClient.h"/>
+      <FILE id="aGkZxs" name="PlayRateModel.cpp" compile="1" resource="0"
+            file="Source/PlayRateModel.cpp"/>
+      <FILE id="BfqDUf" name="PlayRateModel.h" compile="0" resource="0" file="Source/PlayRateModel.h"/>
+      <FILE id="odUc2U" name="RecordWidget.h" compile="0" resource="0" file="Source/RecordWidget.h"/>
+      <FILE id="PnbsG4" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="tQI3Bz" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="GwPmt0" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="uRiGl3" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="diverno_plugin"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="diverno_plugin"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="diverno_plugin"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="diverno_plugin"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_cryptography" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
