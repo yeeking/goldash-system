@@ -28,7 +28,7 @@ struct CustomLookAndFeel    : public LookAndFeel_V4 {
  This component lives inside our window, and this is where you should put all
  your controls and content.
  */
-class Diverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
+class Dinverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                     Timer,
                                                     MidiReceiver,
                                                     Button::Listener,
@@ -36,8 +36,8 @@ class Diverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                     LogginListener
 {
 public:
-    Diverno_pluginAudioProcessorEditor (Diverno_pluginAudioProcessor&);
-    ~Diverno_pluginAudioProcessorEditor() override;
+    Dinverno_pluginAudioProcessorEditor (Dinverno_pluginAudioProcessor&);
+    ~Dinverno_pluginAudioProcessorEditor() override;
 
     /** Timer callback*/
     void timerCallback() override;
@@ -71,7 +71,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    Diverno_pluginAudioProcessor& audioProcessor;
+    Dinverno_pluginAudioProcessor& audioProcessor;
 
     //==============================================================================
     // Your private member variables go here...
@@ -90,11 +90,11 @@ private:
     TextButton loginButton{"login"};
     
     // markov models
-    DinvernoImproviser* currentImproviser;
-    DinvernoMidiParrot dinvernoParrot{44100};
-    DinvernoRandomMidi dinvernoRandomMidi{44100};
-    DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-    DinvernoCCMarkov dinvernoPolyMarkov{44100};
+    //DinvernoImproviser* currentImproviser;
+    //DinvernoMidiParrot dinvernoParrot{44100};
+    //DinvernoRandomMidi dinvernoRandomMidi{44100};
+    //DinvernoRandomEnergy dinvernoRandomEnergy{44100};
+    //DinvernoCCMarkov dinvernoPolyMarkov{44100};
     
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     
@@ -106,5 +106,5 @@ private:
     CustomLookAndFeel lookAndFeel;
     RecordWidget recordWidget;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Diverno_pluginAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };

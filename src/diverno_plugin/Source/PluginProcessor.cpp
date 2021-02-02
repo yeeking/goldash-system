@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-Diverno_pluginAudioProcessor::Diverno_pluginAudioProcessor()
+Dinverno_pluginAudioProcessor::Dinverno_pluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -22,19 +22,20 @@ Diverno_pluginAudioProcessor::Diverno_pluginAudioProcessor()
                        )
 #endif
 {
+    setCurrentImproviser(&dinvernoPolyMarkov);
 }
 
-Diverno_pluginAudioProcessor::~Diverno_pluginAudioProcessor()
+Dinverno_pluginAudioProcessor::~Dinverno_pluginAudioProcessor()
 {
 }
 
 //==============================================================================
-const juce::String Diverno_pluginAudioProcessor::getName() const
+const juce::String Dinverno_pluginAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool Diverno_pluginAudioProcessor::acceptsMidi() const
+bool Dinverno_pluginAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -43,7 +44,7 @@ bool Diverno_pluginAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool Diverno_pluginAudioProcessor::producesMidi() const
+bool Dinverno_pluginAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -52,7 +53,7 @@ bool Diverno_pluginAudioProcessor::producesMidi() const
    #endif
 }
 
-bool Diverno_pluginAudioProcessor::isMidiEffect() const
+bool Dinverno_pluginAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -61,50 +62,50 @@ bool Diverno_pluginAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double Diverno_pluginAudioProcessor::getTailLengthSeconds() const
+double Dinverno_pluginAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int Diverno_pluginAudioProcessor::getNumPrograms()
+int Dinverno_pluginAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int Diverno_pluginAudioProcessor::getCurrentProgram()
+int Dinverno_pluginAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void Diverno_pluginAudioProcessor::setCurrentProgram (int index)
+void Dinverno_pluginAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String Diverno_pluginAudioProcessor::getProgramName (int index)
+const juce::String Dinverno_pluginAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void Diverno_pluginAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void Dinverno_pluginAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void Diverno_pluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void Dinverno_pluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
 
-void Diverno_pluginAudioProcessor::releaseResources()
+void Dinverno_pluginAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool Diverno_pluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool Dinverno_pluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -127,7 +128,7 @@ bool Diverno_pluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 }
 #endif
 
-void Diverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -154,36 +155,105 @@ void Diverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         // ..do something to the data...
     }
+    
+    for (const auto metadata : midiMessages)
+    {
+        auto message = metadata.getMessage();
+        const auto time = metadata.samplePosition;
+        
+        // Add current midi message to improvisor
+        currentImproviser->addMidiMessage(message);
+        
+        
+    }
+    
+    if (currentImproviser){
+        // Get Midi Messages from Improvisor: add to buffer if it is time to send
+        int sampleNumber;
+        //currentImproviser->tick();
+        MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+        if (toSend.getNumEvents() > 0){
+            //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl;
+            MidiBuffer::Iterator iterator (toSend);
+            MidiMessage message;
+            while (iterator.getNextEvent (message, sampleNumber))
+            {
+                //sendMidi(message);
+                midiMessages.addEvent(message, sampleNumber);
+            }
+        }
+    }
 }
 
 //==============================================================================
-bool Diverno_pluginAudioProcessor::hasEditor() const
+bool Dinverno_pluginAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* Diverno_pluginAudioProcessor::createEditor()
+juce::AudioProcessorEditor* Dinverno_pluginAudioProcessor::createEditor()
 {
-    return new Diverno_pluginAudioProcessorEditor (*this);
+    return new Dinverno_pluginAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void Diverno_pluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void Dinverno_pluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void Diverno_pluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void Dinverno_pluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
 
 //==============================================================================
+void Dinverno_pluginAudioProcessor::setCurrentImproviser(DinvernoImproviser *improviser)
+{
+    // Set the current improviser
+    currentImproviser = improviser;
+}
+
+void Dinverno_pluginAudioProcessor::setCurrentImproviser(String improvierName)
+{
+    if (improvierName == "PARROT"){
+        currentImproviser = &dinvernoParrot;
+    }else if (improvierName == "RANDOM MIDI"){
+        currentImproviser = &dinvernoRandomMidi;
+    }else if (improvierName == "RANDOM ENERGY"){
+        currentImproviser = &dinvernoRandomEnergy;
+    }else if (improvierName == "POLY"){
+        currentImproviser = &dinvernoPolyMarkov;
+    }
+}
+
+void Dinverno_pluginAudioProcessor::resetCurrentImproviser()
+{
+    // Set the current improviser
+    currentImproviser->reset();
+}
+
+void Dinverno_pluginAudioProcessor::setImprovisersLoginManager(LogginManager *loggin)
+{
+    // Set all improvisers LogginManager
+    dinvernoParrot.setLogginManager(loggin);
+    dinvernoRandomMidi.setLogginManager(loggin);
+    dinvernoRandomEnergy.setLogginManager(loggin);
+    dinvernoPolyMarkov.setLogginManager(loggin);
+}
+
+void Dinverno_pluginAudioProcessor::tickCurrentImproviser()
+{
+    // Timer event for current improviser
+    currentImproviser->tick();
+}
+
+//==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new Diverno_pluginAudioProcessor();
+    return new Dinverno_pluginAudioProcessor();
 }

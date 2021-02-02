@@ -9,16 +9,17 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "dinvernoSystem.h"
 
 //==============================================================================
 /**
 */
-class Diverno_pluginAudioProcessor  : public juce::AudioProcessor
+class Dinverno_pluginAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    Diverno_pluginAudioProcessor();
-    ~Diverno_pluginAudioProcessor() override;
+    Dinverno_pluginAudioProcessor();
+    ~Dinverno_pluginAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -53,7 +54,23 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    //==============================================================================
+    void setCurrentImproviser(DinvernoImproviser* improviser);
+    void setCurrentImproviser(String improviserName);
+    void resetCurrentImproviser();
+    void setImprovisersLoginManager(LogginManager *loggin);
+    void tickCurrentImproviser();
+    
 private:
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Diverno_pluginAudioProcessor)
+    
+    // markov models
+    DinvernoImproviser* currentImproviser;
+    DinvernoMidiParrot dinvernoParrot{44100};
+    DinvernoRandomMidi dinvernoRandomMidi{44100};
+    DinvernoRandomEnergy dinvernoRandomEnergy{44100};
+    DinvernoCCMarkov dinvernoPolyMarkov{44100};
+    
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessor)
 };

@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-Diverno_pluginAudioProcessorEditor::Diverno_pluginAudioProcessorEditor (Diverno_pluginAudioProcessor& p)
+Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinverno_pluginAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -27,8 +27,8 @@ Diverno_pluginAudioProcessorEditor::Diverno_pluginAudioProcessorEditor (Diverno_
     // settings stuff:
     
     // MIDI
-    midiSetupComponent.setMidiInputReceiver(this);
-    addAndMakeVisible(midiSetupComponent);
+    //midiSetupComponent.setMidiInputReceiver(this);
+    //addAndMakeVisible(midiSetupComponent);
     
     // MC login etc.
     addAndMakeVisible(mcEventMonitor);
@@ -45,11 +45,14 @@ Diverno_pluginAudioProcessorEditor::Diverno_pluginAudioProcessorEditor (Diverno_
     recordWidget.addRecordingReceiver(this);
     
     // add the login to the improvisers:
+    /*
     dinvernoParrot.setLogginManager(&loggin);
     dinvernoRandomMidi.setLogginManager(&loggin);
     dinvernoRandomEnergy.setLogginManager(&loggin);
     dinvernoPolyMarkov.setLogginManager(&loggin);
-    
+    */
+    audioProcessor.setImprovisersLoginManager(&loggin);
+     
     // add the listner to the improvisors:
     parrotButton.addListener(this);
     randomButton.addListener(this);
@@ -78,14 +81,14 @@ Diverno_pluginAudioProcessorEditor::Diverno_pluginAudioProcessorEditor (Diverno_
     
     parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     
-    currentImproviser = &dinvernoPolyMarkov;
+    //audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
     startTimer(50);
     
     loggin.loginToMC(default_username, default_password);
     
 }
 
-Diverno_pluginAudioProcessorEditor::~Diverno_pluginAudioProcessorEditor()
+Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
 {
     // this is needed to properly release the lookandfeel object.
     // VST: setLookAndFeel (nullptr);
@@ -98,7 +101,7 @@ Diverno_pluginAudioProcessorEditor::~Diverno_pluginAudioProcessorEditor()
 /** receive an event from the LogginManager. This is a lightweight events API
  * to notify the user.
  */
-void Diverno_pluginAudioProcessorEditor::musicCircleEvent(MusicCircleEvent event)
+void Dinverno_pluginAudioProcessorEditor::musicCircleEvent(MusicCircleEvent event)
 {
     /* VST:
     // lock the message thread
@@ -129,7 +132,7 @@ void Diverno_pluginAudioProcessorEditor::musicCircleEvent(MusicCircleEvent event
      */
 }
 
-void Diverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
+void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
 {
     // let's use a pointer technique to despatch the button click
     // to the correct function
@@ -149,7 +152,7 @@ void Diverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         resetButtonColours();
         
         sendAllNotesOff();
-        currentImproviser = &dinvernoParrot;
+        audioProcessor.setCurrentImproviser(String("PARROT"));   //currentImproviser = &dinvernoParrot;
         parrotButton.setColour(TextButton::buttonColourId,
                                Colours::red);
     }
@@ -158,7 +161,7 @@ void Diverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         resetButtonColours();
         
         sendAllNotesOff();
-        currentImproviser = &dinvernoRandomMidi;
+        audioProcessor.setCurrentImproviser(String("RANDOM MIDI"));   //currentImproviser = &dinvernoRandomMidi;
         randomButton.setColour(TextButton::buttonColourId,
                                Colours::red);
     }
@@ -167,7 +170,7 @@ void Diverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         resetButtonColours();
         
         sendAllNotesOff();
-        currentImproviser = &dinvernoRandomEnergy;
+        audioProcessor.setCurrentImproviser(String("RANDOM ENERGY"));   //currentImproviser = &dinvernoRandomEnergy;
         randomEnergyButton.setColour(TextButton::buttonColourId,
                                      Colours::red);
     }
@@ -176,25 +179,25 @@ void Diverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         resetButtonColours();
         
         sendAllNotesOff();
-        currentImproviser = &dinvernoPolyMarkov;
+        audioProcessor.setCurrentImproviser(String("POLY"));   //currentImproviser = &dinvernoPolyMarkov;
         polyButton.setColour(TextButton::buttonColourId,
                              Colours::red);
     }
     if (button == &resetButton)
     {
-        currentImproviser->reset();
+        audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
         sendAllNotesOff();
         
     }
 }
 
-void Diverno_pluginAudioProcessorEditor::sendAllNotesOff()
+void Dinverno_pluginAudioProcessorEditor::sendAllNotesOff()
 {
     MidiMessage msg = MidiMessage::allNotesOff(1);
     sendMidi(msg);
 }
 
-void Diverno_pluginAudioProcessorEditor::resetButtonColours()
+void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
 {
     // set default colours
     parrotButton.setColour(TextButton::buttonColourId,
@@ -210,7 +213,7 @@ void Diverno_pluginAudioProcessorEditor::resetButtonColours()
 }
 
 /* VST:
-void Diverno_pluginAudioProcessorEditor::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
+void Dinverno_pluginAudioProcessorEditor::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
@@ -222,7 +225,7 @@ void Diverno_pluginAudioProcessorEditor::prepareToPlay (int samplesPerBlockExpec
 }
 
 
-void Diverno_pluginAudioProcessorEditor::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
+void Dinverno_pluginAudioProcessorEditor::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
     // Your audio-processing code goes here!
     
@@ -234,7 +237,7 @@ void Diverno_pluginAudioProcessorEditor::getNextAudioBlock (const AudioSourceCha
     bufferToFill.clearActiveBufferRegion();
 }
 
-void Diverno_pluginAudioProcessorEditor::releaseResources()
+void Dinverno_pluginAudioProcessorEditor::releaseResources()
 {
     // This will be called when the audio device stops, or when it is being
     // restarted due to a setting change.
@@ -244,13 +247,13 @@ void Diverno_pluginAudioProcessorEditor::releaseResources()
 */
 
 //==============================================================================
-void Diverno_pluginAudioProcessorEditor::paint (juce::Graphics& g)
+void Dinverno_pluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 }
 
-void Diverno_pluginAudioProcessorEditor::resized()
+void Dinverno_pluginAudioProcessorEditor::resized()
 {
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
@@ -277,23 +280,25 @@ void Diverno_pluginAudioProcessorEditor::resized()
     
 }
 
-void Diverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)
+void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)
 {
     // parse it and add it to the model
     // if we are in the right mode!
     //std::cout << "MainCom: receive MIDI " << message.getDescription() << std::endl;
-    currentImproviser->addMidiMessage(message);
+    //currentImproviser->addMidiMessage(message);
 }
 
-void Diverno_pluginAudioProcessorEditor::sendMidi(MidiMessage& message)
+void Dinverno_pluginAudioProcessorEditor::sendMidi(MidiMessage& message)
 {
     //std::cout << "MainCom: sendMidi " << message.getDescription() << std::endl;
     message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
     midiSetupComponent.sendToOutputs (message);
 }
 
-void Diverno_pluginAudioProcessorEditor::timerCallback()
+void Dinverno_pluginAudioProcessorEditor::timerCallback()
 {
+    audioProcessor.tickCurrentImproviser();
+    /*
     //std::cout << "maincompo:: timer sending some midi " << std::endl;
     int sampleNumber;
     
@@ -309,15 +314,16 @@ void Diverno_pluginAudioProcessorEditor::timerCallback()
             sendMidi(message);
         }
     }
+     */
 }
 
-void Diverno_pluginAudioProcessorEditor::recordingStarted()
+void Dinverno_pluginAudioProcessorEditor::recordingStarted()
 {
     loggin.resetClockAndAnnotationQueue();
 }
 
 
-void Diverno_pluginAudioProcessorEditor::recordingComplete(File audioFile)
+void Dinverno_pluginAudioProcessorEditor::recordingComplete(File audioFile)
 {
     DBG("MainComponent::recordingComplete about to upload " << audioFile.getFullPathName());
     loggin.postMedia(audioFile.getFullPathName().toStdString(), [this](int result){
