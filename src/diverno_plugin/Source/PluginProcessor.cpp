@@ -22,7 +22,7 @@ Dinverno_pluginAudioProcessor::Dinverno_pluginAudioProcessor()
                        )
 #endif
 {
-    setCurrentImproviser(&dinvernoPolyMarkov);
+    //setCurrentImproviser(&dinvernoPolyMarkov);
 }
 
 Dinverno_pluginAudioProcessor::~Dinverno_pluginAudioProcessor()
@@ -167,7 +167,8 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
         
     }
     
-    if (currentImproviser){
+    
+    if (improviserReady){
         // Get Midi Messages from Improvisor: add to buffer if it is time to send
         int sampleNumber;
         //currentImproviser->tick();
@@ -179,10 +180,19 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
             while (iterator.getNextEvent (message, sampleNumber))
             {
                 //sendMidi(message);
-                midiMessages.addEvent(message, sampleNumber);
+                message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+                //MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
+                midiMessages.addEvent(message,0);
             }
         }
     }
+    
+    if (clearMidiBuffer) {
+        MidiMessage allOff = MidiMessage::allNotesOff(1);
+        midiMessages.addEvent(allOff,0);
+        clearMidiBuffer = false;
+    }
+    
 }
 
 //==============================================================================
@@ -215,10 +225,12 @@ void Dinverno_pluginAudioProcessor::setCurrentImproviser(DinvernoImproviser *imp
 {
     // Set the current improviser
     currentImproviser = improviser;
+    improviserReady = true;
 }
 
 void Dinverno_pluginAudioProcessor::setCurrentImproviser(String improvierName)
 {
+    /*
     if (improvierName == "PARROT"){
         currentImproviser = &dinvernoParrot;
     }else if (improvierName == "RANDOM MIDI"){
@@ -228,21 +240,25 @@ void Dinverno_pluginAudioProcessor::setCurrentImproviser(String improvierName)
     }else if (improvierName == "POLY"){
         currentImproviser = &dinvernoPolyMarkov;
     }
+     */
 }
 
 void Dinverno_pluginAudioProcessor::resetCurrentImproviser()
 {
     // Set the current improviser
     currentImproviser->reset();
+    clearMidiBuffer = true;
 }
 
 void Dinverno_pluginAudioProcessor::setImprovisersLoginManager(LogginManager *loggin)
 {
     // Set all improvisers LogginManager
+    /*
     dinvernoParrot.setLogginManager(loggin);
     dinvernoRandomMidi.setLogginManager(loggin);
     dinvernoRandomEnergy.setLogginManager(loggin);
     dinvernoPolyMarkov.setLogginManager(loggin);
+     */
 }
 
 void Dinverno_pluginAudioProcessor::tickCurrentImproviser()

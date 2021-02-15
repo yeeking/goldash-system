@@ -31,7 +31,7 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="3" x="0.26" y="0.6346153846153846">
+  <FILTER uid="3" x="0.605" y="0.7480769230769231">
     <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="JUCE" version="1.0" file="" uid="724248cb" isInstrument="0"
             fileTime="0" infoUpdateTime="0" numInputs="2" numOutputs="0"
@@ -46,7 +46,7 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="4" x="0.52" y="0.3192307692307692">
+  <FILTER uid="4" x="0.2925" y="0.8288461538461539">
     <PLUGIN name="MIDI Output" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="JUCE" version="1.0" file="" uid="9d5bbb00" isInstrument="0"
             fileTime="0" infoUpdateTime="0" numInputs="0" numOutputs="0"
@@ -61,37 +61,4 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="5" x="0.2275" y="0.3" uiLastX_Normal="210" uiLastY_Normal="434"
-          uiopen_Normal="0">
-    <PLUGIN name="dinverno_plugin" format="VST3" category="Fx" manufacturer="SensiLab"
-            version="1.0.0" file="/Users/Sam/Library/Audio/Plug-Ins/VST3/dinverno_plugin.vst3"
-            uid="acf610e7" isInstrument="0" fileTime="177619b3474" infoUpdateTime="177619c9788"
-            numInputs="2" numOutputs="2" isShell="0"/>
-    <STATE>191.VMjLgXK....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9XCLt3hKt3hKt3hKt3hYRUUSTEETIckVwTjQisVTTgkdEYjKAQjYPQSPWgUdMcjKAQjct3hdA4hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEV77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
-    <LAYOUT>
-      <INPUTS>
-        <BUS index="0" layout="L R"/>
-      </INPUTS>
-      <OUTPUTS>
-        <BUS index="0" layout="L R"/>
-      </OUTPUTS>
-    </LAYOUT>
-  </FILTER>
-  <FILTER uid="6" x="0.2775" y="0.475">
-    <PLUGIN name="Fury800" format="AudioUnit" category="Synth" manufacturer="Full Bucket Music"
-            version="2.0.1" file="AudioUnit:Synths/aumu,f800,FuBu" uid="41381f30"
-            isInstrument="1" fileTime="0" infoUpdateTime="177619c9789" numInputs="0"
-            numOutputs="2" isShell="0"/>
-    <STATE>812.hAGaoMGcv.i0AHv.DTfAGfPBJr.CT4VXsUFWsEla0YVXiQWcxUlbTQVXzEFUzkGbkc0b0IFc4AWYWYWYxMWZu41USQkTI4zQSIgQ0ITcOEg.QB........9O.....................A.......3EP...................B.A.........P...................7+.........+O........v+C........L.A.........P........H.D..........A..................v+C........7+.........+O........v.D....................P..................TT.A.............................7+.....................D........7+........nBP........+.D........K.A.......7CP........+.D.......fM.A.......HCP........+.D.......vO.A.......7CP........+.D........M.A.......vAP........v.D.......PO.A.......jCP........j.D........M.A.......vAP........X.D........7+...................v+C.....................................................................................jBWOJb8n.+C........7+.........+O........v+C..........................................................................................................................................................................T....PzG...AHQX00VcRXFNv.iD.H..A..B.TA.Z.vI.vB.w.PN.DD.IAfSBLt.nKP6........BD..........M...................BHO</STATE>
-    <LAYOUT>
-      <INPUTS/>
-      <OUTPUTS>
-        <BUS index="0" layout="L R"/>
-      </OUTPUTS>
-    </LAYOUT>
-  </FILTER>
-  <CONNECTION srcFilter="2" srcChannel="4096" dstFilter="5" dstChannel="4096"/>
-  <CONNECTION srcFilter="5" srcChannel="4096" dstFilter="6" dstChannel="4096"/>
-  <CONNECTION srcFilter="6" srcChannel="0" dstFilter="3" dstChannel="0"/>
-  <CONNECTION srcFilter="6" srcChannel="1" dstFilter="3" dstChannel="1"/>
 </FILTERGRAPH>

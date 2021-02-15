@@ -81,7 +81,7 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     
     parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     
-    //audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
+    audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
     startTimer(50);
     
     loggin.loginToMC(default_username, default_password);
@@ -297,14 +297,14 @@ void Dinverno_pluginAudioProcessorEditor::sendMidi(MidiMessage& message)
 
 void Dinverno_pluginAudioProcessorEditor::timerCallback()
 {
-    audioProcessor.tickCurrentImproviser();
-    /*
+    //audioProcessor.tickCurrentImproviser();
+    
     //std::cout << "maincompo:: timer sending some midi " << std::endl;
     int sampleNumber;
     
-    currentImproviser->tick();
+    audioProcessor.currentImproviser->tick();
     
-    MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+    MidiBuffer toSend = audioProcessor.currentImproviser->getPendingMidiMessages();
     if (toSend.getNumEvents() > 0){
         //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl;
         MidiBuffer::Iterator iterator (toSend);
@@ -314,7 +314,7 @@ void Dinverno_pluginAudioProcessorEditor::timerCallback()
             sendMidi(message);
         }
     }
-     */
+    
 }
 
 void Dinverno_pluginAudioProcessorEditor::recordingStarted()
