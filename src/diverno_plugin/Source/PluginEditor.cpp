@@ -22,7 +22,7 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     std::string default_password{"test123"};
     
     // loggin = new LogginManager(default_username, default_password);
-    loggin.addEventListener(this);
+    //loggin.addEventListener(this);
     
     // settings stuff:
     
@@ -31,6 +31,7 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     //addAndMakeVisible(midiSetupComponent);
     
     // MC login etc.
+    /*
     addAndMakeVisible(mcEventMonitor);
     mcEventMonitor.setMultiLine(true);
     mcEventMonitor.setText("MusicCircle events appear here");
@@ -40,9 +41,10 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     addAndMakeVisible(passwordField);
     addAndMakeVisible(loginButton);
     loginButton.addListener(this);
+    */
     
     // Record Widget
-    recordWidget.addRecordingReceiver(this);
+    //recordWidget.addRecordingReceiver(this);
     
     // add the login to the improvisers:
     /*
@@ -51,18 +53,18 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     dinvernoRandomEnergy.setLogginManager(&loggin);
     dinvernoPolyMarkov.setLogginManager(&loggin);
     */
-    audioProcessor.setImprovisersLoginManager(&loggin);
+    //audioProcessor.setImprovisersLoginManager(&loggin);
      
     // add the listner to the improvisors:
-    parrotButton.addListener(this);
-    randomButton.addListener(this);
-    randomEnergyButton.addListener(this);
-    polyButton.addListener(this);
+    //parrotButton.addListener(this);
+    //randomButton.addListener(this);
+    //randomEnergyButton.addListener(this);
+    //polyButton.addListener(this);
     resetButton.addListener(this);
     
     // Add Buttons to GUI
     addAndMakeVisible(resetButton);
-    addAndMakeVisible(recordWidget);
+    //addAndMakeVisible(recordWidget);
     // disabling these for the Monash June trial
     //addAndMakeVisible(parrotButton);
     //addAndMakeVisible(randomButton);
@@ -73,18 +75,18 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     resetButtonColours();
     //VST: setLookAndFeel(&lookAndFeel);
     
-    parrotButton.setButtonText("PARROT");
-    randomButton.setButtonText("RANDOM");
-    randomEnergyButton.setButtonText("RANDOM ENERGY");
-    polyButton.setButtonText("POLY MARKOV");
+    //parrotButton.setButtonText("PARROT");
+    //randomButton.setButtonText("RANDOM");
+    //randomEnergyButton.setButtonText("RANDOM ENERGY");
+    //polyButton.setButtonText("POLY MARKOV");
     resetButton.setButtonText("RESET MODEL");
     
-    parrotButton.setColour(TextButton::buttonColourId, Colours::red);
+    //parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     
     audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
     startTimer(50);
     
-    loggin.loginToMC(default_username, default_password);
+    //loggin.loginToMC(default_username, default_password);
     
 }
 
@@ -186,7 +188,7 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
     if (button == &resetButton)
     {
         audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
-        sendAllNotesOff();
+        //sendAllNotesOff();
         
     }
 }
@@ -262,21 +264,21 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     int col = getWidth()/2;
     int row = getHeight()/rowCount;
     
-    midiSetupComponent.setBounds(0, 0, getWidth()/2, row * 3);
+    //midiSetupComponent.setBounds(0, 0, getWidth()/2, row * 3);
     
-    mcEventMonitor.setBounds(0, row*3 , getWidth()/2, row);
-    int loginCol = getWidth() / 2 / 3;
-    usernameField.setBounds(0, row*4 + (row/2), loginCol, row/2);
-    passwordField.setBounds(loginCol, row*4 + (row/2), loginCol, row/2);
-    loginButton.setBounds(loginCol*2, row*4 + (row/2), loginCol, row/2);
+    //mcEventMonitor.setBounds(0, row*3 , getWidth()/2, row);
+    //int loginCol = getWidth() / 2 / 3;
+    //usernameField.setBounds(0, row*4 + (row/2), loginCol, row/2);
+    //passwordField.setBounds(loginCol, row*4 + (row/2), loginCol, row/2);
+    //loginButton.setBounds(loginCol*2, row*4 + (row/2), loginCol, row/2);
     
-    parrotButton.setBounds(col, 0, col, row);
-    randomButton.setBounds(col, row, col, row);
-    randomEnergyButton.setBounds(col, row*2, col, row);
-    polyButton.setBounds(col, row*3, col, row);
+    //parrotButton.setBounds(col, 0, col, row);
+    //randomButton.setBounds(col, row, col, row);
+    //randomEnergyButton.setBounds(col, row*2, col, row);
+    //polyButton.setBounds(col, row*3, col, row);
     resetButton.setBounds(col, row*4, col, row);
     
-    recordWidget.setBounds(0, row*5, getWidth(), row);
+    //recordWidget.setBounds(0, row*5, getWidth(), row);
     
 }
 

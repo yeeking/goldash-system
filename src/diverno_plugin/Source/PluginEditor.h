@@ -94,7 +94,7 @@ private:
     DinvernoMidiParrot dinvernoParrot{44100};
     DinvernoRandomMidi dinvernoRandomMidi{44100};
     DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-    DinvernoCCMarkov dinvernoPolyMarkov{44100};
+    DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     

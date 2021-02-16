@@ -156,19 +156,21 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
         // ..do something to the data...
     }
     
-    for (const auto metadata : midiMessages)
-    {
-        auto message = metadata.getMessage();
-        const auto time = metadata.samplePosition;
-        
-        // Add current midi message to improvisor
-        currentImproviser->addMidiMessage(message);
-        
-        
-    }
-    
-    
     if (improviserReady){
+        
+        for (const auto metadata : midiMessages)
+        {
+            auto message = metadata.getMessage();
+            const auto time = metadata.samplePosition;
+            
+            // Add current midi message to improvisor
+            currentImproviser->addMidiMessage(message);
+            
+            
+        }
+    
+    
+    
         // Get Midi Messages from Improvisor: add to buffer if it is time to send
         int sampleNumber;
         //currentImproviser->tick();
