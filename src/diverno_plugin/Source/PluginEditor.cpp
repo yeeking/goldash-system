@@ -15,11 +15,11 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (1024, 768);
+    setSize (200, 100);
     
     //mcClient.login();
-    std::string default_username{"csys2"};
-    std::string default_password{"test123"};
+    //std::string default_username{"csys2"};
+    //std::string default_password{"test123"};
     
     // loggin = new LogginManager(default_username, default_password);
     //loggin.addEventListener(this);
@@ -83,8 +83,8 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     
     //parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     
-    audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
-    startTimer(50);
+    //audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
+    //startTimer(50);
     
     //loggin.loginToMC(default_username, default_password);
     
@@ -97,7 +97,8 @@ Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
     
     // This shuts down the audio device and clears the audio source.
     // VST: shutdownAudio();
-    stopTimer();
+    //stopTimer();
+    //audioProcessor->stopTimer();
 }
 
 /** receive an event from the LogginManager. This is a lightweight events API
@@ -138,7 +139,7 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
 {
     // let's use a pointer technique to despatch the button click
     // to the correct function
-    
+    /*
     if (button == &loginButton)
     {
         std::cout << "Login button clicked " << std::endl;
@@ -185,6 +186,8 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         polyButton.setColour(TextButton::buttonColourId,
                              Colours::red);
     }
+     */
+    
     if (button == &resetButton)
     {
         audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
@@ -195,13 +198,14 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
 
 void Dinverno_pluginAudioProcessorEditor::sendAllNotesOff()
 {
-    MidiMessage msg = MidiMessage::allNotesOff(1);
-    sendMidi(msg);
+    //MidiMessage msg = MidiMessage::allNotesOff(1);
+    //sendMidi(msg);
 }
 
 void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
 {
     // set default colours
+    /*
     parrotButton.setColour(TextButton::buttonColourId,
                            Colours::lightsteelblue);
     randomButton.setColour(TextButton::buttonColourId,
@@ -210,6 +214,7 @@ void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
                                  Colours::lightsteelblue);
     polyButton.setColour(TextButton::buttonColourId,
                          Colours::lightsteelblue);
+     */
     resetButton.setColour(TextButton::buttonColourId,
                           Colours::darkblue);
 }
@@ -260,9 +265,9 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    int rowCount = 6;
-    int col = getWidth()/2;
-    int row = getHeight()/rowCount;
+    //int rowCount = 6;
+    //int col = getWidth()/2;
+    //int row = getHeight()/rowCount;
     
     //midiSetupComponent.setBounds(0, 0, getWidth()/2, row * 3);
     
@@ -276,10 +281,11 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     //randomButton.setBounds(col, row, col, row);
     //randomEnergyButton.setBounds(col, row*2, col, row);
     //polyButton.setBounds(col, row*3, col, row);
-    resetButton.setBounds(col, row*4, col, row);
+    //resetButton.setBounds(col, row*4, col, row);
     
     //recordWidget.setBounds(0, row*5, getWidth(), row);
     
+    resetButton.setBounds(0, 0, getWidth(),getHeight());
 }
 
 void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)
@@ -293,12 +299,13 @@ void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message
 void Dinverno_pluginAudioProcessorEditor::sendMidi(MidiMessage& message)
 {
     //std::cout << "MainCom: sendMidi " << message.getDescription() << std::endl;
-    message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-    midiSetupComponent.sendToOutputs (message);
+    //message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+    //midiSetupComponent.sendToOutputs (message);
 }
 
 void Dinverno_pluginAudioProcessorEditor::timerCallback()
 {
+    /*
     //audioProcessor.tickCurrentImproviser();
     
     //std::cout << "maincompo:: timer sending some midi " << std::endl;
@@ -313,25 +320,27 @@ void Dinverno_pluginAudioProcessorEditor::timerCallback()
         MidiMessage message;
         while (iterator.getNextEvent (message, sampleNumber))
         {
-            sendMidi(message);
+            //sendMidi(message);
         }
     }
-    
+    */
 }
 
 void Dinverno_pluginAudioProcessorEditor::recordingStarted()
 {
-    loggin.resetClockAndAnnotationQueue();
+    //loggin.resetClockAndAnnotationQueue();
 }
 
 
 void Dinverno_pluginAudioProcessorEditor::recordingComplete(File audioFile)
 {
+    /*
     DBG("MainComponent::recordingComplete about to upload " << audioFile.getFullPathName());
     loggin.postMedia(audioFile.getFullPathName().toStdString(), [this](int result){
         std::cout << "MainComponent::recordingComplete postMedia callback result " << result << std::endl;
         //loggin.sendQueuedAnnotations();
     });
+     */
 }
 
 

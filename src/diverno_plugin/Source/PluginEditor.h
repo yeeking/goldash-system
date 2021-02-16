@@ -91,10 +91,10 @@ private:
     
     // markov models
     //DinvernoImproviser* currentImproviser;
-    DinvernoMidiParrot dinvernoParrot{44100};
-    DinvernoRandomMidi dinvernoRandomMidi{44100};
-    DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-    DinvernoPolyMarkov dinvernoPolyMarkov{44100};
+    //DinvernoMidiParrot dinvernoParrot{44100};
+    //DinvernoRandomMidi dinvernoRandomMidi{44100};
+    //DinvernoRandomEnergy dinvernoRandomEnergy{44100};
+    //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     

@@ -23,6 +23,7 @@ Dinverno_pluginAudioProcessor::Dinverno_pluginAudioProcessor()
 #endif
 {
     //setCurrentImproviser(&dinvernoPolyMarkov);
+    setCurrentImproviser(&dinvernoPolyMarkov);
 }
 
 Dinverno_pluginAudioProcessor::~Dinverno_pluginAudioProcessor()
@@ -228,6 +229,7 @@ void Dinverno_pluginAudioProcessor::setCurrentImproviser(DinvernoImproviser *imp
     // Set the current improviser
     currentImproviser = improviser;
     improviserReady = true;
+    startTimer(50);
 }
 
 void Dinverno_pluginAudioProcessor::setCurrentImproviser(String improvierName)
@@ -261,6 +263,11 @@ void Dinverno_pluginAudioProcessor::setImprovisersLoginManager(LogginManager *lo
     dinvernoRandomEnergy.setLogginManager(loggin);
     dinvernoPolyMarkov.setLogginManager(loggin);
      */
+}
+
+void Dinverno_pluginAudioProcessor::timerCallback()
+{
+    tickCurrentImproviser();
 }
 
 void Dinverno_pluginAudioProcessor::tickCurrentImproviser()

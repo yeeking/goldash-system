@@ -14,7 +14,8 @@
 //==============================================================================
 /**
 */
-class Dinverno_pluginAudioProcessor  : public juce::AudioProcessor
+class Dinverno_pluginAudioProcessor  : public juce::AudioProcessor,
+                                                Timer
 {
 public:
     //==============================================================================
@@ -60,10 +61,12 @@ public:
     void resetCurrentImproviser();
     void setImprovisersLoginManager(LogginManager *loggin);
     void tickCurrentImproviser();
+    void timerCallback() override;  /** Timer callback*/
     
     //==============================================================================
     // markov models
     DinvernoImproviser* currentImproviser;
+    DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     bool improviserReady = false;
     
 private:
