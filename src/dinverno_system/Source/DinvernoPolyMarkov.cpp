@@ -107,7 +107,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       // to release notes into the model
       addNotesToModel(notes);
       // remember velocity
-      velocityModel.putEvent(std::to_string(message.getVelocity()));
+      velocityModel.putEvent(std::to_string(message.getVelocity() * 0.8));
       // calculate and remember interonsetinterval
 //      std::cout << "time now " << elapsedSamples << "last on at " << lastNoteOnAtSample << " ioi " << (elapsedSamples - lastNoteOnAtSample) <<  std::endl;; 
       double interOnsetInterval = elapsedSamples - lastNoteOnAtSample;
