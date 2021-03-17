@@ -79,7 +79,7 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     //randomButton.setButtonText("RANDOM");
     //randomEnergyButton.setButtonText("RANDOM ENERGY");
     //polyButton.setButtonText("POLY MARKOV");
-    resetButton.setButtonText("RESET MODEL");
+    resetButton.setButtonText("Reset Model");
     
     //parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     

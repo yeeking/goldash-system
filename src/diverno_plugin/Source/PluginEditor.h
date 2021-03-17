@@ -77,17 +77,17 @@ private:
     // Your private member variables go here...
     void resetButtonColours();
     void sendAllNotesOff();
-    MidiSetupComponent midiSetupComponent;
+    //MidiSetupComponent midiSetupComponent;
     
     //MusicCircleClient mcClient{"csys2", "test123"};
-    LogginManager loggin;
+    //LogginManager loggin;
     
     // GUI compoenents for login details
     //Label loginStatusLabel{};
-    TextEditor mcEventMonitor  { "MC Event Monitor" };
-    TextEditor usernameField{"username"};
-    TextEditor passwordField{"password", '*'};
-    TextButton loginButton{"login"};
+    //TextEditor mcEventMonitor  { "MC Event Monitor" };
+    //TextEditor usernameField{"username"};
+    //TextEditor passwordField{"password", '*'};
+    //TextButton loginButton{"login"};
     
     // markov models
     //DinvernoImproviser* currentImproviser;
@@ -98,13 +98,13 @@ private:
     
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     
-    TextButton parrotButton;
-    TextButton randomButton;
-    TextButton randomEnergyButton;
-    TextButton polyButton;
+    //TextButton parrotButton;
+    //TextButton randomButton;
+    //TextButton randomEnergyButton;
+    //TextButton polyButton;
     TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
-    RecordWidget recordWidget;
+    //RecordWidget recordWidget;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };

@@ -15,19 +15,23 @@ Dinverno_pluginAudioProcessor::Dinverno_pluginAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       //.withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                       //.withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        )
 #endif
 {
     //setCurrentImproviser(&dinvernoPolyMarkov);
-    setCurrentImproviser(&dinvernoPolyMarkov);
+    //setCurrentImproviser(&dinvernoPolyMarkov);
+    setCurrentImproviser(&threadedImprovisor.dinvernoPolyMarkov);
+    
+    threadedImprovisor.startThread();
 }
 
 Dinverno_pluginAudioProcessor::~Dinverno_pluginAudioProcessor()
 {
+    threadedImprovisor.stopThread(30);
 }
 
 //==============================================================================
@@ -143,22 +147,13 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
+    
+    MidiBuffer generatedMidi;
     
     if (improviserReady){
         
+        threadedImprovisor.setMidiBuffer(midiMessages);
+        /*
         for (const auto metadata : midiMessages)
         {
             auto message = metadata.getMessage();
@@ -166,12 +161,10 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
             
             // Add current midi message to improvisor
             currentImproviser->addMidiMessage(message);
-            
-            
         }
+        */
     
-    
-    
+        
         // Get Midi Messages from Improvisor: add to buffer if it is time to send
         int sampleNumber;
         //currentImproviser->tick();
@@ -185,16 +178,21 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
                 //sendMidi(message);
                 message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
                 //MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
-                midiMessages.addEvent(message,0);
+                generatedMidi.addEvent(message,0);
             }
         }
+         
     }
     
     if (clearMidiBuffer) {
         MidiMessage allOff = MidiMessage::allNotesOff(1);
         midiMessages.addEvent(allOff,0);
+        generatedMidi.addEvent(allOff,0);
         clearMidiBuffer = false;
     }
+    
+    // Remove Raw midi input and only transmit dinverno generated messages
+    midiMessages.swapWith(generatedMidi);
     
 }
 
