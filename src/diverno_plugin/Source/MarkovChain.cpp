@@ -23,8 +23,9 @@ MarkovChain::~MarkovChain()
 
 }
 
-void MarkovChain::addObservation(state_sequence prevState, state_single currentState)
+void MarkovChain::addObservation(const state_sequence& prevState, state_single currentState)
 {
+  std::cout << "MarkovChain::addObservation adding observation " << currentState << std::endl; 
   if (currentState == "0")
   {
     std::cout << "MarkovChain::addObservation received invalid state. Ignoring it " << currentState << std::endl;
@@ -54,7 +55,7 @@ void MarkovChain::addObservation(state_sequence prevState, state_single currentS
   }
 }
 
-void MarkovChain::addObservationAllOrders(state_sequence prevState, state_single currentState)
+void MarkovChain::addObservationAllOrders(const state_sequence& prevState, state_single currentState)
 {
   std::vector<state_sequence> allPrevs = breakStateIntoAllOrders(prevState);
   for (state_sequence& seq : allPrevs)
@@ -80,19 +81,19 @@ std::vector<state_sequence>  MarkovChain::breakStateIntoAllOrders(state_sequence
 }
 
 
-std::string MarkovChain::stateSequenceToString(state_sequence sequence)
+std::string MarkovChain::stateSequenceToString(const state_sequence& sequence)
 {
   std::string str = std::to_string(sequence.size()); // write the order first
   str.append(",");
   // prefix it with the order
-  for (state_single& s : sequence)
+  for (const state_single& s : sequence)
   {
     str.append(s);
     str.append(",");   
   } 
   return str;
 }
-std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxOrder)
+std::string MarkovChain::stateSequenceToString(const state_sequence& sequence, int maxOrder)
 {
   if (maxOrder >= sequence.size()){ 
     // max order is higher pr == than the order we have
@@ -105,7 +106,7 @@ std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxO
     auto want_to_skip = sequence.size() - maxOrder;
     auto skipped = 0;
     // prefix it with the order
-    for (state_single& s : sequence)
+    for (const state_single& s : sequence)
     {
      if (skipped < want_to_skip) 
      {
@@ -114,14 +115,16 @@ std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxO
      } 
       str.append(s);
       str.append(",");
-    } 
+    }
     return str;
   }
 }
 
 
-state_single MarkovChain::generateObservation(state_sequence prevState, int maxOrder)
+state_single MarkovChain::generateObservation(const state_sequence& prevState, int maxOrder)
 {
+  //std::cout << "MarkovChain::generateObservation model size " << model.size() <<std::endl;
+
   // check for empty model
   if (model.size() == 0)
   {
@@ -168,6 +171,8 @@ state_single MarkovChain::generateObservation(state_sequence prevState, int maxO
         continue;
       }
     }
+    std::cout << "MarkovChain::generateObservation  " << state <<std::endl;
+
     return state;
   }
 }

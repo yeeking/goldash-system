@@ -26,19 +26,13 @@ DinvernoPolyMarkov::~DinvernoPolyMarkov()
 void DinvernoPolyMarkov::reset()
 {
 
-  //   MarkovManager pitchModel; // pitches of notes
-  // MarkovManager lengthModel;  // length of notes
-  // MarkovManager velocityModel; // loudness of notes
-  // MarkovManager interOnsetIntervalModel; // time between note onts
-  // ChordDetector chordDetector;
-
     std::cout << "DinvernoPolyMarkov::reset" << std::endl;
     pendingMessages.clear();
     pitchModel.reset();
     lengthModel.reset();
     interOnsetIntervalModel.reset();
     velocityModel.reset();
-    
+    chordDetector.reset();
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Reset applied.");
 }

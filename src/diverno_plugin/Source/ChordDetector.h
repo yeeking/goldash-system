@@ -21,8 +21,6 @@ class ChordDetector{
   /** send it the sample rate*/
     ChordDetector(int sampleRate);
     ~ChordDetector();
-    /** clear any info stored */
-    void reset();
     /** tell it a note was played */
     void notePlayed(int note, double timeInSamples);
     /** tell it a cc was 'played' */
@@ -36,6 +34,9 @@ class ChordDetector{
     std::vector<int> getReadyNotes();
     /** get an appropriate set of ccs, similar logic to getReadyNotes  */
     std::vector<std::pair<int,int>> getReadyCCs();
+    /** wipe all memory*/
+    void reset();
+
   private:
     std::vector<int> storedNotes;
     std::vector<int> notesForReturn;
