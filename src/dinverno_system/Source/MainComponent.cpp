@@ -383,6 +383,7 @@ bool MainComponent::keyPressed (const KeyPress &key, Component *originatingCompo
             break;
             
     }
+    return true;
    
 }
 
