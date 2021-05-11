@@ -18,7 +18,7 @@ DinvernoCCMarkov::DinvernoCCMarkov(int sampleRate)
   lastTickSamples = 0;
   accumTimeDelta = 0;
   timeBeforeNextCCMsg = 0;
-  std::cout << "DinvernoCCMarkov::DinvernoCCMarkov construction complete" << std::endl;
+  //std::cout << "DinvernoCCMarkov::DinvernoCCMarkov construction complete" << std::endl;
 }
 
 DinvernoCCMarkov::~DinvernoCCMarkov()
@@ -82,7 +82,7 @@ DinvernoCCMarkov::~DinvernoCCMarkov()
 
     for (std::pair<int, int>& cc : ccs)
     {
-      std::cout << "DinvernoCCMarkov::tick firing cc " << cc.first << ":" << cc.second << " options are "<< next_state << std::endl;
+      //t << "DinvernoCCMarkov::tick firing cc " << cc.first << ":" << cc.second << " options are "<< next_state << std::endl;
     
       MidiMessage ccMsg = MidiMessage::controllerEvent(1, cc.first, cc.second);
       if (pendingMessages.getNumEvents() < MAX_PENDING_MESSAGES){
@@ -98,11 +98,11 @@ DinvernoCCMarkov::~DinvernoCCMarkov()
 {
    // pass it onto the poly 
    polyMarkovDelegate.addMidiMessage(msg);
-   std::cout << "DinvernoCCMarkov :: addMidiMessage received midi " << std::endl;
+   //std::cout << "DinvernoCCMarkov :: addMidiMessage received midi " << std::endl;
    // now do our own processing of CC messages
    if (msg.isController())
    {
-    std::cout << "DinvernoCCMarkov :: addMidiMessage cc " << msg.getControllerNumber() << ":" << msg.getControllerValue()<< std::endl;
+   // std::cout << "DinvernoCCMarkov :: addMidiMessage cc " << msg.getControllerNumber() << ":" << msg.getControllerValue()<< std::endl;
 
     // manage the inter onset interval model
     double elapsedSamples  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;   
@@ -213,7 +213,7 @@ void DinvernoCCMarkov::addCCsToModel(std::vector<std::pair<int, int>> ccs)
 {
   // convert the pairs 
   state_single cc_state = controlChangesToMarkovState(ccs);
-  std::cout << "DinvernoCCMarkov::addCCsToModel adding state to markov " << cc_state << std::endl;
+  //std::cout << "DinvernoCCMarkov::addCCsToModel adding state to markov " << cc_state << std::endl;
   // remember when this note started so we can measure length later
   controlChangeModel.putEvent(cc_state);
 }
@@ -221,7 +221,7 @@ void DinvernoCCMarkov::addCCsToModel(std::vector<std::pair<int, int>> ccs)
 
  void DinvernoCCMarkov::reset()
  {
-   std::cout << "DinvernoCCMarkov::reset " << std::endl;
+   //std::cout << "DinvernoCCMarkov::reset " << std::endl;
    polyMarkovDelegate.reset();
     pendingMessages.clear();
     controlChangeModel.reset();

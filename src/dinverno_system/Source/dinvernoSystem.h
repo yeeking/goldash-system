@@ -141,7 +141,7 @@ private:
   /** helper function to convert a vector of notes into a state string */
   state_single notesToMarkovState(std::vector<int> notes);
   /** does the opposite of notesToMarkovState - converts a state back to a vector */
-  std::vector<int> markovStateToNotes(state_single n_state);
+  std::vector<int> markovStateToNotes(const state_single& n_state);
   /** query the noteOnTimesSamples map with error checking */
   double getNoteOnTimeSamples(int note);
 
@@ -214,7 +214,7 @@ private:
 
 class ImproviserUtils {
   public:
-static std::vector<std::string> tokenise(std::string input, char sep)
+static std::vector<std::string> tokenise(const std::string& input, char sep)
 {
   std::vector<std::string> vec;
   int end;

@@ -28,7 +28,7 @@ class MarkovChain {
      * @param currentState - the state observed
      * 
     */
-    void addObservation(state_sequence prevState, state_single currentState);
+    void addObservation(const state_sequence& prevState, state_single currentState);
     /**
      *  addObservationAllOrders
      * Add all orders of the sent observation to the chain
@@ -37,7 +37,7 @@ class MarkovChain {
      * @param prevState - the state preceeding the observation
      * @param currentState - the state observed
      */
-    void addObservationAllOrders(state_sequence prevState, state_single currentState);
+    void addObservationAllOrders(const state_sequence& prevState, state_single currentState);
 
   // should be private once testing is complete... 
   // note to self - how to enable testing of private methods? 
@@ -61,7 +61,7 @@ class MarkovChain {
    * @param state_sequence: a vector of strings 
    */
 
-    std::string stateSequenceToString(state_sequence sequence);
+    std::string stateSequenceToString(const state_sequence& sequence);
   /**
    * stateSequenceToString 
    * Converts a state_sequence into a string that can be used as a key
@@ -72,7 +72,7 @@ class MarkovChain {
    * @param max_order:an int representing which limits how much of the sequence we use 
    */
 
-    std::string stateSequenceToString(state_sequence sequence, int maxOrder);
+    std::string stateSequenceToString(const state_sequence& sequence, int maxOrder);
     /**
      * generateObservation: generate a new observation from the chain
      * @param prevState - the lookup state used to query the model
@@ -81,7 +81,7 @@ class MarkovChain {
      * reduce the order until the query returns something.
      * @return a state sampled from the model
      */
-    state_single generateObservation(const state_sequence prevState, int maxOrder);
+    state_single generateObservation(const state_sequence& prevState, int maxOrder);
   /**
    * Picks a random observation from the sent sequence. 
    */

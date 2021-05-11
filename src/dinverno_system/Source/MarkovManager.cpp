@@ -23,6 +23,9 @@ MarkovManager::~MarkovManager()
 }
 void MarkovManager::reset()
 {
+    inputMemory.clear();
+    outputMemory.clear();
+
     inputMemory.assign(250, "0");
     outputMemory.assign(250, "0");
     chain.reset();
@@ -30,6 +33,7 @@ void MarkovManager::reset()
 void MarkovManager::putEvent(state_single event)
 {
   // add the observation to the markov 
+  std::cout << "MarkovManager::putEvent" << event << std::endl;
   chain.addObservationAllOrders(inputMemory, event);
   // update the input memory
   addStateToStateSequence(inputMemory, event);

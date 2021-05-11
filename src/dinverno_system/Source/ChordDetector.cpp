@@ -20,6 +20,13 @@ ChordDetector::~ChordDetector()
 {
 
 }
+void ChordDetector::reset()
+{
+  notesForReturn.clear();
+  storedNotes.clear();
+  ccsForReturn.clear();
+  storedCCs.clear();
+}
 
 void ChordDetector::notePlayed(int note, double timeInSamples)
 {
@@ -64,6 +71,7 @@ void ChordDetector::ccPlayed(int number, int value, double timeInSamples)
 
 std::vector<int> ChordDetector::getReadyNotes()
 {
+  for (const int& n : notesForReturn) std::cout << "ChordDetector::getReadyNotes has note " << n << std::endl;
   if (notesForReturn.size() > 0){// we hvae notes to return!
     std::vector<int> retVal{notesForReturn};
     //std::cout << "ChordDetector::getReadyNotes: notes " << retVal.size() << std::endl; 

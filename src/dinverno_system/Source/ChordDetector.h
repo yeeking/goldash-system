@@ -34,6 +34,9 @@ class ChordDetector{
     std::vector<int> getReadyNotes();
     /** get an appropriate set of ccs, similar logic to getReadyNotes  */
     std::vector<std::pair<int,int>> getReadyCCs();
+    /** wipe all memory*/
+    void reset();
+
   private:
     std::vector<int> storedNotes;
     std::vector<int> notesForReturn;
