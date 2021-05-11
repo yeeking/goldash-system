@@ -21,6 +21,8 @@ class ChordDetector{
   /** send it the sample rate*/
     ChordDetector(int sampleRate);
     ~ChordDetector();
+    /** clear any info stored */
+    void reset();
     /** tell it a note was played */
     void notePlayed(int note, double timeInSamples);
     /** tell it a cc was 'played' */

@@ -21,6 +21,12 @@ ChordDetector::~ChordDetector()
 
 }
 
+void ChordDetector::reset()
+{
+  storedNotes.clear();
+  notesForReturn.clear();
+}
+
 void ChordDetector::notePlayed(int note, double timeInSamples)
 {
   if (timeInSamples - lastNoteTimeInSamples > (sampleRate / 8)) // 1/8 of a econd
