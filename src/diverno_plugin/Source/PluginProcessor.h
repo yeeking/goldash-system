@@ -64,6 +64,9 @@ public:
     void timerCallback() override;  /** Timer callback*/
     
     //==============================================================================
+    int getMarkovModelDetails();
+    
+    //==============================================================================
     // markov models
     DinvernoImproviser* currentImproviser;
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};

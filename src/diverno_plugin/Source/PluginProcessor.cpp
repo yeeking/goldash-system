@@ -274,6 +274,12 @@ void Dinverno_pluginAudioProcessor::tickCurrentImproviser()
     currentImproviser->tick();
 }
 
+int Dinverno_pluginAudioProcessor::getMarkovModelDetails()
+{
+    // Get Markov Model
+    return 5;
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
