@@ -1,12 +1,21 @@
 
 #include "MarkovChain.h"
 #include "MarkovManager.h"
-#include "dinvernoSystem.h"
-#include "../JuceLibraryCode/JuceHeader.h"
+//#include "dinvernoSystem.h"
+//#include "../JuceLibraryCode/JuceHeader.h"
 
 #include <iostream>
 #include <string>
 #include <random>
+
+/**
+ * helper function to print result of a test
+ */
+void log(std::string test, bool result)
+{
+    std::cout << test << " : " << result << std::endl;
+}
+
 
 // 1
 bool emptyChainReturnsNull()
@@ -80,7 +89,7 @@ bool returnsHighestOrder()
     chain.addObservation(prevState1, "c");
     chain.addObservation(prevState2, "d");
     std::string res = chain.generateObservation(prevState2, 2);
-    if (res == "d") return true;
+    if (res == "d" && chain.getOrderOfLastMatch() == 2) return true;
     else return false; 
 }
 // 6
@@ -91,12 +100,14 @@ bool respectsMaxOrderLow()
     
     state_sequence prevState1 = {"a"};
     state_sequence prevState2 = {"a", "b"};
-    chain.addObservation(prevState1, "c");
-    chain.addObservation(prevState2, "d");
+    chain.addObservationAllOrders(prevState1, "c"); // a->c
+    chain.addObservationAllOrders(prevState2, "d"); // a-b -->d so should do ab->d and b->d
 
-    std::string res = chain.generateObservation(prevState2, 1);
+    std::string res = chain.generateObservation(prevState2, 1); // query on a,b but limit to 'b'
+
     // max order is 1, so it should search on b not ab
-    if (res == "d") return true;
+    if (res == "d" && chain.getOrderOfLastMatch() == 1) return true;
+
     else return false; 
 }
 
@@ -116,7 +127,9 @@ bool respectsMaxOrderHigh()
     
     std::string res = chain.generateObservation(prevState3, 3);
     // max order is 3, so it should search for cba, not ba or a
-    if (res == "g") return true;
+//    if (res == "g") return true;
+    if (res == "g" && chain.getOrderOfLastMatch() == 3) return true;
+
     else return false; 
 }
 // 8
@@ -368,33 +381,32 @@ bool getOutputNoData()
     return false; 
 }
 
-void log(std::string test, bool result)
+
+// 22
+bool variableOrderGenerate()
 {
-    std::cout << test << " : " << result << std::endl;
+    MarkovManager manager{};
+    state_sequence seq = {"a", "b", "c", "d"};
+    int highestOrder = 0;
+    // feed them in
+    for (state_single& s : seq){
+        manager.putEvent(s);
+    }
+    for (auto i=0;i<100;i++)
+    {
+        manager.getEvent();
+        //std::cout << manager.getOrderOfLastEvent() << std::endl;
+        if (manager.getOrderOfLastEvent() > highestOrder) highestOrder = manager.getOrderOfLastEvent();
+    }
+    if (highestOrder > 0) return true;
+     return false; 
 }
 
-// 21
-bool addMessage()
+bool zeroOrderSample()
 {
-    DinvernoMidiParrot parrot{44100};
-    MidiMessage msg{};
-    parrot.addMidiMessage(msg);
-    return true;
-}
-
-void runDinvernoParrotTests()
-{
-    int total_tests, passed_tests;
-    total_tests = 0;
-    passed_tests = 0; 
-    
-    // parrot1
-    bool res = addMessage();
-    log("addMessage", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
-
+    MarkovChain chain{};
+    state_single s = chain.zeroOrderSample(); // pick an observation at random from the chain
+    return true; 
 }
 
 void runMarkovTests()
@@ -402,8 +414,9 @@ void runMarkovTests()
     int total_tests, passed_tests;
     total_tests = 0;
     passed_tests = 0; 
-    // run some tests
-    bool res = emptyChainReturnsNull();
+    bool res = false; 
+    
+    res = emptyChainReturnsNull();
     log("emptyChainReturnsNull", res);
     total_tests ++;
     if (res) passed_tests ++;
@@ -514,17 +527,38 @@ void runMarkovTests()
     log("addStateToStateSequence", res);
     total_tests ++;
     if (res) passed_tests ++;
-
+    // 20
     res = getOutputNoData();
     log("getOutputNoData", res);
     total_tests ++;
     if (res) passed_tests ++;
+
+    // 22
+    res = variableOrderGenerate();
+    log("variableOrderGenerate", res);
+    total_tests ++;
+    if (res) passed_tests ++;
+
+    // 23
+    res = zeroOrderSample();
+    log("zeroOrderSample", res);
+    total_tests ++;
+    if (res) passed_tests ++;
+
+
+
+    
+    res = respectsMaxOrderLow();
+    log("respectsMaxOrderLow", res);
+    total_tests ++;
+    if (res) passed_tests ++;
+
 
     std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
   
 }
 
 int main(){
-    runDinvernoParrotTests();
+    runMarkovTests();
     return 0;
 }

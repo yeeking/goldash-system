@@ -53,3 +53,8 @@ void MarkovManager::addStateToStateSequence(state_sequence& seq, state_single ne
   // replace the final state with the new one
   seq[seq.size()-1] = new_state;
 }
+
+int MarkovManager::getOrderOfLastEvent()
+{
+  return chain.getOrderOfLastMatch();
+}

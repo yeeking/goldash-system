@@ -12,10 +12,9 @@
 #include <iostream>
 #include <ctime>
 
-MarkovChain::MarkovChain()
+MarkovChain::MarkovChain() : maxOrder{1000}, orderOfLastMatch{0}
 {
   srand((int)time(NULL));
-  maxOrder = 1000;
 }
 
 MarkovChain::~MarkovChain()
@@ -23,7 +22,7 @@ MarkovChain::~MarkovChain()
 
 }
 
-void MarkovChain::addObservation(state_sequence prevState, state_single currentState)
+void MarkovChain::addObservation(const state_sequence& prevState, state_single currentState)
 {
   if (currentState == "0")
   {
@@ -32,7 +31,6 @@ void MarkovChain::addObservation(state_sequence prevState, state_single currentS
   }
   // convert the previous state to a CSV style key
   state_single key = stateSequenceToString(prevState);
-  
   // do we have this key already
   bool have_key = true;
   try
@@ -54,7 +52,7 @@ void MarkovChain::addObservation(state_sequence prevState, state_single currentS
   }
 }
 
-void MarkovChain::addObservationAllOrders(state_sequence prevState, state_single currentState)
+void MarkovChain::addObservationAllOrders(const state_sequence& prevState, state_single currentState)
 {
   std::vector<state_sequence> allPrevs = breakStateIntoAllOrders(prevState);
   for (state_sequence& seq : allPrevs)
@@ -63,7 +61,7 @@ void MarkovChain::addObservationAllOrders(state_sequence prevState, state_single
   } 
 }
 
-std::vector<state_sequence>  MarkovChain::breakStateIntoAllOrders(state_sequence prevState)
+std::vector<state_sequence>  MarkovChain::breakStateIntoAllOrders(const state_sequence& prevState)
 {
   std::vector<state_sequence> allPrevs;
   // start is in the range 0-prevState.size() - 1
@@ -80,19 +78,19 @@ std::vector<state_sequence>  MarkovChain::breakStateIntoAllOrders(state_sequence
 }
 
 
-std::string MarkovChain::stateSequenceToString(state_sequence sequence)
+std::string MarkovChain::stateSequenceToString(const state_sequence& sequence)
 {
   std::string str = std::to_string(sequence.size()); // write the order first
   str.append(",");
   // prefix it with the order
-  for (state_single& s : sequence)
+  for (const state_single& s : sequence)
   {
     str.append(s);
     str.append(",");   
   } 
   return str;
 }
-std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxOrder)
+std::string MarkovChain::stateSequenceToString(const state_sequence& sequence, int maxOrder)
 {
   if (maxOrder >= sequence.size()){ 
     // max order is higher pr == than the order we have
@@ -105,7 +103,7 @@ std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxO
     auto want_to_skip = sequence.size() - maxOrder;
     auto skipped = 0;
     // prefix it with the order
-    for (state_single& s : sequence)
+    for (const state_single& s : sequence)
     {
      if (skipped < want_to_skip) 
      {
@@ -119,8 +117,7 @@ std::string MarkovChain::stateSequenceToString(state_sequence sequence, int maxO
   }
 }
 
-
-state_single MarkovChain::generateObservation(state_sequence prevState, int maxOrder)
+state_single MarkovChain::generateObservation(const state_sequence& prevState, int maxOrder)
 {
   // check for empty model
   if (model.size() == 0)
@@ -128,12 +125,11 @@ state_single MarkovChain::generateObservation(state_sequence prevState, int maxO
     //std::cout << "warning - requested obs from empty model " << std::endl;
     return "0";
   }
-  // force the maxOrder allowed by this class
-  if (maxOrder > this->maxOrder) maxOrder = this->maxOrder; 
-
-  std::string key = stateSequenceToString(prevState);
-  state_sequence poss_next_states;
-
+  // don't allow orders beyond our own maxOrder
+  if (maxOrder > this->maxOrder) maxOrder = this->maxOrder;
+  // attempt to find a key in the chain that matches the incoming prevState
+  std::string key = stateSequenceToString(prevState, maxOrder);
+  state_sequence poss_next_states{};
   bool have_key = true;
   try
   {
@@ -145,34 +141,52 @@ state_single MarkovChain::generateObservation(state_sequence prevState, int maxO
   }
   if (have_key)
   {
+    this->orderOfLastMatch = maxOrder; 
     // get a random numner
     return pickRandomObservation(poss_next_states);
   }
   else {
-    // no key - choose something at random from all next observed states
-    int randInd = 0;
-    if (model.size() > 1) randInd = rand() % model.size();
-    int ind = 0;
-    state_single state = "0"; // start on the default state
-    // iterate the map until we teach our random index
-    // have to do this as skips are not possible
-    for (std::map<std::string,state_sequence>::iterator it=model.begin();it!=model.end(); ++it)
+    //std::cout << "MarkovChain::generateObservation no match for that key " << key << "  at order " << maxOrder << std::endl;
+    if (maxOrder > 1) 
     {
-      if (ind == randInd){
-        poss_next_states = (it->second);
-        state = pickRandomObservation(poss_next_states);
-        break;// jump down to the return statement 
-      }
-      else {
-        ind ++;
-        continue;
-      }
+      //std::cout << "no match, reducing order to " << maxOrder - 1 << std::endl;
+      return generateObservation(prevState, maxOrder-1);
     }
-    return state;
+    else {
+      // worst case - nothing at higher than zero order
+       return this->zeroOrderSample();
+    }
   }
 }
 
-state_single MarkovChain::pickRandomObservation( state_sequence& seq)
+state_single MarkovChain::zeroOrderSample()
+{
+  state_sequence poss_next_states{};
+  // no key - choose something at random from all next observed states
+  int randInd = 0;
+  if (model.size() > 1) randInd = rand() % model.size();
+  int ind = 0;
+  state_single state = "0"; // start on the default state
+  // iterate the map until we teach our random index
+  // have to do this as skips are not possible
+  for (std::map<std::string,state_sequence>::iterator it=model.begin();it!=model.end(); ++it)
+  {
+    if (ind == randInd){
+      poss_next_states = (it->second);
+      state = pickRandomObservation(poss_next_states);
+      break;// jump down to the return statement 
+    }
+    else {
+      ind ++;
+      continue;
+    }
+  }
+  this->orderOfLastMatch = 0; 
+  return state;
+}
+
+
+state_single MarkovChain::pickRandomObservation(const state_sequence& seq)
 {
   auto ind = 0;
   if (seq.size() > 1) ind = rand() % seq.size();  
@@ -182,6 +196,7 @@ state_single MarkovChain::pickRandomObservation( state_sequence& seq)
 
 std::string MarkovChain::toString()
 {
+
   return "String representation of the model here";
 }
 
@@ -193,4 +208,9 @@ void MarkovChain::fromString(std::string savedModel)
 void MarkovChain::reset()
 {
     model.clear();
+}
+
+int MarkovChain::getOrderOfLastMatch()
+{
+  return this->orderOfLastMatch;
 }
