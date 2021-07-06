@@ -11,6 +11,9 @@
 #pragma once
 #include "MarkovChain.h"
 
+/**
+ * Manages a markov chain for training and generation purposes
+ */
 class MarkovManager {
   public:
       MarkovManager();
@@ -23,6 +26,11 @@ class MarkovManager {
       * retrieve an event from the underlying markov model. 
       */
       state_single getEvent();
+      /**
+       * returns the order of the model that generated the last event 
+       * calls 
+       */
+      int getOrderOfLastEvent();
     /**
      * wipe the underlying model and reset short term input and output memory. 
      */
