@@ -64,6 +64,10 @@ public:
     void timerCallback() override;  /** Timer callback*/
     
     //==============================================================================
+    state_sequence getImproviserInputMemory();
+    state_sequence getImproviserOutputMemory();
+    
+    //==============================================================================
     // markov models
     DinvernoImproviser* currentImproviser;
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
@@ -77,6 +81,9 @@ private:
     {
     public:
         ThreadedImprovisor() : Thread ("Improvisor Thread") {}
+        MidiBuffer midiBuffer;
+        std::atomic<bool> processingBuffer {false};
+        DinvernoPolyMarkov dinvernoPolyMarkov{44100};
         
         void run() override
         {
@@ -123,10 +130,7 @@ private:
             }
         }
         
-        //float value = 0.0f;
-        MidiBuffer midiBuffer;
-        std::atomic<bool> processingBuffer {false};
-        DinvernoPolyMarkov dinvernoPolyMarkov{44100};
+
     };
     
     ThreadedImprovisor threadedImprovisor;

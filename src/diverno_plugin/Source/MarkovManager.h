@@ -34,7 +34,17 @@ class MarkovManager {
      */
       void addStateToStateSequence(state_sequence& seq, state_single new_state);
 
-
+    /**
+   * Gets the current inputMemory state
+   */
+    state_sequence getInputMemory();
+    
+    /**
+   * Gets the current outputMemory state
+   */
+    state_sequence getOutputMemory();
+    
+    
   private:
       state_sequence inputMemory;
       state_sequence outputMemory;

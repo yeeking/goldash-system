@@ -177,3 +177,13 @@ double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
   }
   return time; 
 }
+
+state_sequence DinvernoPolyMarkov::getPitchModelInputMemory()
+{
+    return pitchModel.getInputMemory();
+}
+
+state_sequence DinvernoPolyMarkov::getPitchModelOutputMemory()
+{
+    return pitchModel.getOutputMemory();
+}

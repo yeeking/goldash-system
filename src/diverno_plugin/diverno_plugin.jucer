@@ -3,7 +3,7 @@
 <JUCERPROJECT id="gng6Ei" name="dinverno_plugin" projectType="audioplug" displaySplashScreen="1"
               jucerFormatVersion="1" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn"
               pluginManufacturer="SensiLab" bundleIdentifier="com.sensilab.dinverno_plugin"
-              version="1.1.2">
+              version="1.1.1">
   <MAINGROUP id="y3iYVo" name="dinverno_plugin">
     <GROUP id="{1603BC85-35A2-1DEA-6ACC-23390878DA8B}" name="Source">
       <FILE id="XwYTDA" name="ChordDetector.cpp" compile="1" resource="0"
@@ -74,6 +74,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../../../Library/Developer/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2019 targetFolder="Builds/VisualStudio2019">
@@ -96,6 +97,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../../../Library/Developer/JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX">
@@ -118,6 +120,7 @@
         <MODULEPATH id="juce_audio_formats" path="../../juce"/>
         <MODULEPATH id="juce_audio_devices" path="../../juce"/>
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_osc" path="../../../../../../Library/Developer/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
@@ -137,6 +140,7 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
     <OSX/>

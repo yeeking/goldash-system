@@ -42,7 +42,6 @@ public:
     LogginManager* loggin;
     bool isReadyToLog();
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
-   
     
 protected:
   double getElapsedTimeSamples();   
@@ -133,6 +132,12 @@ public:
    virtual void addMidiMessage(const MidiMessage& msg) override;
     virtual void reset() override;
 
+    /** Get the pitchModel MarkovManager input memory state */
+    state_sequence getPitchModelInputMemory();
+    
+    /** Get the pitchModel MarkovManager output memory state */
+    state_sequence getPitchModelOutputMemory();
+    
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
   void addNotesToModel(std::vector<int> notes);

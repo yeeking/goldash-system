@@ -28,6 +28,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_opengl/juce_opengl.h>
+#include <juce_osc/juce_osc.h>
 
 
 #if defined (JUCE_PROJUCER_VERSION) && JUCE_PROJUCER_VERSION < JUCE_VERSION
@@ -50,7 +51,7 @@ namespace ProjectInfo
 {
     const char* const  projectName    = "dinverno_plugin";
     const char* const  companyName    = "";
-    const char* const  versionString  = "1.1.2";
-    const int          versionNumber  = 0x10102;
+    const char* const  versionString  = "1.1.1";
+    const int          versionNumber  = 0x10101;
 }
 #endif
