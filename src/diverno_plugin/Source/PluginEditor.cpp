@@ -448,8 +448,32 @@ void Dinverno_pluginAudioProcessorEditor::timerCallback()
     // Check if connected to OSC Server
     if (oscConnected){
         // Send Markov Models via OSC
-        int markovDetails = audioProcessor.getMarkovModelDetails();
-        if(! osc.send ("/juce/test", (float) markovDetails))
+        
+        // Get InputMemory and put into string object for sending
+        state_sequence inputMemory = audioProcessor.getImproviserInputMemory();
+        juce::String inputMemoryStr = juce::String();
+        for (std::string noteStr : inputMemory){
+            inputMemoryStr += String(noteStr);
+        }
+        
+        // Get OutputMemory and put into string object for sending
+        state_sequence outputMemory = audioProcessor.getImproviserOutputMemory();
+        juce::String outputMemoryStr = juce::String();
+        for (std::string noteStr : outputMemory){
+            outputMemoryStr += String(noteStr);
+        }
+        
+        // Create OSC Messages
+        OSCMessage inputMsg = OSCMessage("/InputMemory", inputMemoryStr);
+        OSCMessage outputMsg = OSCMessage("/OutputMemory", outputMemoryStr);
+        
+        // Create OSC Bundle from Input and Output Memory Messages
+        OSCBundle oscBundle = OSCBundle();
+        oscBundle.addElement(inputMsg);
+        oscBundle.addElement(outputMsg);
+        
+        // Send OSC Bundle
+        if(! osc.send (oscBundle))
         {
             // Handle OSC Send Error
             //showConnectionErrorMessage ("Error: could not send OSC message.");

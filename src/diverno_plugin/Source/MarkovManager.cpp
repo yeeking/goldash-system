@@ -33,7 +33,7 @@ void MarkovManager::reset()
 void MarkovManager::putEvent(state_single event)
 {
   // add the observation to the markov 
-  std::cout << "MarkovManager::putEvent" << event << std::endl;
+   std::cout << "MarkovManager::putEvent" << event << std::endl;
   chain.addObservationAllOrders(inputMemory, event);
   // update the input memory
   addStateToStateSequence(inputMemory, event);
@@ -56,4 +56,14 @@ void MarkovManager::addStateToStateSequence(state_sequence& seq, state_single ne
   }
   // replace the final state with the new one
   seq[seq.size()-1] = new_state;
+}
+
+state_sequence MarkovManager::getInputMemory()
+{
+    return inputMemory;
+}
+
+state_sequence MarkovManager::getOutputMemory()
+{
+    return outputMemory;
 }
