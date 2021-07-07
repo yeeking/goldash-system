@@ -120,7 +120,6 @@ std::string MarkovChain::stateSequenceToString(const state_sequence& sequence, i
   }
 }
 
-
 state_single MarkovChain::generateObservation(const state_sequence& prevState, int maxOrder)
 {
   //std::cout << "MarkovChain::generateObservation model size " << model.size() <<std::endl;
@@ -136,6 +135,12 @@ state_single MarkovChain::generateObservation(const state_sequence& prevState, i
 
   std::string key = stateSequenceToString(prevState);
   state_sequence poss_next_states;
+    
+  // Split prevState into all orders and find highest order prevState that matches a model.key
+  std::string matchedModelKey = this->findModelStateAllOrders(prevState);
+  if (matchedModelKey != ""){
+      key = matchedModelKey;
+  }
 
   bool have_key = true;
   try
@@ -150,6 +155,7 @@ state_single MarkovChain::generateObservation(const state_sequence& prevState, i
   {
     // get a random numner
     return pickRandomObservation(poss_next_states);
+        
   }
   else {
     // no key - choose something at random from all next observed states
@@ -175,6 +181,40 @@ state_single MarkovChain::generateObservation(const state_sequence& prevState, i
 
     return state;
   }
+}
+
+std::string MarkovChain::findModelStateAllOrders(const state_sequence& prevState)
+{
+    state_sequence poss_next_states;
+    
+    // Flatten prevState into string key
+    std::string key = stateSequenceToString(prevState);
+    std::string matchedState = "";
+    
+    // Split prevState into vector containing key of all orders
+    std::vector<state_sequence> prevStateAllOrders = this->breakStateIntoAllOrders(prevState);
+    
+    // Iterate through each order of prevState to find a matching model.key - reducing order each iteration
+    for (state_sequence testState : prevStateAllOrders){
+        bool have_key = true;
+        std::string testKey = stateSequenceToString(testState);
+
+        try
+        {
+            poss_next_states = model.at(testKey);
+        }
+        catch (const std::out_of_range& oor)
+        {
+            have_key = false;
+        }
+        
+        if (have_key){
+            matchedState = testKey;
+            break;
+        }
+    }
+    
+    return matchedState;
 }
 
 state_single MarkovChain::pickRandomObservation( state_sequence& seq)

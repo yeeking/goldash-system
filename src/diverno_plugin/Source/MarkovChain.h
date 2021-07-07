@@ -82,6 +82,14 @@ class MarkovChain {
      * @return a state sampled from the model
      */
     state_single generateObservation(const state_sequence& prevState, int maxOrder);
+    
+    /**
+     * findModelStateAllOrders: finds the highest order model.key by iterativly reducing prevState order until a matching model.key  is found
+     * @param prevState - the lookup state used to query the model
+     * @return a std::string with the matched key, or an empty std::string "" if no matching state is found
+     */
+    std::string findModelStateAllOrders(const state_sequence& prevState);
+    
   /**
    * Picks a random observation from the sent sequence. 
    */
