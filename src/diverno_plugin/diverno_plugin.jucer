@@ -2,8 +2,7 @@
 
 <JUCERPROJECT id="gng6Ei" name="dinverno_plugin" projectType="audioplug" displaySplashScreen="1"
               jucerFormatVersion="1" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn"
-              pluginManufacturer="SensiLab" bundleIdentifier="com.sensilab.dinverno_plugin"
-              version="1.1.2">
+              pluginManufacturer="SensiLab" bundleIdentifier="com.sensilab.dinverno_plugin">
   <MAINGROUP id="y3iYVo" name="dinverno_plugin">
     <GROUP id="{1603BC85-35A2-1DEA-6ACC-23390878DA8B}" name="Source">
       <FILE id="XwYTDA" name="ChordDetector.cpp" compile="1" resource="0"
