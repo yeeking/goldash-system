@@ -1,12 +1,21 @@
 
 #include "MarkovChain.h"
 #include "MarkovManager.h"
-#include "dinvernoSystem.h"
-#include "../JuceLibraryCode/JuceHeader.h"
+//#include "dinvernoSystem.h"
+//#include "../JuceLibraryCode/JuceHeader.h"
 
 #include <iostream>
 #include <string>
 #include <random>
+
+/**
+ * helper function to print result of a test
+ */
+void log(std::string test, bool result)
+{
+    std::cout << test << " : " << result << std::endl;
+}
+
 
 // 1
 bool emptyChainReturnsNull()
@@ -80,7 +89,7 @@ bool returnsHighestOrder()
     chain.addObservation(prevState1, "c");
     chain.addObservation(prevState2, "d");
     std::string res = chain.generateObservation(prevState2, 2);
-    if (res == "d") return true;
+    if (res == "d" && chain.getOrderOfLastMatch() == 2) return true;
     else return false; 
 }
 // 6
@@ -91,12 +100,14 @@ bool respectsMaxOrderLow()
     
     state_sequence prevState1 = {"a"};
     state_sequence prevState2 = {"a", "b"};
-    chain.addObservation(prevState1, "c");
-    chain.addObservation(prevState2, "d");
+    chain.addObservationAllOrders(prevState1, "c"); // a->c
+    chain.addObservationAllOrders(prevState2, "d"); // a-b -->d so should do ab->d and b->d
 
-    std::string res = chain.generateObservation(prevState2, 1);
+    std::string res = chain.generateObservation(prevState2, 1); // query on a,b but limit to 'b'
+
     // max order is 1, so it should search on b not ab
-    if (res == "d") return true;
+    if (res == "d" && chain.getOrderOfLastMatch() == 1) return true;
+
     else return false; 
 }
 
@@ -116,7 +127,9 @@ bool respectsMaxOrderHigh()
     
     std::string res = chain.generateObservation(prevState3, 3);
     // max order is 3, so it should search for cba, not ba or a
-    if (res == "g") return true;
+//    if (res == "g") return true;
+    if (res == "g" && chain.getOrderOfLastMatch() == 3) return true;
+
     else return false; 
 }
 // 8
@@ -368,163 +381,332 @@ bool getOutputNoData()
     return false; 
 }
 
-void log(std::string test, bool result)
+
+// 22
+bool variableOrderGenerate()
 {
-    std::cout << test << " : " << result << std::endl;
+    MarkovManager manager{};
+    state_sequence seq = {"a", "b", "c", "d"};
+    int highestOrder = 0;
+    // feed them in
+    for (state_single& s : seq){
+        manager.putEvent(s);
+    }
+    for (auto i=0;i<100;i++)
+    {
+        manager.getEvent();
+        //std::cout << manager.getOrderOfLastEvent() << std::endl;
+        if (manager.getOrderOfLastEvent() > highestOrder) highestOrder = manager.getOrderOfLastEvent();
+    }
+    if (highestOrder > 0) return true;
+     return false; 
 }
 
-// 21
-bool addMessage()
+bool zeroOrderSample()
 {
-    DinvernoMidiParrot parrot{44100};
-    MidiMessage msg{};
-    parrot.addMidiMessage(msg);
+    MarkovChain chain{};
+    state_single s = chain.zeroOrderSample(); // pick an observation at random from the chain
+    return true; 
+}
+
+bool checkLast()
+{
+    MarkovChain chain{};
+    state_sequence seq1 = {"a"};
+    chain.addObservationAllOrders(seq1, "b"); // a->b
+    state_single obs = chain.generateObservation(seq1, 1);
+    state_and_observation last = chain.getLastMatch();
+    std::string expect = chain.stateSequenceToString(seq1);
+    if (last.first == expect && last.second == "b") return true;
+    return false; 
+}
+
+
+bool removeStateToObs()
+{
+    MarkovChain chain{};
+    state_sequence seq1 = {"a"};
+    chain.addObservationAllOrders(seq1, "b"); // a->b
+    state_single obs = chain.generateObservation(seq1, 1);
+    state_and_observation last = chain.getLastMatch();
+    state_single removeMe = chain.stateSequenceToString(seq1);
+    //chain.removeMapping
+    chain.removeMapping(removeMe, "b");
+    // now get an observation again  -should not be anything there
+    obs = chain.generateObservation(seq1, 1);
+    if (obs == "0") return true; // the model should return an empty obs
+    return false; 
+}
+
+bool reinforceChain()
+{
+    MarkovChain chain{};
+    state_sequence seq1 = {"a"};
+    chain.addObservationAllOrders(seq1, "b"); // a->b
+    chain.addObservationAllOrders(seq1, "c"); // a->c
+    // now equal chance of a and c in respose to seq1
+    state_single reinforceMe = chain.stateSequenceToString(seq1);
+    chain.amplifyMapping(reinforceMe, "b");
+    // now greater chance of a->b than a->c
+    int b_count = 0;
+    int c_count = 0;
+    for (auto i=0;i<100;i++) 
+    {
+        state_single obs = chain.generateObservation(seq1, 100);
+        if (obs == "b") b_count ++;
+        if (obs == "c") c_count ++;
+    }
+    //std::cout << "b and c count " << b_count << " " << c_count << std::endl;
+    if (b_count > c_count) return true;
+    return false; 
+}
+
+bool negFeedback()
+{
+    MarkovManager man{};
+    man.putEvent("a");
+    man.putEvent("b");
+    man.putEvent("c");
+    man.putEvent("d");
+    man.putEvent("c"); // loop back to c
+    
+    // now a->b->c
+    // eve will be either a,b or c I think
+    state_single eve = man.getEvent(); // should be a which is the first event
+    eve = man.getEvent(); // should be b, which is only possible follow on from a
+    // now remove the a->b transition
+    man.giveNegativeFeedback();
+    // verify that we don't get eve any more
+    for (auto i = 0;i<10;i++)
+    {
+        state_single eve2 = man.getEvent();
+        if (eve2 == eve) return false; 
+    }
+    return true; 
+}
+
+bool stressNeg()
+{
+    MarkovManager man{};
+    for (auto i=0;i<500;i++)
+    {
+        man.putEvent("a");
+        man.putEvent("b");
+        man.putEvent("c");
+        man.putEvent("a");
+        man.putEvent("d");
+    }
+    for (auto i=0;i<500;i++)
+    {
+        man.getEvent();
+        man.giveNegativeFeedback();
+    }
+    // if we get here, great
     return true;
 }
 
-void runDinvernoParrotTests()
-{
-    int total_tests, passed_tests;
-    total_tests = 0;
-    passed_tests = 0; 
-    
-    // parrot1
-    bool res = addMessage();
-    log("addMessage", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
 
+bool stressPos()
+{
+    MarkovManager man{};
+    for (auto i=0;i<500;i++)
+    {
+        man.putEvent("a");
+        man.putEvent("b");
+        man.putEvent("c");
+        man.putEvent("a");
+        man.putEvent("d");
+    }
+    for (auto i=0;i<500;i++)
+    {
+        man.getEvent();
+        man.givePositiveFeedback();
+    }
+    // if we get here, great
+    return true;
 }
+
 
 void runMarkovTests()
 {
     int total_tests, passed_tests;
     total_tests = 0;
     passed_tests = 0; 
-    // run some tests
-    bool res = emptyChainReturnsNull();
-    log("emptyChainReturnsNull", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+    bool res = false; 
     
-    res = addOneTokenReturnOneToken();
-    log("addOneTokenReturnOneToken", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    
-    res = addSameTwoObsReturnOneObs();
-    log("addSameTwoObsReturnOneObs", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    
-    res = addSameTwoObsReturnDiffObs();
-    log("addSameTwoObsReturnDiffObs", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        res = emptyChainReturnsNull();
+        log("emptyChainReturnsNull", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = addOneTokenReturnOneToken();
+        log("addOneTokenReturnOneToken", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = addSameTwoObsReturnOneObs();
+        log("addSameTwoObsReturnOneObs", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = addSameTwoObsReturnDiffObs();
+        log("addSameTwoObsReturnDiffObs", res);
+        total_tests ++;
+        if (res) passed_tests ++;
 
-    res = returnsHighestOrder();
-    log("returnsHighestOrder", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        res = returnsHighestOrder();
+        log("returnsHighestOrder", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = respectsMaxOrderLow();
+        log("respectsMaxOrderLow", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        res = respectsMaxOrderHigh();
+        log("respectsMaxOrderHigh", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = addAllOrders();
+        log("addAllOrders", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        res = addAllOrdersWorksWithOrder1();
+        log("addAllOrdersWorksWithOrder1", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 9a
+        res = addAllOrdersWorksWithOrder2();
+        log("addAllOrdersWorksWithOrder2", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        // 10
+        res = breakStateIntoAllOrdersThreeOrders();
+        log("breakStateIntoAllOrdersThreeOrders", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 11
+        res = breakStateIntoAllOrdersThreeOrdersSize();
+        log("breakStateIntoAllOrdersThreeOrdersSize", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 12
+        res = breakStateIntoAllOrdersThreeOrdersContents();
+        log("breakStateIntoAllOrdersThreeOrdersContents", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        //13
+        res = sequenceToStringOne();
+        log("sequenceToStringOne", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        //14
+        res = sequenceToStringThree();
+        log("sequenceToStringThree", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        // 15
+        res = unkownKeyUseDistribution();
+        log("unkownKeyUseDistribution", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 15a
+        res = unkownKeyUseDistributionMoreThanOne();
+        log("unkownKeyUseDistributionMoreThanOne", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        
+        // 16
+        res = sequenceToStringMaxLength();
+        log("sequenceToStringMaxLength", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        // 17
+        res = sequenceToStringMaxLengthTooLong();
+        log("sequenceToStringMaxLengthTooLong", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        //  18
+        res = sequenceToStringMaxLengthTheSame();
+        log("sequenceToStringMaxLengthTheSame", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 19
+        res = addStateToStateSequence();
+        log("addStateToStateSequence", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        // 20
+        res = getOutputNoData();
+        log("getOutputNoData", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        // 22
+        res = variableOrderGenerate();
+        log("variableOrderGenerate", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        // 23
+        res = zeroOrderSample();
+        log("zeroOrderSample", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        
+        // 24
+        res = checkLast();
+        log("checkLast", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+
+        //25   
+        res = removeStateToObs();
+        log("removeStateToObs", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
     
-    res = respectsMaxOrderLow();
-    log("respectsMaxOrderLow", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-
-    res = respectsMaxOrderHigh();
-    log("respectsMaxOrderHigh", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        // 26
+        res = reinforceChain();
+        log("reinforceChain", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
     
-    res = addAllOrders();
-    log("addAllOrders", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    
-    res = addAllOrdersWorksWithOrder1();
-    log("addAllOrdersWorksWithOrder1", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    // 9a
-    res = addAllOrdersWorksWithOrder2();
-    log("addAllOrdersWorksWithOrder2", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    
-    // 10
-    res = breakStateIntoAllOrdersThreeOrders();
-    log("breakStateIntoAllOrdersThreeOrders", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    // 11
-    res = breakStateIntoAllOrdersThreeOrdersSize();
-    log("breakStateIntoAllOrdersThreeOrdersSize", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    // 12
-    res = breakStateIntoAllOrdersThreeOrdersContents();
-    log("breakStateIntoAllOrdersThreeOrdersContents", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        // 27
+        res = negFeedback();
+        log("negFeedback", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
 
-    //13
-    res = sequenceToStringOne();
-    log("sequenceToStringOne", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        // 28
+        res = stressNeg();
+        log("stressNeg", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
 
-    //14
-    res = sequenceToStringThree();
-    log("sequenceToStringThree", res);
-    total_tests ++;
-    if (res) passed_tests ++;
+        // 29
+        res = stressPos();
+        log("stressPos", res);
+        total_tests ++;
+        if (res) passed_tests ++;
+        std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
 
-    // 15
-    res = unkownKeyUseDistribution();
-    log("unkownKeyUseDistribution", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    // 15a
-    res = unkownKeyUseDistributionMoreThanOne();
-    log("unkownKeyUseDistributionMoreThanOne", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    
-    
-    // 16
-    res = sequenceToStringMaxLength();
-    log("sequenceToStringMaxLength", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-
-    // 17
-    res = sequenceToStringMaxLengthTooLong();
-    log("sequenceToStringMaxLengthTooLong", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    //  18
-    res = sequenceToStringMaxLengthTheSame();
-    log("sequenceToStringMaxLengthTheSame", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-    // 19
-    res = addStateToStateSequence();
-    log("addStateToStateSequence", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-
-    res = getOutputNoData();
-    log("getOutputNoData", res);
-    total_tests ++;
-    if (res) passed_tests ++;
-
-    std::cout << "Passed " << passed_tests << " of " << total_tests << std::endl;
-  
 }
 
 int main(){
-    runDinvernoParrotTests();
+    runMarkovTests();
     return 0;
 }

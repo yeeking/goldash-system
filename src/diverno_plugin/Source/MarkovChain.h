@@ -2,7 +2,8 @@
   ==============================================================================
 
     MarkovChain.h
-    Created: 25 Oct 2019 6:47:13am
+    Creat
+    d: 25 Oct 2019 6:47:13am
     Author:  matthew
 
   ==============================================================================
@@ -16,7 +17,11 @@
 
 typedef std::vector<std::string> state_sequence;
 typedef std::string state_single;
+typedef std::pair<state_single, state_single> state_and_observation;
 
+/**
+ * Represents a markov chain
+ */
 class MarkovChain {
   public:
     MarkovChain();
@@ -51,7 +56,7 @@ class MarkovChain {
    * @param state_sequence: the incoming vector that needs to be broken down
    * @return a vector of several_statess a
    */
-    std::vector<state_sequence> breakStateIntoAllOrders(state_sequence prevState);
+    std::vector<state_sequence> breakStateIntoAllOrders(const state_sequence& prevState);
   
   /**
    * stateSequenceToString 
@@ -72,9 +77,13 @@ class MarkovChain {
    * @param max_order:an int representing which limits how much of the sequence we use 
    */
 
-    std::string stateSequenceToString(const state_sequence& sequence, int maxOrder);
+    std::string stateSequenceToString(const state_sequence& sequence, long unsigned int maxOrder);
     /**
-     * generateObservation: generate a new observation from the chain
+     * generateObservation: generate a new observation from the chain. Tries to get highest possible 
+     * order match to the incoming sequence by recursively testing sequences at length len(sequence) -> 1
+     * 
+     * Also remembers the final order it used into this->orderOfLastMatch
+     * 
      * @param prevState - the lookup state used to query the model
      * @param maxOrder - how much of the previous state to consider. 
      * It will try to query at this ordder, but if nothing is there, it'll
@@ -85,7 +94,7 @@ class MarkovChain {
   /**
    * Picks a random observation from the sent sequence. 
    */
-    state_single pickRandomObservation(state_sequence& seq);
+    state_single pickRandomObservation(const state_sequence& seq);
      /**
      * toString: convert the current model into a string for saving etc.
      * @return a string that can be sent to 'fromString' to recreate the model later
@@ -96,15 +105,46 @@ class MarkovChain {
      * @param savedModel: the model we want
      */
     void fromString(std::string savedModel);
-    /** Yanik the chain, as it were. 
+    /** Yank the chain, as it were. 
      */
     void reset();
+    /**return the order of the last match generated from generateObservation
+     */
+    int getOrderOfLastMatch();
+    /**
+     * pick a random observation from all observations
+     */
+    state_single zeroOrderSample();
+
+    /**
+     * returns the key-value that was used to 
+     * generate the last observation via generateObservation
+     */
+    state_and_observation getLastMatch();
+
+  /**
+   * remove the mapping from the sent state key (derived from a state_sequence via stateSequenceToString) to the sent observation 
+   * where state_key should be a key in this->map
+   */
+    void removeMapping(state_single state_key, state_single unwanted_option);
+    
+  /**
+   * increase the chance of the sent mapping occuring by a certain amount 
+   */
+    void amplifyMapping(state_single state_key, state_single unwanted_option);
     
 private:
+/**
+ * returns the available states that follow the sent key, where the sent key 
+ * is derived from stateSequenceToString 
+ */
+    state_sequence getOptionsForSequenceKey(state_single seqAsKey);
 /**
  * Maps from string keys to list of possible next states
  * 
  */
-    std::map<std::string,state_sequence> model;
+    std::map<state_single,state_sequence> model;
     int maxOrder; 
+    int orderOfLastMatch;
+    state_and_observation lastMatch;
 };
