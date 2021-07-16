@@ -68,6 +68,10 @@ public:
     
     void sendMidi(MidiMessage& message);
     
+    // OSC
+    bool validateOSCAddress(String oscAddressStr);
+    bool validateOSCPort(String oscPort);
+    
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -83,7 +87,7 @@ private:
     //LogginManager loggin;
     
     // GUI compoenents for login details
-    //Label loginStatusLabel{};
+    //Label {};
     //TextEditor mcEventMonitor  { "MC Event Monitor" };
     //TextEditor usernameField{"username"};
     //TextEditor passwordField{"password", '*'};
@@ -105,6 +109,15 @@ private:
     TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
     //RecordWidget recordWidget;
+    
+    // OSC Output
+    bool oscConnected = false;
+    Label oscAddressLabel {"OSC Address Label"};
+    Label oscPortLabel {"OSC Port Label"};
+    TextEditor oscAddressField {"OSC Address"};
+    TextEditor oscPortField {"OSC Port"};
+    TextButton oscButton;
+    juce::OSCSender osc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };

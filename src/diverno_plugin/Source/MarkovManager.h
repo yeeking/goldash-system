@@ -46,6 +46,7 @@ class MarkovManager {
        * [1,2,3], 4 -> [2,3,4]
        */
       void addStateToStateSequence(state_sequence& seq, state_single new_state);
+
       /**
        * Update the chain by removing recently visited parts 
        */
@@ -54,8 +55,17 @@ class MarkovManager {
        * Update the chain by amplifying recently visited parts 
        */
       void givePositiveFeedback();
-       
 
+    /**
+   * Gets the current inputMemory state
+   */
+    state_sequence getInputMemory();
+    
+    /**
+   * Gets the current outputMemory state
+   */
+    state_sequence getOutputMemory();
+    
   private:
       void rememberChainEvent(state_and_observation event);
 

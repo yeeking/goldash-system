@@ -84,10 +84,22 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     //parrotButton.setColour(TextButton::buttonColourId, Colours::red);
     
     //audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
-    //startTimer(50);
+    startTimer(1000);
     
     //loggin.loginToMC(default_username, default_password);
     
+    // OSC
+    addAndMakeVisible(oscAddressLabel);
+    addAndMakeVisible(oscPortLabel);
+    oscAddressLabel.setText("Server",dontSendNotification);
+    oscPortLabel.setText("Port",dontSendNotification);
+    addAndMakeVisible(oscAddressField);
+    addAndMakeVisible(oscPortField);
+    oscAddressField.setText("localhost");
+    oscPortField.setText("9001");
+    oscButton.addListener(this);
+    addAndMakeVisible(oscButton);
+    oscButton.setButtonText("OSC");
 }
 
 Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
@@ -133,6 +145,43 @@ void Dinverno_pluginAudioProcessorEditor::musicCircleEvent(MusicCircleEvent even
     mcEventMonitor.setText(msg);
     //    mcEventMonitor.repaint();
      */
+}
+
+bool Dinverno_pluginAudioProcessorEditor::validateOSCAddress(String oscAddressStr)
+{
+    // Validate Server Address
+    bool validAddress = false;
+    
+    // Split Address into '.' seperated components
+    StringArray oscAddressSplit = StringArray();
+    oscAddressSplit.addTokens(oscAddressStr, ".", "");
+    
+    // Check 4 part address is entereed
+    if (oscAddressSplit.size() == 4){
+        validAddress = true;
+        // Check each part is a number
+        for (int i = 0; i < 4; i++){
+            int addressComponent = oscAddressSplit[i].getIntValue();
+            if (!(0 <= addressComponent && addressComponent <= 255)){
+                validAddress = false;
+            }
+        }
+    }
+    
+    return validAddress;
+}
+
+bool Dinverno_pluginAudioProcessorEditor::validateOSCPort(String oscPortStr)
+{
+    bool validPort = false;
+ 
+    // Check if OSC Port is Valid
+    int oscPort = oscPortStr.getIntValue();
+    if (oscPort >= 0 && oscPort < 65536){
+        validPort = true;
+    }
+    
+    return validPort;
 }
 
 void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
@@ -194,6 +243,65 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
         //sendAllNotesOff();
         
     }
+    
+    if (button == &oscButton)
+    {
+        if (!oscConnected){
+            // Validate OSC Server Address
+            String oscAddressStr = oscAddressField.getText();
+            if (oscAddressStr == "localhost")   oscAddressStr = "127.0.0.1";    // Handle "localhost"
+            bool validAddress = validateOSCAddress(oscAddressStr);
+            
+            // Validate OSC Server Port
+            String oscPortStr = oscPortField.getText();
+            bool validPort = validateOSCPort(oscPortStr);
+            
+            // Check Inputs are Valid
+            if (validPort && validAddress){
+                // Update Input Fields
+                oscAddressField.setText(oscAddressStr);
+                oscPortField.setText(oscPortStr);
+                oscAddressField.applyColourToAllText(Colours::white, true);
+                oscPortField.applyColourToAllText(Colours::white, true);
+                
+                // Attempt to Connect to OSC Server
+                if (osc.connect (oscAddressStr, oscPortStr.getIntValue() ))
+                {
+                    // OSC Connected successfully
+                    oscConnected = true;
+                    oscButton.setColour(TextButton::buttonColourId,
+                                        Colours::green);
+                }else{
+                    // Handle connect error
+                    //log ("Error: could not connect to UDP port 9001.");
+                    oscConnected = false;
+                    oscButton.setColour(TextButton::buttonColourId,
+                                        Colours::grey);
+                }
+            }else{
+                // Invalid OSC Address or Port
+                if (!validAddress) oscAddressField.applyColourToAllText(Colours::red, true);
+                if (!validPort) oscPortField.applyColourToAllText(Colours::red, true);
+            }
+        }else{
+            // Attempt to Disconnect from OSC Server
+            if (osc.disconnect()){
+                // OSC Disconnected successfully
+                oscConnected = false;
+                oscButton.setColour(TextButton::buttonColourId,
+                                    Colours::grey);
+            }else{
+                // Handle disconnect error
+                oscConnected = false;
+                oscButton.setColour(TextButton::buttonColourId,
+                                    Colours::grey);
+            }
+        }
+        
+        // Can't edit OSC Text Fields when connected (must disconnect first)
+        oscAddressField.setReadOnly(oscConnected);
+        oscPortField.setReadOnly(oscConnected);
+    }
 }
 
 void Dinverno_pluginAudioProcessorEditor::sendAllNotesOff()
@@ -217,6 +325,9 @@ void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
      */
     resetButton.setColour(TextButton::buttonColourId,
                           Colours::darkblue);
+    
+    oscButton.setColour(TextButton::buttonColourId,
+                        Colours::grey);
 }
 
 /* VST:
@@ -284,8 +395,17 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     //resetButton.setBounds(col, row*4, col, row);
     
     //recordWidget.setBounds(0, row*5, getWidth(), row);
+    int oscLabelBuffer = 3;
+    int oscButtonHeight = 50;
+    int oscButtonWidth = 50;
+    resetButton.setBounds(0, 0, getWidth(),getHeight()-oscButtonHeight);
     
-    resetButton.setBounds(0, 0, getWidth(),getHeight());
+    oscAddressLabel.setBounds(0,1.0*oscButtonHeight,oscButtonWidth,0.5*oscButtonHeight);
+    oscAddressField.setBounds(oscButtonWidth,1.0*oscButtonHeight+oscLabelBuffer,getWidth()-2*oscButtonWidth-oscLabelBuffer,0.5*oscButtonHeight-2*oscLabelBuffer);
+    oscPortLabel.setBounds(0,1.5*oscButtonHeight,oscButtonWidth,0.5*oscButtonHeight);
+    oscPortField.setBounds(oscButtonWidth,1.5*oscButtonHeight+oscLabelBuffer,getWidth()-2*oscButtonWidth-oscLabelBuffer,0.5*oscButtonHeight-2*oscLabelBuffer);
+    oscButton.setBounds(getWidth() - oscButtonWidth,oscButtonHeight,oscButtonWidth,oscButtonHeight);
+    
 }
 
 void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)
@@ -324,6 +444,41 @@ void Dinverno_pluginAudioProcessorEditor::timerCallback()
         }
     }
     */
+    
+    // Check if connected to OSC Server
+    if (oscConnected){
+        // Send Markov Models via OSC
+        
+        // Get InputMemory and put into string object for sending
+        state_sequence inputMemory = audioProcessor.getImproviserInputMemory();
+        juce::String inputMemoryStr = juce::String();
+        for (std::string noteStr : inputMemory){
+            inputMemoryStr += String(noteStr);
+        }
+        
+        // Get OutputMemory and put into string object for sending
+        state_sequence outputMemory = audioProcessor.getImproviserOutputMemory();
+        juce::String outputMemoryStr = juce::String();
+        for (std::string noteStr : outputMemory){
+            outputMemoryStr += String(noteStr);
+        }
+        
+        // Create OSC Messages
+        OSCMessage inputMsg = OSCMessage("/InputMemory", inputMemoryStr);
+        OSCMessage outputMsg = OSCMessage("/OutputMemory", outputMemoryStr);
+        
+        // Create OSC Bundle from Input and Output Memory Messages
+        OSCBundle oscBundle = OSCBundle();
+        oscBundle.addElement(inputMsg);
+        oscBundle.addElement(outputMsg);
+        
+        // Send OSC Bundle
+        if(! osc.send (oscBundle))
+        {
+            // Handle OSC Send Error
+            //showConnectionErrorMessage ("Error: could not send OSC message.");
+        }
+    }
 }
 
 void Dinverno_pluginAudioProcessorEditor::recordingStarted()

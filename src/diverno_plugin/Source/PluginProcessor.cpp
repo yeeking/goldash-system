@@ -274,6 +274,21 @@ void Dinverno_pluginAudioProcessor::tickCurrentImproviser()
     currentImproviser->tick();
 }
 
+state_sequence Dinverno_pluginAudioProcessor::getImproviserInputMemory()
+{
+    // Get Pitch Model OutputMemory
+    state_sequence pitchInputMemory = dynamic_cast<DinvernoPolyMarkov*>(currentImproviser)->getPitchModelInputMemory();
+    return pitchInputMemory;
+}
+
+state_sequence Dinverno_pluginAudioProcessor::getImproviserOutputMemory()
+{
+    // Get Pitch Model OutputMemory
+    state_sequence pitchOutputMemory = dynamic_cast<DinvernoPolyMarkov*>(currentImproviser)->getPitchModelOutputMemory();
+    return pitchOutputMemory;
+}
+
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
