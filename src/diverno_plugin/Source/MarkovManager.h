@@ -56,15 +56,15 @@ class MarkovManager {
        */
       void givePositiveFeedback();
 
-    /**
-   * Gets the current inputMemory state
-   */
-    state_sequence getInputMemory();
-    
-    /**
-   * Gets the current outputMemory state
-   */
-    state_sequence getOutputMemory();
+      /**
+       * Gets the current inputMemory state
+       */
+      state_sequence getInputMemory();
+        
+      /**
+       * Gets the current outputMemory state
+       */
+      state_sequence getOutputMemory();
     
   private:
       void rememberChainEvent(state_and_observation event);

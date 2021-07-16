@@ -96,3 +96,13 @@ void MarkovManager::givePositiveFeedback()
     chain.amplifyMapping(so.first, so.second);
   }
 }
+
+state_sequence MarkovManager::getInputMemory()
+{
+    return inputMemory;
+}
+
+state_sequence MarkovManager::getOutputMemory()
+{
+    return outputMemory;
+}
