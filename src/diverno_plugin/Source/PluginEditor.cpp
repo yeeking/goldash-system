@@ -454,14 +454,18 @@ void Dinverno_pluginAudioProcessorEditor::timerCallback()
         juce::String inputMemoryStr = juce::String();
         for (std::string noteStr : inputMemory){
             inputMemoryStr += String(noteStr);
+            inputMemoryStr += String(",");
         }
+        inputMemoryStr = inputMemoryStr.dropLastCharacters(1);
         
         // Get OutputMemory and put into string object for sending
         state_sequence outputMemory = audioProcessor.getImproviserOutputMemory();
         juce::String outputMemoryStr = juce::String();
         for (std::string noteStr : outputMemory){
             outputMemoryStr += String(noteStr);
+            outputMemoryStr += String(",");
         }
+        outputMemoryStr = outputMemoryStr.dropLastCharacters(1);
         
         // Create OSC Messages
         OSCMessage inputMsg = OSCMessage("/InputMemory", inputMemoryStr);
