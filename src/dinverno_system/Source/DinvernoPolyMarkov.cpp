@@ -16,6 +16,8 @@ DinvernoPolyMarkov::DinvernoPolyMarkov(int sampleRate) : chordDetector(ChordDete
   accumTimeDelta = 0;
   timeBeforeNextNote = 0;
   lastNoteOnAtSample = 0;
+  
+  gotoLeadMode();
 
 }
 DinvernoPolyMarkov::~DinvernoPolyMarkov()
@@ -28,11 +30,19 @@ void DinvernoPolyMarkov::reset()
 
     std::cout << "DinvernoPolyMarkov::reset" << std::endl;
     pendingMessages.clear();
-    pitchModel.reset();
-    lengthModel.reset();
-    interOnsetIntervalModel.reset();
-    velocityModel.reset();
+    // reset leaders and followers: 
+    followPitchModel.reset(); // pitches of notes
+    followLengthModel.reset();  // length of notes
+    followVelocityModel.reset(); // loudness of notes
+    followInterOnsetIntervalModel.reset(); // time between note onts
+
+    leadPitchModel.reset(); // pitches of notes
+    leadLengthModel.reset();  // length of notes
+    leadVelocityModel.reset(); // loudness of notes
+    leadInterOnsetIntervalModel.reset(); // time between note onts
+    
     chordDetector.reset();
+
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Reset applied.");
 }
@@ -58,19 +68,19 @@ void DinvernoPolyMarkov::tick()
     // reset the wait time
     accumTimeDelta = 0;
     // same length for all notes
-    int noteLen = std::stoi(lengthModel.getEvent());
-    int waitLen = std::stoi(interOnsetIntervalModel.getEvent());
+    int noteLen = std::stoi(lengthModel->getEvent());
+    int waitLen = std::stoi(interOnsetIntervalModel->getEvent());
     if (waitLen == 0)
     {
       waitLen = (int) sampleRate; 
     }
     if (noteLen > 0){
-      state_single event = pitchModel.getEvent();
+      state_single event = pitchModel->getEvent();
       std::vector<int> notes = markovStateToNotes(event);
       for (int& note : notes){
         if (note > 0)
         {
-          uint8 velocity = std::stoi(velocityModel.getEvent());
+          uint8 velocity = std::stoi(velocityModel->getEvent());
           MidiMessage noteOn = MidiMessage::noteOn(1, note, velocity);
           MidiMessage noteOff = MidiMessage::noteOff(1, note, velocity);
           auto sampleNumber =  getElapsedTimeSamples() + sampleRate; // 1 second late
@@ -108,14 +118,14 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       // to release notes into the model
       addNotesToModel(notes);
       // remember velocity
-      velocityModel.putEvent(std::to_string(message.getVelocity()));
+      velocityModel->putEvent(std::to_string(message.getVelocity()));
       // calculate and remember interonsetinterval
 //      std::cout << "time now " << elapsedSamples << "last on at " << lastNoteOnAtSample << " ioi " << (elapsedSamples - lastNoteOnAtSample) <<  std::endl;; 
       double interOnsetInterval = elapsedSamples - lastNoteOnAtSample;
       // only add it if its not too long
       if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
       {
-        interOnsetIntervalModel.putEvent(std::to_string(interOnsetInterval));
+        interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
       }
       
       lastNoteOnAtSample = elapsedSamples; 
@@ -132,7 +142,7 @@ void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
 {
   state_single n_state = notesToMarkovState(notes);
   // remember when this note started so we can measure length later
-  pitchModel.putEvent(n_state);
+  pitchModel->putEvent(n_state);
 }
 state_single DinvernoPolyMarkov::notesToMarkovState(std::vector<int> notes)
 { 
@@ -161,7 +171,7 @@ void DinvernoPolyMarkov::addNoteOffToModel(int note)
     double noteStart = getNoteOnTimeSamples(note);
     int elapsedSamples  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
     int noteLen = elapsedSamples - noteStart;
-    lengthModel.putEvent(std::to_string(noteLen));
+    lengthModel->putEvent(std::to_string(noteLen));
 }
 
 double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
@@ -182,19 +192,47 @@ double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
 void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
 {
 
-    switch (fbType)
+    switch (fbType) 
+    // this is considered to be bad engineering because it is 'control coupling'
+    // where one module sends a control flag to another one
+    // which dictates its execution path
+    // what I should do is make the FeedbackListener interface
+    // more complex but I don't want to do that 
     {
         case FeedbackEventType::negative:
-            std::cout << "DinvernoPolyMarkov::negative" << std::endl;
+            pitchModel->giveNegativeFeedback(); 
+            lengthModel->giveNegativeFeedback();  
+            velocityModel->giveNegativeFeedback(); 
+            interOnsetIntervalModel->giveNegativeFeedback(); 
+
             break;
         case FeedbackEventType::positive:
-            std::cout << "DinvernoPolyMarkov::positive" << std::endl;
+            pitchModel->givePositiveFeedback(); 
+            lengthModel->givePositiveFeedback();  
+            velocityModel->givePositiveFeedback(); 
+            interOnsetIntervalModel->givePositiveFeedback(); 
             break;
         case FeedbackEventType::follow:
-            std::cout << "DinvernoPolyMarkov::follow" << std::endl;
+            gotoFollowMode();
             break;
         case FeedbackEventType::lead:
-            std::cout << "DinvernoPolyMarkov::lead" << std::endl;
+            gotoLeadMode();
             break;  
     }
+}
+
+void DinvernoPolyMarkov::gotoFollowMode()
+{
+    pitchModel = &followPitchModel;
+    lengthModel = &followLengthModel;
+    velocityModel = &followVelocityModel;
+    interOnsetIntervalModel = &followInterOnsetIntervalModel;
+}
+
+void DinvernoPolyMarkov::gotoLeadMode()
+{
+    pitchModel = &leadPitchModel;
+    lengthModel = &leadLengthModel;
+    velocityModel = &leadVelocityModel;
+    interOnsetIntervalModel = &leadInterOnsetIntervalModel; 
 }

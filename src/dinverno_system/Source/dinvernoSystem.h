@@ -146,18 +146,32 @@ private:
   std::vector<int> markovStateToNotes(state_single n_state);
   /** query the noteOnTimesSamples map with error checking */
   double getNoteOnTimeSamples(int note);
+  void gotoFollowMode();
+  void gotoLeadMode();
 
   double lastTickSamples;
   double accumTimeDelta;
   double timeBeforeNextNote;
   double lastNoteOnAtSample;
   std::map<int,double> noteOnTimesSamples;
-  MarkovManager pitchModel; // pitches of notes
-  MarkovManager lengthModel;  // length of notes
-  MarkovManager velocityModel; // loudness of notes
-  MarkovManager interOnsetIntervalModel; // time between note onts
-  ChordDetector chordDetector;
+
+  MarkovManager followPitchModel; // pitches of notes
+  MarkovManager followLengthModel;  // length of notes
+  MarkovManager followVelocityModel; // loudness of notes
+  MarkovManager followInterOnsetIntervalModel; // time between note onts
   
+  MarkovManager leadPitchModel; // pitches of notes
+  MarkovManager leadLengthModel;  // length of notes
+  MarkovManager leadVelocityModel; // loudness of notes
+  MarkovManager leadInterOnsetIntervalModel; // time between note onts
+  
+
+  MarkovManager* pitchModel; // pitches of notes
+  MarkovManager* lengthModel;  // length of notes
+  MarkovManager* velocityModel; // loudness of notes
+  MarkovManager* interOnsetIntervalModel; // time between note onts
+
+  ChordDetector chordDetector;
 };
 
 class ImproviserUtils {
