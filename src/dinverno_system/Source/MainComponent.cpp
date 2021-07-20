@@ -57,7 +57,7 @@ MainComponent::MainComponent()
     dinvernoRandomEnergy.setLogginManager(&loggin);
     dinvernoPolyMarkov.setLogginManager(&loggin);
 
-    recordWidget.addRecordingReceiver(this);
+   // recordWidget.addRecordingReceiver(this);
    
    
 
@@ -76,7 +76,7 @@ MainComponent::MainComponent()
     // end of disabled buttons
 
     addAndMakeVisible(resetButton);
-    addAndMakeVisible(recordWidget);
+    //addAndMakeVisible(recordWidget);
     
     resetButtonColours();
 
@@ -286,7 +286,7 @@ void MainComponent::resized()
     polyButton.setBounds(col, row*3, col, row);
     resetButton.setBounds(col, row*4, col, row);
 
-   recordWidget.setBounds(0, row*5, getWidth(), row);
+  // recordWidget.setBounds(0, row*5, getWidth(), row);
     
 }
 
@@ -314,13 +314,13 @@ void MainComponent::timerCallback()
     currentImproviser->tick();
 
     MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+
+
     if (toSend.getNumEvents() > 0){
-        //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl; 
-        MidiBuffer::Iterator iterator (toSend);
-        MidiMessage message;
-        while (iterator.getNextEvent (message, sampleNumber)) 
+        for (const auto meta : toSend)
         {
-            sendMidi(message);
+            auto msg = meta.getMessage();
+            sendMidi(msg);
         }
     }
 }

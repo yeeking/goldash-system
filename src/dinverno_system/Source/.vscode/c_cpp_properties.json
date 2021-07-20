@@ -3,9 +3,18 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**", 
-                "~/src/JUCE/modules"
+                "${workspaceFolder}/*",
+                "${workspaceFolder}/**",
+                "/home/matthewyk/src/JUCE/current/modules/",
+                "/home/matthewyk/src/creative-ai/goldash-system/src/dinverno_plugin/JuceLibraryCode"
             ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "${workspaceFolder}/**",
+                    "/home/matthewyk/src/JUCE/current/modules/**"
+                ]
+            },
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",

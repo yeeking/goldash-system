@@ -16,7 +16,12 @@
  */
 class MarkovManager {
   public:
-      MarkovManager();
+  /**
+   * Create a markov manager. chainEventMemoryLength is how many chain events we 
+   * remember. Chain events are remembered so we can delete or amplify parts of the chain
+   * using givePositive and giveNegative feedback. 
+   */
+      MarkovManager(unsigned long chainEventMemoryLength=20);
       ~MarkovManager();
       /** add an event to the chain. The manager manages previous events to ensure 
        * that variable orders are passed to the underlying markov model
@@ -31,20 +36,34 @@ class MarkovManager {
        * calls 
        */
       int getOrderOfLastEvent();
-    /**
-     * wipe the underlying model and reset short term input and output memory. 
-     */
-      void reset();
       /**
-     * Rotates the sent seq and pops the sent item on the end
-     * [1,2,3], 4 -> [2,3,4]
-     */
+       * wipe the underlying model and reset short term input and output memory. 
+       */
+      void reset();
+
+      /**
+       * Rotates the sent seq and pops the sent item on the end
+       * [1,2,3], 4 -> [2,3,4]
+       */
       void addStateToStateSequence(state_sequence& seq, state_single new_state);
-
-
+      /**
+       * Update the chain by removing recently visited parts 
+       */
+      void giveNegativeFeedback();
+      /**
+       * Update the chain by amplifying recently visited parts 
+       */
+      void givePositiveFeedback();
+       
 
   private:
+      void rememberChainEvent(state_and_observation event);
+
       state_sequence inputMemory;
       state_sequence outputMemory;
       MarkovChain chain;
+      std::vector<state_and_observation> chainEvents;
+      unsigned long  maxChainEventMemory;
+      unsigned long  chainEventIndex;
 };
+

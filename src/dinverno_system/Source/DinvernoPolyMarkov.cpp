@@ -25,13 +25,14 @@ DinvernoPolyMarkov::~DinvernoPolyMarkov()
 
 void DinvernoPolyMarkov::reset()
 {
+
+    std::cout << "DinvernoPolyMarkov::reset" << std::endl;
     pendingMessages.clear();
     pitchModel.reset();
     lengthModel.reset();
     interOnsetIntervalModel.reset();
     velocityModel.reset();
     chordDetector.reset();
-    
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Reset applied.");
 }
@@ -103,7 +104,6 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
     // see if the chord detector has anything for us
     std::vector<int> notes = chordDetector.getReadyNotes();
     if (notes.size() > 0){
-      std::cout << "DinvernoPolyMarkov::addMidiMessage chord detector released notes " << notes[0] << std::endl;
       // the gap between this and the previous note was sufficient
       // to release notes into the model
       addNotesToModel(notes);
@@ -130,7 +130,6 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 }
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
 {
-  std::cout << "DinvernoPolyMarkov::addNotesToModel received notes: " << notes.size() << std::endl; 
   state_single n_state = notesToMarkovState(notes);
   // remember when this note started so we can measure length later
   pitchModel.putEvent(n_state);
@@ -143,14 +142,14 @@ state_single DinvernoPolyMarkov::notesToMarkovState(std::vector<int> notes)
   }
   return mstate;
 }
-std::vector<int> DinvernoPolyMarkov::markovStateToNotes(const state_single& n_state)
+std::vector<int> DinvernoPolyMarkov::markovStateToNotes(state_single n_state)
 {
   std::vector<int> notes;
   if (n_state == "0") return notes;
   //std::cout << "DinvernoPolyMarkov::markovStateToNotes got state " << n_state << std::endl;
-  for (const std::string& note_s : ImproviserUtils::tokenise(n_state, '-'))
+  for (std::string& note_s : ImproviserUtils::tokenise(n_state, '-'))
   {
-    std::cout << "DinvernoPolyMarkov::markovStateToNotes got substate " << note_s << std::endl;
+    //std::cout << "DinvernoPolyMarkov::markovStateToNotes got substate " << note_s << std::endl;
     notes.push_back(std::stoi(note_s));
   }
   return notes;

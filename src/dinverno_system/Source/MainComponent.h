@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 #include "MidiReceiver.h"
 #include "MidiSetupComponent.h"
 #include "dinvernoSystem.h"
@@ -97,7 +97,7 @@ private:
     TextButton polyButton;
     TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
-    RecordWidget recordWidget;
+    //RecordWidget recordWidget;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

@@ -141,7 +141,7 @@ private:
   /** helper function to convert a vector of notes into a state string */
   state_single notesToMarkovState(std::vector<int> notes);
   /** does the opposite of notesToMarkovState - converts a state back to a vector */
-  std::vector<int> markovStateToNotes(const state_single& n_state);
+  std::vector<int> markovStateToNotes(state_single n_state);
   /** query the noteOnTimesSamples map with error checking */
   double getNoteOnTimeSamples(int note);
 
@@ -156,61 +156,6 @@ private:
   MarkovManager interOnsetIntervalModel; // time between note onts
   ChordDetector chordDetector;
 };
-
-/**
- * DinvernoCCMarkov : improviser that works with
- * midi note data and midi CC data. 
- * It actually contains a DinvernoPolyMarkov which handles the notes
- * and its own implementation for the midi CC processing
- */
-class DinvernoCCMarkov : public DinvernoImproviser
-{
-public:
-    DinvernoCCMarkov(int sampleRate);
-    ~DinvernoCCMarkov();
-    virtual void tick() override; 
-    virtual void addMidiMessage(const MidiMessage& msg) override;
-    virtual void reset() override;
-    virtual MidiBuffer getPendingMidiMessages() override;
-
-private:
-    /** we use this to model the midi notes */
-    DinvernoPolyMarkov polyMarkovDelegate;
-    /** models the times between control change messages */
-    MarkovManager interOnsetIntervalModel; 
-    /** models the control change messages */
-    MarkovManager controlChangeModel; 
-    /** We use this to detect when there are multiple 
-     * ccs coming in at roughly the same time
-     */
-    ChordDetector chordDetector;
-
-    double lastTickSamples;
-    double accumTimeDelta;
-    double timeBeforeNextCCMsg;
-    double lastCCAtSample;
-
-    /** 
-     * Counterpart to controlChangesToMarkovState
-     * converts from a single state symbol
-     * which is a string in the format ccnum:ccval-ccnum:ccval
-     * the control data it represents, which is a vector of pairs of ints
-     * representing cc numbers abd cc values
-    */
-    std::vector<std::pair<int,int>> markovStateToControlChanges(state_single state);
-    /**
-     * Counterpart to markovStateToControlChanges
-     * converts from a set of cc ints and cc values
-     * which is a vector of pairs of ints
-     * into a single state symbol
-     * which is a string in the format ccnum:ccval-ccnum:ccval
-     */
-    state_single controlChangesToMarkovState(std::vector<std::pair<int,int>> ccs);
-
-    void addCCsToModel(std::vector<std::pair<int, int>> ccs);
-
-};
-
 
 class ImproviserUtils {
   public:

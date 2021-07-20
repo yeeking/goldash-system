@@ -45,24 +45,36 @@ MidiBuffer DinvernoImproviser::getPendingMidiMessages()
     if (pendingMessages.getNumEvents() == 0) return messagesToSend;
     auto currentSampleNumber = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
     //getElapsedTimeSamples();
-    MidiBuffer::Iterator iterator (pendingMessages);
     MidiMessage message;
 
     // identify the messages we want to send and add them
     // to the secondary buffer
+
     int sampleNumber;
     int oldest = 0;
-    while (iterator.getNextEvent (message, sampleNumber)) 
-    {
-      // sampleNumber is the sampleNumber assigned to this message.
-      // is sample Number in the future? 
-        if (sampleNumber > currentSampleNumber)  // we are in the future. STOP!
-            break;
+
+    for (const auto meta : pendingMessages)
+     {
+      const auto msg = meta.getMessage();
+      sampleNumber = meta.samplePosition;
+      if (sampleNumber > currentSampleNumber)  break; // we are in the future. STOP!
       // remember the oldest one we processed
-        if (oldest == 0) oldest = sampleNumber;
-        //std::cout << "parrot adding ts: " << message.getTimeStamp() << std::endl; 
-        messagesToSend.addEvent(message, sampleNumber);
+      if (oldest == 0) oldest = sampleNumber;
+      messagesToSend.addEvent (msg, meta.samplePosition);
     }
+
+//    MidiBuffer::Iterator iterator (pendingMessages);
+    // while (iterator.getNextEvent (message, sampleNumber)) 
+    // {
+    //   // sampleNumber is the sampleNumber assigned to this message.
+    //   // is sample Number in the future? 
+    //     if (sampleNumber > currentSampleNumber)  // we are in the future. STOP!
+    //         break;
+    //   // remember the oldest one we processed
+    //     if (oldest == 0) oldest = sampleNumber;
+    //     //std::cout << "parrot adding ts: " << message.getTimeStamp() << std::endl; 
+    //     messagesToSend.addEvent(message, sampleNumber);
+    // }
     //std::cout << "DinvernoImproviser::getPendingMidiMessages sending " << messagesToSend.getNumEvents() << " events " << std::endl;
     // now claer any sent messages from pendingMessages
     // oldst is the oldest one we processed,currentSampleNumber
