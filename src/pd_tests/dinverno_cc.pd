@@ -1,0 +1,49 @@
+#N canvas 751 273 1479 840 24;
+#X obj 100 136 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 6900 1;
+#X floatatom 148 66 3 0 0 0 - - -, f 3;
+#X floatatom 91 72 3 0 0 0 - - -, f 3;
+#X obj 100 26 ctlin;
+#X obj 49 93 bng 20 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 72 237 table plot1;
+#X obj 377 33 loadbang;
+#X obj 385 173 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 556 45 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 259 330 tabwrite plot1;
+#X obj 466 218 int;
+#X obj 476 287 + 1;
+#X obj 223 158 float;
+#X msg 520 158 0;
+#X obj 377 104 metro 100;
+#X obj 562 365 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X floatatom 444 356 5 0 0 0 - - -, f 5;
+#X obj 607 217 select 99;
+#X obj 237 201 / 127;
+#X obj 239 254 * 2;
+#X obj 244 295 - 1;
+#X connect 0 0 12 1;
+#X connect 2 0 4 0;
+#X connect 2 0 0 0;
+#X connect 3 0 2 0;
+#X connect 3 1 1 0;
+#X connect 6 0 14 0;
+#X connect 7 0 10 0;
+#X connect 8 0 14 0;
+#X connect 10 0 11 0;
+#X connect 11 0 10 1;
+#X connect 11 0 9 1;
+#X connect 11 0 16 0;
+#X connect 11 0 17 0;
+#X connect 12 0 18 0;
+#X connect 13 0 10 0;
+#X connect 14 0 7 0;
+#X connect 14 0 12 0;
+#X connect 17 0 13 0;
+#X connect 17 0 15 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 0;
+#X connect 20 0 9 0;
