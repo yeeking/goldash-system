@@ -107,7 +107,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 {
 
   if (message.isNoteOn()){
-  if (!inLeadMode && random.nextDouble() > 0.9) reset();
+  if (!inLeadMode && random.nextDouble() > 0.95) reset();
 
     std::string mgsDesc = message.getDescription().toStdString();
     if (isReadyToLog())
