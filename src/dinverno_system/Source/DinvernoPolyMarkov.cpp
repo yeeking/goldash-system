@@ -207,8 +207,8 @@ void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
 
             break;
         case FeedbackEventType::positive:
-            pitchModel->givePositiveFeedback(); 
-            lengthModel->givePositiveFeedback();  
+            pitchModel->givePositiveFeedback();             
+            leadLengthModel.givePositiveFeedback();
             velocityModel->givePositiveFeedback(); 
             interOnsetIntervalModel->givePositiveFeedback(); 
             break;

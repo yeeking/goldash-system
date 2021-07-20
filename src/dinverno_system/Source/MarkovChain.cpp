@@ -152,7 +152,6 @@ state_single MarkovChain::generateObservation(const state_sequence& prevState, i
     // remember what we did
     this->orderOfLastMatch = maxOrder; 
     this->lastMatch = state_and_observation{key, obs};
-    std::cout << "MarkovChain::order is " << maxOrder << std::endl;
     return obs; 
   }
   else {
@@ -240,6 +239,7 @@ state_and_observation MarkovChain::getLastMatch()
 
 void  MarkovChain::removeMapping(state_single state_key, state_single unwanted_option)
 {
+  if (model.size() ==0 ) return; 
   state_sequence current_options{};
   bool have_key = true;
   try
@@ -267,6 +267,7 @@ void  MarkovChain::removeMapping(state_single state_key, state_single unwanted_o
 
 void MarkovChain::amplifyMapping(state_single state_key, state_single wanted_option)
 {
+  if (model.size() ==0 ) return; 
   state_sequence options = getOptionsForSequenceKey(state_key);
   if (options.size() == 0) // nothing mapped to this key... easy! 
   {
