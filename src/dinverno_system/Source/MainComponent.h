@@ -14,6 +14,7 @@
 #include "dinvernoSystem.h"
 #include "RecordWidget.h"
 #include "MusicCircleClient.h"
+#include "FeedbackControls.h"
 
 
 struct CustomLookAndFeel    : public LookAndFeel_V4 {
@@ -33,7 +34,8 @@ class MainComponent   : public AudioAppComponent,
                                 MidiReceiver,  
                                 Button::Listener, 
                                 RecordingReceiver, 
-                                LogginListener
+                                LogginListener, 
+                                FeedbackListener
 {
 public:
     //==============================================================================
@@ -63,7 +65,10 @@ public:
     void recordingStarted() override;
     void recordingComplete(File audioFile) override;
 
-    void sendMidi(MidiMessage& message);    
+    void sendMidi(MidiMessage& message); 
+
+    /** from feedback event listener*/
+    void feedback(FeedbackEventType fbEvent) override;    
 
 private:
     //==============================================================================
@@ -95,6 +100,9 @@ private:
     TextButton randomButton;    
     TextButton randomEnergyButton;
     TextButton polyButton;
+
+    FeedbackControls fbControls; 
+    
     TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
     //RecordWidget recordWidget;

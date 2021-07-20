@@ -177,3 +177,24 @@ double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
   }
   return time; 
 }
+
+
+void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
+{
+
+    switch (fbType)
+    {
+        case FeedbackEventType::negative:
+            std::cout << "DinvernoPolyMarkov::negative" << std::endl;
+            break;
+        case FeedbackEventType::positive:
+            std::cout << "DinvernoPolyMarkov::positive" << std::endl;
+            break;
+        case FeedbackEventType::follow:
+            std::cout << "DinvernoPolyMarkov::follow" << std::endl;
+            break;
+        case FeedbackEventType::lead:
+            std::cout << "DinvernoPolyMarkov::lead" << std::endl;
+            break;  
+    }
+}

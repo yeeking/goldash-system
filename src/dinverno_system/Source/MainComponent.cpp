@@ -94,6 +94,12 @@ MainComponent::MainComponent()
     currentImproviser = &dinvernoPolyMarkov;
     startTimer(50);
 
+
+    // new feedback buttons
+    addAndMakeVisible(fbControls);
+    //fbControls.addFeedbackListener(this);
+    fbControls.addFeedbackListener(this->currentImproviser);
+
     loggin.loginToMC(default_username, default_password);
   
 }
@@ -284,6 +290,8 @@ void MainComponent::resized()
     randomButton.setBounds(col, row, col, row);
     randomEnergyButton.setBounds(col, row*2, col, row);
     polyButton.setBounds(col, row*3, col, row);
+
+    fbControls.setBounds(col, row*3, col, row);
     resetButton.setBounds(col, row*4, col, row);
 
   // recordWidget.setBounds(0, row*5, getWidth(), row);
@@ -339,6 +347,26 @@ void MainComponent::recordingComplete(File audioFile)
     });
 }  
 
+void MainComponent::feedback(FeedbackEventType fbEvent)
+{
+    std::cout << "MainComponent::feedback" << std::endl;
+
+    switch (fbEvent)
+    {
+        case FeedbackEventType::negative:
+            std::cout << "MainComponent::negative" << std::endl;
+            break;
+        case FeedbackEventType::positive:
+            std::cout << "MainComponent::positive" << std::endl;
+            break;
+        case FeedbackEventType::follow:
+            std::cout << "MainComponent::follow" << std::endl;
+            break;
+        case FeedbackEventType::lead:
+            std::cout << "MainComponent::lead" << std::endl;
+            break;  
+    }
+}
 
 
 
