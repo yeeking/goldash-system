@@ -37,12 +37,13 @@ public:
     virtual void tick() = 0;
     virtual void addMidiMessage(const MidiMessage& msg) = 0;
     virtual void reset() = 0;
-    MidiBuffer getPendingMidiMessages();
+    virtual MidiBuffer getPendingMidiMessages();
     void setLogginManager(LogginManager* loggin);
     LogginManager* loggin;
     bool isReadyToLog();
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
    
+    
 protected:
   double getElapsedTimeSamples();   
   double sampleRate;
@@ -140,7 +141,7 @@ private:
   /** helper function to convert a vector of notes into a state string */
   state_single notesToMarkovState(std::vector<int> notes);
   /** does the opposite of notesToMarkovState - converts a state back to a vector */
-  std::vector<int> markovStateToNotes(state_single n_state);
+  std::vector<int> markovStateToNotes(const state_single& n_state);
   /** query the noteOnTimesSamples map with error checking */
   double getNoteOnTimeSamples(int note);
 
@@ -169,7 +170,8 @@ public:
     ~DinvernoCCMarkov();
     virtual void tick() override; 
     virtual void addMidiMessage(const MidiMessage& msg) override;
-    virtual void reset() override; 
+    virtual void reset() override;
+    virtual MidiBuffer getPendingMidiMessages() override;
 
 private:
     /** we use this to model the midi notes */
@@ -212,7 +214,7 @@ private:
 
 class ImproviserUtils {
   public:
-static std::vector<std::string> tokenise(std::string input, char sep)
+static std::vector<std::string> tokenise(const std::string& input, char sep)
 {
   std::vector<std::string> vec;
   int end;

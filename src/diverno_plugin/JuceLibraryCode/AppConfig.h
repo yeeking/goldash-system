@@ -20,6 +20,8 @@
 
 // [END_USER_CODE_SECTION]
 
+#include "JucePluginDefines.h"
+
 /*
   ==============================================================================
 
@@ -46,19 +48,20 @@
 #define JUCE_PROJUCER_VERSION 0x60008
 
 //==============================================================================
-#define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
-#define JUCE_MODULE_AVAILABLE_juce_audio_devices         1
-#define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
-#define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
-#define JUCE_MODULE_AVAILABLE_juce_audio_utils           1
-#define JUCE_MODULE_AVAILABLE_juce_core                  1
-#define JUCE_MODULE_AVAILABLE_juce_cryptography          1
-#define JUCE_MODULE_AVAILABLE_juce_data_structures       1
-#define JUCE_MODULE_AVAILABLE_juce_events                1
-#define JUCE_MODULE_AVAILABLE_juce_graphics              1
-#define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
-#define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
-#define JUCE_MODULE_AVAILABLE_juce_opengl                1
+#define JUCE_MODULE_AVAILABLE_juce_audio_basics             1
+#define JUCE_MODULE_AVAILABLE_juce_audio_devices            1
+#define JUCE_MODULE_AVAILABLE_juce_audio_formats            1
+#define JUCE_MODULE_AVAILABLE_juce_audio_plugin_client      1
+#define JUCE_MODULE_AVAILABLE_juce_audio_processors         1
+#define JUCE_MODULE_AVAILABLE_juce_audio_utils              1
+#define JUCE_MODULE_AVAILABLE_juce_core                     1
+#define JUCE_MODULE_AVAILABLE_juce_cryptography             1
+#define JUCE_MODULE_AVAILABLE_juce_data_structures          1
+#define JUCE_MODULE_AVAILABLE_juce_events                   1
+#define JUCE_MODULE_AVAILABLE_juce_graphics                 1
+#define JUCE_MODULE_AVAILABLE_juce_gui_basics               1
+#define JUCE_MODULE_AVAILABLE_juce_gui_extra                1
+#define JUCE_MODULE_AVAILABLE_juce_opengl                   1
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
@@ -130,6 +133,33 @@
 
 #ifndef    JUCE_USE_WINDOWS_MEDIA_FORMAT
  //#define JUCE_USE_WINDOWS_MEDIA_FORMAT 1
+#endif
+
+//==============================================================================
+// juce_audio_plugin_client flags:
+
+#ifndef    JUCE_VST3_CAN_REPLACE_VST2
+ #define   JUCE_VST3_CAN_REPLACE_VST2 0
+#endif
+
+#ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
+ //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 0
+#endif
+
+#ifndef    JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
+ //#define JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE 0
+#endif
+
+#ifndef    JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
+ //#define JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS 1
+#endif
+
+#ifndef    JUCE_AU_WRAPPERS_SAVE_PROGRAM_STATES
+ //#define JUCE_AU_WRAPPERS_SAVE_PROGRAM_STATES 0
+#endif
+
+#ifndef    JUCE_STANDALONE_FILTER_WINDOW_USE_KIOSK_MODE
+ //#define JUCE_STANDALONE_FILTER_WINDOW_USE_KIOSK_MODE 0
 #endif
 
 //==============================================================================
@@ -286,6 +316,6 @@
  #if defined(JucePlugin_Name) && defined(JucePlugin_Build_Standalone)
   #define  JUCE_STANDALONE_APPLICATION JucePlugin_Build_Standalone
  #else
-  #define  JUCE_STANDALONE_APPLICATION 1
+  #define  JUCE_STANDALONE_APPLICATION 0
  #endif
 #endif
