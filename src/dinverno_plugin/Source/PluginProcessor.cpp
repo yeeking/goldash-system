@@ -169,16 +169,24 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
         int sampleNumber;
         //currentImproviser->tick();
         MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+
         if (toSend.getNumEvents() > 0){
             //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl;
-            MidiBuffer::Iterator iterator (toSend);
-            MidiMessage message;
-            while (iterator.getNextEvent (message, sampleNumber))
+            // MidiBuffer::Iterator iterator (toSend);
+            // MidiMessage message;
+            // while (iterator.getNextEvent (message, sampleNumber))
+            // {
+            //     //sendMidi(message);
+            //     message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+            //     //MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
+            //     generatedMidi.addEvent(message,0);
+            // }
+            // myk: new JUCE 6 style message iteration
+            for (const auto meta : toSend)
             {
-                //sendMidi(message);
-                message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-                //MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
-                generatedMidi.addEvent(message,0);
+                auto msg = meta.getMessage();
+                msg.setTimeStamp(Time::getApproximateMillisecondCounter() * 0.001);
+                generatedMidi.addEvent(msg, 0);
             }
         }
          

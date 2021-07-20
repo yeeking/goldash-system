@@ -11,8 +11,6 @@
       <FILE id="W2zQMR" name="ChordDetector.h" compile="0" resource="0" file="Source/ChordDetector.h"/>
       <FILE id="OMEkBz" name="ChordDetectorTest.cpp" compile="1" resource="0"
             file="Source/ChordDetectorTest.cpp"/>
-      <FILE id="N7KUv8" name="DinvernoCCMarkov.cpp" compile="1" resource="0"
-            file="Source/DinvernoCCMarkov.cpp"/>
       <FILE id="VCoV1X" name="DinvernoPolyMarkov.cpp" compile="1" resource="0"
             file="Source/DinvernoPolyMarkov.cpp"/>
       <FILE id="z0c2lY" name="DinvernoRandom.cpp" compile="1" resource="0"

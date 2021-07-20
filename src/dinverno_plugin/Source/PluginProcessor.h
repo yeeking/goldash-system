@@ -136,7 +136,6 @@ private:
     DinvernoMidiParrot dinvernoParrot{44100};
     DinvernoRandomMidi dinvernoRandomMidi{44100};
     DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-    DinvernoCCMarkov dinvernoPolyMarkov{44100};
     */
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessor)
