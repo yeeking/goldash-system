@@ -318,12 +318,8 @@ void MainComponent::timerCallback()
 {
     //std::cout << "maincompo:: timer sending some midi " << std::endl;
     int sampleNumber; 
-    
     currentImproviser->tick();
-
     MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
-
-
     if (toSend.getNumEvents() > 0){
         for (const auto meta : toSend)
         {

@@ -155,7 +155,7 @@ private:
   double lastNoteOnAtSample;
   std::map<int,double> noteOnTimesSamples;
 
-  MarkovManager followPitchModel; // pitches of notes
+  MarkovManager followPitchModel{}; // pitches of notes
   MarkovManager followLengthModel;  // length of notes
   MarkovManager followVelocityModel; // loudness of notes
   MarkovManager followInterOnsetIntervalModel; // time between note onts
@@ -170,6 +170,10 @@ private:
   MarkovManager* lengthModel;  // length of notes
   MarkovManager* velocityModel; // loudness of notes
   MarkovManager* interOnsetIntervalModel; // time between note onts
+
+  bool inLeadMode;
+
+  juce::Random random{};
 
   ChordDetector chordDetector;
 };

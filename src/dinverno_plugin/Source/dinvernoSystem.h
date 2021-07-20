@@ -15,9 +15,9 @@
 #include "ChordDetector.h"
 #include "LogginManager.h"
 #include "MusicCircleClient.h"
+#include "FeedbackControls.h"
 
 #pragma once
-
 
 /**
  * This is an abstract class that specifies an interface for
@@ -25,7 +25,7 @@
  * The various versions of these improvisers will implement this interface
  * The outer JUCE program can therefore interact with this interface.
  */
-class DinvernoImproviser {
+class DinvernoImproviser : public FeedbackListener{
 public:
 /**
  * Constructor sets up sampleRate and starttime for convenience 
@@ -41,6 +41,7 @@ public:
     void setLogginManager(LogginManager* loggin);
     LogginManager* loggin;
     bool isReadyToLog();
+    virtual void feedback(FeedbackEventType fbType) override {}
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
    
     
@@ -132,6 +133,7 @@ public:
    virtual void tick() override;
    virtual void addMidiMessage(const MidiMessage& msg) override;
     virtual void reset() override;
+    virtual void feedback(FeedbackEventType fbType) override;
 
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
@@ -144,16 +146,35 @@ private:
   std::vector<int> markovStateToNotes(state_single n_state);
   /** query the noteOnTimesSamples map with error checking */
   double getNoteOnTimeSamples(int note);
+  void gotoFollowMode();
+  void gotoLeadMode();
 
   double lastTickSamples;
   double accumTimeDelta;
   double timeBeforeNextNote;
   double lastNoteOnAtSample;
   std::map<int,double> noteOnTimesSamples;
-  MarkovManager pitchModel; // pitches of notes
-  MarkovManager lengthModel;  // length of notes
-  MarkovManager velocityModel; // loudness of notes
-  MarkovManager interOnsetIntervalModel; // time between note onts
+
+  MarkovManager followPitchModel{}; // pitches of notes
+  MarkovManager followLengthModel;  // length of notes
+  MarkovManager followVelocityModel; // loudness of notes
+  MarkovManager followInterOnsetIntervalModel; // time between note onts
+  
+  MarkovManager leadPitchModel; // pitches of notes
+  MarkovManager leadLengthModel;  // length of notes
+  MarkovManager leadVelocityModel; // loudness of notes
+  MarkovManager leadInterOnsetIntervalModel; // time between note onts
+  
+
+  MarkovManager* pitchModel; // pitches of notes
+  MarkovManager* lengthModel;  // length of notes
+  MarkovManager* velocityModel; // loudness of notes
+  MarkovManager* interOnsetIntervalModel; // time between note onts
+
+  bool inLeadMode;
+
+  juce::Random random{};
+
   ChordDetector chordDetector;
 };
 

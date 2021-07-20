@@ -369,8 +369,8 @@ private:
             midiInputReceiver->receiveMidi(m);
             // display it
 //            messageText = m.getDescription() + "\n";
-
-            messageText << m.getDescription() << "\n";
+            // only display if is note one
+            if (m.isNoteOn()) messageText << m.getDescription() << "\n";
         }
         midiMonitor.setText(messageText);
         //midiMonitor.insertTextAtCaret (messageText);

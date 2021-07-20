@@ -6,6 +6,10 @@
               version="2.0.0">
   <MAINGROUP id="y3iYVo" name="dinverno_plugin">
     <GROUP id="{1603BC85-35A2-1DEA-6ACC-23390878DA8B}" name="Source">
+      <FILE id="J4GRxQ" name="FeedbackControls.cpp" compile="1" resource="0"
+            file="Source/FeedbackControls.cpp"/>
+      <FILE id="EErZaU" name="FeedbackControls.h" compile="0" resource="0"
+            file="Source/FeedbackControls.h"/>
       <FILE id="XwYTDA" name="ChordDetector.cpp" compile="1" resource="0"
             file="Source/ChordDetector.cpp"/>
       <FILE id="W2zQMR" name="ChordDetector.h" compile="0" resource="0" file="Source/ChordDetector.h"/>

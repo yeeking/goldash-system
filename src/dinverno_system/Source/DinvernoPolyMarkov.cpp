@@ -10,7 +10,10 @@
 
 #include "dinvernoSystem.h"
 
-DinvernoPolyMarkov::DinvernoPolyMarkov(int sampleRate) : chordDetector(ChordDetector{sampleRate}), DinvernoImproviser(sampleRate)
+DinvernoPolyMarkov::DinvernoPolyMarkov(int sampleRate) : 
+              chordDetector(ChordDetector{sampleRate}), 
+              inLeadMode{true}, 
+              DinvernoImproviser(sampleRate)
 {
   lastTickSamples = 0;
   accumTimeDelta = 0;
@@ -30,6 +33,8 @@ void DinvernoPolyMarkov::reset()
 
     std::cout << "DinvernoPolyMarkov::reset" << std::endl;
     pendingMessages.clear();
+    // send all notes off
+    pendingMessages.addEvent(MidiMessage::allNotesOff(1), 0);
     // reset leaders and followers: 
     followPitchModel.reset(); // pitches of notes
     followLengthModel.reset();  // length of notes
@@ -100,7 +105,10 @@ void DinvernoPolyMarkov::tick()
 
 void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 {
+
   if (message.isNoteOn()){
+  if (!inLeadMode && random.nextDouble() > 0.9) reset();
+
     std::string mgsDesc = message.getDescription().toStdString();
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Adding midi message: " + mgsDesc);
@@ -227,6 +235,7 @@ void DinvernoPolyMarkov::gotoFollowMode()
     lengthModel = &followLengthModel;
     velocityModel = &followVelocityModel;
     interOnsetIntervalModel = &followInterOnsetIntervalModel;
+    inLeadMode = false;  
 }
 
 void DinvernoPolyMarkov::gotoLeadMode()
@@ -235,4 +244,5 @@ void DinvernoPolyMarkov::gotoLeadMode()
     lengthModel = &leadLengthModel;
     velocityModel = &leadVelocityModel;
     interOnsetIntervalModel = &leadInterOnsetIntervalModel; 
+    inLeadMode = true; 
 }
