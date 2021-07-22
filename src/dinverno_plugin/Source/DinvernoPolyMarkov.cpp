@@ -144,8 +144,39 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
     std::string mgsDesc = message.getDescription().toStdString();
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Adding midi message off the model: " + mgsDesc);
-  }  
+  }
+  
+  // Thresholds for top and bottom end of value ranges
+  int feedbackBandwidthCC = 30;
+  int feedbackBandwidthPB = feedbackBandwidthCC/127*16383;
+    
+  if (message.isController()){
+      // CC Message Received: Check which controller
+      if(message.getControllerNumber() == 1)
+      {
+        //Leading/Following
+        if (127-feedbackBandwidthCC < message.getControllerValue() && !inLeadMode){
+            // Signal to Lead
+            feedback(FeedbackEventType::lead);
+        }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
+            //Signal to Follow
+            feedback(FeedbackEventType::follow);
+        }
+    }
+  }
+  
+  if(message.isPitchWheel()){
+    //PitchBend Message Received
+    if (16383-feedbackBandwidthPB < message.getPitchWheelValue()){
+      // Positive Feedback
+      feedback(FeedbackEventType::positive);
+    }else if (message.getPitchWheelValue() < feedbackBandwidthPB){
+      // Negative Feedback
+      feedback(FeedbackEventType::negative);
+    }
+  }
 }
+
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
 {
   state_single n_state = notesToMarkovState(notes);
