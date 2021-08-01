@@ -145,36 +145,117 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
     if (isReadyToLog())
       loggin->logData("PolyMarkov", "Adding midi message off the model: " + mgsDesc);
   }
-  
-  // Thresholds for top and bottom end of value ranges
-  int feedbackBandwidthCC = 30;
-  int feedbackBandwidthPB = feedbackBandwidthCC/127*16383;
-    
+      
   if (message.isController()){
-      // CC Message Received: Check which controller
-      if(message.getControllerNumber() == 1)
-      {
-        //Leading/Following
-        if (127-feedbackBandwidthCC < message.getControllerValue() && !inLeadMode){
-            // Signal to Lead
-            feedback(FeedbackEventType::lead);
-        }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
-            //Signal to Follow
-            feedback(FeedbackEventType::follow);
-        }
-    }
+      // CC Message Received: Handle Feedback
+      handleFeedbackCC(message);
   }
   
   if(message.isPitchWheel()){
-    //PitchBend Message Received
-    if (16383-feedbackBandwidthPB < message.getPitchWheelValue()){
-      // Positive Feedback
-      feedback(FeedbackEventType::positive);
-    }else if (message.getPitchWheelValue() < feedbackBandwidthPB){
-      // Negative Feedback
-      feedback(FeedbackEventType::negative);
-    }
+      //PitchBend Message Received: Handle Feedback
+      handleFeedbackPB(message);
   }
+}
+
+void DinvernoPolyMarkov::handleFeedbackPB(const MidiMessage& message)
+{
+    // Bandwidth at top and bottom of PB value range
+    int feedbackBandwidthPB = 16383*feedbackBandwidthPercent/100;
+    
+    // Handl PitchBend Feedback
+    if(leadFollowFeedbackController == -1 && message.isPitchWheel()){
+        //Leading/Following
+        if (16383-feedbackBandwidthPB < message.getPitchWheelValue()){
+            // Signal to Lead
+            handleFeedbackMode(FeedbackEventType::lead);
+        }else if (message.getPitchWheelValue() < feedbackBandwidthPB){
+            // Signal to Follow
+            handleFeedbackMode(FeedbackEventType::follow);
+        }
+    }
+    else if (posNegFeedbackController == -1 && message.isPitchWheel()){
+        //Positive/Neagive Feedback
+        if (16383-feedbackBandwidthPB < message.getPitchWheelValue()){
+            // Positive Feedback
+            handleFeedbackMode(FeedbackEventType::positive);
+        }else if (message.getPitchWheelValue() < feedbackBandwidthPB){
+            // Negative Feedback
+            handleFeedbackMode(FeedbackEventType::negative);
+        }
+    }
+}
+
+void DinvernoPolyMarkov::handleFeedbackCC(const MidiMessage& message)
+{
+    // Bandwidth at top and bottom of CC value range
+    int feedbackBandwidthCC = 127*feedbackBandwidthPercent/100;
+
+    if (message.isController()){
+        // CC Message Received: Check which controller
+        if(message.getControllerNumber() == posNegFeedbackController){
+          //Leading/Following
+          if (127-feedbackBandwidthCC < message.getControllerValue()){
+              // Signal to Lead
+              handleFeedbackMode(FeedbackEventType::lead);
+          }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
+              //Signal to Follow
+              handleFeedbackMode(FeedbackEventType::follow);
+          }
+        }
+        else if(message.getControllerNumber() == leadFollowFeedbackController){
+            //Positive/Neagive Feedback
+            if (127-feedbackBandwidthCC < message.getControllerValue()){
+                // Signal to Lead
+                handleFeedbackMode(FeedbackEventType::positive);
+            }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
+                //Signal to Follow
+                handleFeedbackMode(FeedbackEventType::negative);
+            }
+        }
+    }
+}
+
+FeedbackEventType DinvernoPolyMarkov::getReverseFeedbackType(FeedbackEventType fbType)
+{
+    FeedbackEventType reverseFbType = fbType;
+    switch(fbType){
+        case FeedbackEventType::negative:
+            reverseFbType = FeedbackEventType::positive;
+            break;
+        case FeedbackEventType::positive:
+            reverseFbType = FeedbackEventType::negative;
+            break;
+        case FeedbackEventType::lead:
+            reverseFbType = FeedbackEventType::follow;
+            break;
+        case FeedbackEventType::follow:
+            reverseFbType = FeedbackEventType::lead;
+            break;
+        default:
+            break;
+    }
+    return reverseFbType;
+}
+
+void DinvernoPolyMarkov::handleFeedbackMode(FeedbackEventType fbType)
+{
+    switch(feedbackMode){
+        case FeedbackModes::Practice:
+            // Practice Mode: Flow into ForwardFeedback
+        case FeedbackModes::ForwardFeedback:
+            // ForwardFeedback Mode: No Alteration to feedback signal
+            feedback(fbType);
+            break;
+        case FeedbackModes::ReverseFeedback:
+            // ReverseFeedback: Reverse the feedback signal
+            feedback(getReverseFeedbackType(fbType));
+            break;
+        case FeedbackModes::NoFeedback:
+            // No Feedback:
+            break;
+        default:
+            break;
+    }
 }
 
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
@@ -276,4 +357,9 @@ void DinvernoPolyMarkov::gotoLeadMode()
     velocityModel = &leadVelocityModel;
     interOnsetIntervalModel = &leadInterOnsetIntervalModel; 
     inLeadMode = true; 
+}
+
+void DinvernoPolyMarkov::setFeedbackMode(int mode)
+{
+    feedbackMode = mode;
 }

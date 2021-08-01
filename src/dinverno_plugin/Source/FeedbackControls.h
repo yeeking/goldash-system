@@ -12,7 +12,16 @@
 
 #include <JuceHeader.h>
 
+//==============================================================================
+enum FeedbackModes{
+    Practice = 0,
+    ForwardFeedback = 1,
+    ReverseFeedback = 2,
+    NoFeedback = 3
+};
+
 enum class FeedbackEventType{positive, negative, lead, follow};
+//==============================================================================
 
 class FeedbackListener
 {

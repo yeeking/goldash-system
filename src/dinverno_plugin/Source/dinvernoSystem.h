@@ -43,8 +43,7 @@ public:
     bool isReadyToLog();
     virtual void feedback(FeedbackEventType fbType) override {}
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
-   
-    
+
 protected:
   double getElapsedTimeSamples();   
   double sampleRate;
@@ -128,13 +127,14 @@ private:
 
 class DinvernoPolyMarkov : public DinvernoImproviser {
 public:
-   DinvernoPolyMarkov(int sampleRate);
-   ~DinvernoPolyMarkov();
-   virtual void tick() override;
-   virtual void addMidiMessage(const MidiMessage& msg) override;
-    virtual void reset() override;
-    virtual void feedback(FeedbackEventType fbType) override;
-
+  DinvernoPolyMarkov(int sampleRate);
+  ~DinvernoPolyMarkov();
+  virtual void tick() override;
+  virtual void addMidiMessage(const MidiMessage& msg) override;
+  virtual void reset() override;
+  virtual void feedback(FeedbackEventType fbType) override;
+  void setFeedbackMode(int mode);
+    
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
   void addNotesToModel(std::vector<int> notes);
@@ -172,6 +172,16 @@ private:
   MarkovManager* interOnsetIntervalModel; // time between note onts
 
   bool inLeadMode;
+  int feedbackMode = FeedbackModes::Practice;
+  int posNegFeedbackController = 1;         // 1 for CC1: ModWheel
+  int leadFollowFeedbackController = -1;    // -1 for PitchBend
+  int feedbackBandwidthPercent = 25;
+  
+  void handleFeedbackCC(const MidiMessage& message);
+  void handleFeedbackPB(const MidiMessage& message);
+  FeedbackEventType getReverseFeedbackType(FeedbackEventType fbType);
+  void handleFeedbackMode(FeedbackEventType fbType);
+
 
   juce::Random random{};
 
