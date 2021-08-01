@@ -205,6 +205,9 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         feedbackModeSelector.setBounds(getWidth()-selectorWidth,3*selectorHeight,selectorWidth,selectorHeight);
         
         returnToPerformViewButton.setBounds(0,4*selectorHeight,getWidth(),selectorHeight);
+        
+        // Update dropdown if feedback Mode is changed by ProgramChange message outside GUI
+        feedbackModeSelector.setSelectedId(audioProcessor.getCurrentProgram()+feedbackModeSelectorOffset);
     }
 }
 

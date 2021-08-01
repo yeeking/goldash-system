@@ -89,6 +89,7 @@ void Dinverno_pluginAudioProcessor::setCurrentProgram (int index)
     if (curProgram != index){
         curProgram = index;
         currentImproviser->setFeedbackMode(curProgram);
+        //std::cout << "[dinverno_plugin] Set Program Mode " + std::to_string(index) << std::endl;
     }
 }
 
