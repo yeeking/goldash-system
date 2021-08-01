@@ -210,6 +210,22 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
 }
 
 //==============================================================================
+void Dinverno_pluginAudioProcessor::setPosNegFeedbackCC(int cc)
+{
+    currentImproviser->setPosNegFeedbackController(cc);
+}
+
+void Dinverno_pluginAudioProcessor::setLeadFollowFeedbackCC(int cc)
+{
+    currentImproviser->setLeadFollowFeedbackController(cc);
+}
+
+void Dinverno_pluginAudioProcessor::setFeedbackBandwidth(int fbRange)
+{
+    currentImproviser->setFeedbackBandwidth(fbRange);
+}
+
+//==============================================================================
 bool Dinverno_pluginAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)

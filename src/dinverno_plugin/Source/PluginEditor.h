@@ -29,48 +29,22 @@ struct CustomLookAndFeel    : public LookAndFeel_V4 {
  your controls and content.
  */
 class Dinverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
-                                                    Timer,
-                                                    MidiReceiver,
                                                     Button::Listener,
-                                                    ComboBox::Listener,
-                                                    RecordingReceiver,
-                                                    LogginListener
+                                                    ComboBox::Listener
 {
 public:
     Dinverno_pluginAudioProcessorEditor (Dinverno_pluginAudioProcessor&);
     ~Dinverno_pluginAudioProcessorEditor() override;
-
-    /** Timer callback*/
-    void timerCallback() override;
-    
-    /** LogginListener callback */
-    void musicCircleEvent(MusicCircleEvent event) override;
-    
-    //==============================================================================
-    /* VST:
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
-    void releaseResources() override;
-    */
      
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    
-    // from the midiInputHandler
-    void receiveMidi(const MidiMessage& message) override;
-    
+
     // Listener interface for buttons
     void buttonClicked (Button* button) override;
     
     // Listner interface for combo box
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
-    
-    // record listener
-    void recordingStarted() override;
-    void recordingComplete(File audioFile) override;
-    
-    void sendMidi(MidiMessage& message);
     
 private:
     // This reference is provided as a quick way for your editor to
@@ -79,48 +53,28 @@ private:
 
     //==============================================================================
     // Your private member variables go here...
-    void resetButtonColours();
-    void sendAllNotesOff();
-    //MidiSetupComponent midiSetupComponent;
-    
-    //MusicCircleClient mcClient{"csys2", "test123"};
-    //LogginManager loggin;
-    
-    // GUI compoenents for login details
-    //Label loginStatusLabel{};
-    //TextEditor mcEventMonitor  { "MC Event Monitor" };
-    //TextEditor usernameField{"username"};
-    //TextEditor passwordField{"password", '*'};
-    //TextButton loginButton{"login"};
-    
-    // markov models
-    //DinvernoImproviser* currentImproviser;
-    //DinvernoMidiParrot dinvernoParrot{44100};
-    //DinvernoRandomMidi dinvernoRandomMidi{44100};
-    //DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-    //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
-    
-    //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
-    
-    //TextButton parrotButton;
-    //TextButton randomButton;
-    //TextButton randomEnergyButton;
-    //TextButton polyButton;
-    TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
+    void initialiseGUI();
+    void resetButtonColours();
+    
+    // Perform View
+    TextButton resetButton;
     
     // Configuration View
+    bool configView = false;
     Label posNegFeedbackLabel;
     ComboBox posNegFeedbackCCSelector;
     Label leadFollowFeedbackLabel;
     ComboBox leadFollowFeedbackCCSelector;
     Label feedbackValueRangeLabel;
     ComboBox feedbackValueRangeSelector;
-    TextButton returnToPerformModeButton;
-    
-    //RecordWidget recordWidget;
-    
-    bool configView = false;
+    Label feedbackModeLabel;
+    ComboBox feedbackModeSelector;
+    int feedbackModeSelectorOffset = 10; // Map feedbackModeSelectorID to programNumber (as you can't add a comboBox item with id "0")
+    TextButton returnToPerformViewButton;
+    void configureCCSelector(ComboBox* selector);
+    void configureFBRangeSelector(ComboBox* selector);
+    void configureFBModeSelector(ComboBox* selector);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };

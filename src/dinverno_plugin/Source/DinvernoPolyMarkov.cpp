@@ -196,20 +196,20 @@ void DinvernoPolyMarkov::handleFeedbackCC(const MidiMessage& message)
           //Leading/Following
           if (127-feedbackBandwidthCC < message.getControllerValue()){
               // Signal to Lead
-              handleFeedbackMode(FeedbackEventType::lead);
-          }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
+              handleFeedbackMode(FeedbackEventType::positive);
+          }else if (message.getControllerValue() < feedbackBandwidthCC){
               //Signal to Follow
-              handleFeedbackMode(FeedbackEventType::follow);
+              handleFeedbackMode(FeedbackEventType::negative);
           }
         }
         else if(message.getControllerNumber() == leadFollowFeedbackController){
             //Positive/Neagive Feedback
             if (127-feedbackBandwidthCC < message.getControllerValue()){
                 // Signal to Lead
-                handleFeedbackMode(FeedbackEventType::positive);
-            }else if (message.getControllerValue() < feedbackBandwidthCC && inLeadMode){
+                handleFeedbackMode(FeedbackEventType::lead);
+            }else if (message.getControllerValue() < feedbackBandwidthCC){
                 //Signal to Follow
-                handleFeedbackMode(FeedbackEventType::negative);
+                handleFeedbackMode(FeedbackEventType::follow);
             }
         }
     }
@@ -311,7 +311,14 @@ double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
 
 void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
 {
-
+    // Ignore lead feedback if Already in Lead Mode
+    if (inLeadMode && fbType == FeedbackEventType::lead)
+        return;
+    
+    // Ignore follow feedback if Already in Follow Mode
+    if (!inLeadMode && fbType == FeedbackEventType::follow)
+        return;
+    
     switch (fbType) 
     // this is considered to be bad engineering because it is 'control coupling'
     // where one module sends a control flag to another one
@@ -362,4 +369,28 @@ void DinvernoPolyMarkov::gotoLeadMode()
 void DinvernoPolyMarkov::setFeedbackMode(int mode)
 {
     feedbackMode = mode;
+}
+
+void DinvernoPolyMarkov::setPosNegFeedbackController(int cc)
+{
+    // Validate Controller index (-1 for pitch bend)
+    if (-1 <= cc && cc <= 127){
+        posNegFeedbackController = cc;
+    }
+}
+
+void DinvernoPolyMarkov::setLeadFollowFeedbackController(int cc)
+{
+    // Validate Controller index (-1 for pitch bend)
+    if (-1 <= cc && cc <= 127){
+        leadFollowFeedbackController = cc;
+    }
+}
+
+void DinvernoPolyMarkov::setFeedbackBandwidth(int fbRange)
+{
+    // Validate Bandwidth is in range [0,50]
+    if (1 <= fbRange && fbRange <= 50){
+        feedbackBandwidthPercent = fbRange;
+    }
 }

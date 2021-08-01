@@ -44,6 +44,10 @@ public:
     bool isReadyToLog();
     virtual void feedback(FeedbackEventType fbType) override {}
     virtual void setFeedbackMode(int mode) {}
+    virtual void setPosNegFeedbackController(int cc) {}
+    virtual void setLeadFollowFeedbackController(int cc) {}
+    virtual void setFeedbackBandwidth(int fbRange) {}
+    
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
 
 protected:
@@ -135,7 +139,11 @@ public:
   virtual void addMidiMessage(const MidiMessage& msg) override;
   virtual void reset() override;
   virtual void feedback(FeedbackEventType fbType) override;
+  
   void setFeedbackMode(int mode) override;
+  void setPosNegFeedbackController(int cc) override;
+  void setLeadFollowFeedbackController(int cc) override;
+  void setFeedbackBandwidth(int fbRange) override;
     
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/

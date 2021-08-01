@@ -66,6 +66,11 @@ public:
     void timerCallback() override;  /** Timer callback*/
     
     //==============================================================================
+    void setPosNegFeedbackCC(int cc);
+    void setLeadFollowFeedbackCC(int cc);
+    void setFeedbackBandwidth(int fbRange);
+    
+    //==============================================================================
     // markov models
     DinvernoImproviser* currentImproviser;
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};

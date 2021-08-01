@@ -17,43 +17,8 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     // editor's size to whatever you need it to be.
     setSize (200, 100);
     
-    // Reset Button
-    resetButton.addListener(this);
-    returnToPerformModeButton.addListener(this);
-    posNegFeedbackCCSelector.addListener(this);
-    leadFollowFeedbackCCSelector.addListener(this);
-    feedbackValueRangeSelector.addListener(this);
-    
-    // Add Buttons to GUI
-    addAndMakeVisible(resetButton);
-    addAndMakeVisible(posNegFeedbackLabel);
-    addAndMakeVisible(posNegFeedbackCCSelector);
-    addAndMakeVisible(leadFollowFeedbackLabel);
-    addAndMakeVisible(leadFollowFeedbackCCSelector);
-    addAndMakeVisible(feedbackValueRangeLabel);
-    addAndMakeVisible(feedbackValueRangeSelector);
-    addAndMakeVisible(returnToPerformModeButton);
-    
-    resetButtonColours();
-    resetButton.setButtonText("Reset Model");
-    
-    posNegFeedbackLabel.setText("Pos/Neg CC:", NotificationType::dontSendNotification);
-    posNegFeedbackCCSelector.addItem("PitchBend", -1);
-    posNegFeedbackCCSelector.addItem("1", 1);
-    posNegFeedbackCCSelector.setSelectedId(1);
-    
-    leadFollowFeedbackLabel.setText("Lead/Follow CC:", NotificationType::dontSendNotification);
-    leadFollowFeedbackCCSelector.addItem("PB", -1);
-    leadFollowFeedbackCCSelector.addItem("1", 1);
-    leadFollowFeedbackCCSelector.setSelectedId(-1);
-    
-    feedbackValueRangeLabel.setText("Feedback Range:", NotificationType::dontSendNotification);
-    feedbackValueRangeSelector.addItem("1%",1);
-    feedbackValueRangeSelector.addItem("25%",25);
-    feedbackValueRangeSelector.addItem("50%",50);
-    feedbackValueRangeSelector.setSelectedId(25);
-    
-    returnToPerformModeButton.setButtonText("Return To Perform Mode");
+    // Initialise the GUI objects
+    initialiseGUI();
 }
 
 Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
@@ -67,106 +32,92 @@ Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
     //audioProcessor->stopTimer();
 }
 
-/** receive an event from the LogginManager. This is a lightweight events API
- * to notify the user.
- */
-void Dinverno_pluginAudioProcessorEditor::musicCircleEvent(MusicCircleEvent event)
+void Dinverno_pluginAudioProcessorEditor::initialiseGUI(){
+    // Reset Button
+    resetButton.addListener(this);
+    returnToPerformViewButton.addListener(this);
+    posNegFeedbackCCSelector.addListener(this);
+    leadFollowFeedbackCCSelector.addListener(this);
+    feedbackValueRangeSelector.addListener(this);
+    feedbackModeSelector.addListener(this);
+    
+    // Add Buttons to GUI
+    addAndMakeVisible(resetButton);
+    addAndMakeVisible(posNegFeedbackLabel);
+    addAndMakeVisible(posNegFeedbackCCSelector);
+    addAndMakeVisible(leadFollowFeedbackLabel);
+    addAndMakeVisible(leadFollowFeedbackCCSelector);
+    addAndMakeVisible(feedbackValueRangeLabel);
+    addAndMakeVisible(feedbackValueRangeSelector);
+    addAndMakeVisible(feedbackModeLabel);
+    addAndMakeVisible(feedbackModeSelector);
+    addAndMakeVisible(returnToPerformViewButton);
+    
+    resetButtonColours();
+    resetButton.setButtonText("Reset Model");
+    
+    posNegFeedbackLabel.setText("Pos/Neg CC:", NotificationType::dontSendNotification);
+    configureCCSelector(&posNegFeedbackCCSelector);
+    posNegFeedbackCCSelector.setSelectedId(1);
+    
+    leadFollowFeedbackLabel.setText("Lead/Follow CC:", NotificationType::dontSendNotification);
+    configureCCSelector(&leadFollowFeedbackCCSelector);
+    leadFollowFeedbackCCSelector.setSelectedId(-1);
+    
+    feedbackValueRangeLabel.setText("Feedback Range:", NotificationType::dontSendNotification);
+    configureFBRangeSelector(&feedbackValueRangeSelector);
+    feedbackValueRangeSelector.setSelectedId(25);
+    
+    feedbackModeLabel.setText("Feedback Mode:", NotificationType::dontSendNotification);
+    configureFBModeSelector(&feedbackModeSelector);
+    feedbackModeSelector.setSelectedId(audioProcessor.getCurrentProgram()+feedbackModeSelectorOffset);
+    
+    returnToPerformViewButton.setButtonText("Return To Perform Mode");
+}
+
+void Dinverno_pluginAudioProcessorEditor::configureCCSelector(ComboBox* selector)
 {
-    /* VST:
-    // lock the message thread
-    // as this func is called from another thread
-    // and we get assertion errors otherwise
-    const MessageManagerLock mmLock;
-    juce::String msg = mcEventMonitor.getText();
-    switch(event){
-        case MusicCircleEvent::login_succeeded:
-            msg  << "\nLogged in. user id " << loggin.getUserId();
-            break;
-        case MusicCircleEvent::login_failed:
-            msg << "\nFailed to login with user " << usernameField.getText();
-            break;
-        case MusicCircleEvent::media_upload_succeeded:
-            msg << "\nMedia upload succeeded. ";// + (usernameField.getText());
-            break;
-        case MusicCircleEvent::logout_succeeded:
-            msg << "\nLogged out user " << usernameField.getText();
-            break;
-        case MusicCircleEvent::logout_failed:
-            msg << "\nFailed to logout user id " << loggin.getUserId();
-            break;
-            
+    // Populate combo box with all CC channels
+    selector->addItem("PB", -1);
+    for (int i = 1; i <= 127; i++){
+        selector->addItem(String(i), i);
     }
-    mcEventMonitor.setText(msg);
-    //    mcEventMonitor.repaint();
-     */
+}
+
+void Dinverno_pluginAudioProcessorEditor::configureFBRangeSelector(ComboBox* selector)
+{
+    // Populate combo bo with percentages in range [1..50]
+    for (int i = 1; i <= 50; i++){
+        selector->addItem(String(i)+"%",i);
+    }
+}
+
+void Dinverno_pluginAudioProcessorEditor::configureFBModeSelector(ComboBox* selector)
+{
+    selector->addItem("Practice",0+feedbackModeSelectorOffset);
+    selector->addItem("Forward",1+feedbackModeSelectorOffset);
+    selector->addItem("Reverse",2+feedbackModeSelectorOffset);
+    selector->addItem("No Feedback",3+feedbackModeSelectorOffset);
 }
 
 void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
 {
-    // let's use a pointer technique to despatch the button click
-    // to the correct function
-    /*
-    if (button == &loginButton)
-    {
-        std::cout << "Login button clicked " << std::endl;
-        std::string username = usernameField.getText().toStdString();
-        std::string password = passwordField.getText().toStdString();
-        loggin.setUsername(username);
-        loggin.setPassword(password);
-        loggin.loginToMC(username, password);
-    }
     
-    if (button == &parrotButton)
-    {
-        resetButtonColours();
-        
-        sendAllNotesOff();
-        audioProcessor.setCurrentImproviser(String("PARROT"));   //currentImproviser = &dinvernoParrot;
-        parrotButton.setColour(TextButton::buttonColourId,
-                               Colours::red);
-    }
-    if (button == &randomButton)
-    {
-        resetButtonColours();
-        
-        sendAllNotesOff();
-        audioProcessor.setCurrentImproviser(String("RANDOM MIDI"));   //currentImproviser = &dinvernoRandomMidi;
-        randomButton.setColour(TextButton::buttonColourId,
-                               Colours::red);
-    }
-    if (button == &randomEnergyButton)
-    {
-        resetButtonColours();
-        
-        sendAllNotesOff();
-        audioProcessor.setCurrentImproviser(String("RANDOM ENERGY"));   //currentImproviser = &dinvernoRandomEnergy;
-        randomEnergyButton.setColour(TextButton::buttonColourId,
-                                     Colours::red);
-    }
-    if (button == &polyButton)
-    {
-        resetButtonColours();
-        
-        sendAllNotesOff();
-        audioProcessor.setCurrentImproviser(String("POLY"));   //currentImproviser = &dinvernoPolyMarkov;
-        polyButton.setColour(TextButton::buttonColourId,
-                             Colours::red);
-    }
-     */
-    
-    if (button == &resetButton)
-    {
+    if (button == &resetButton){
+        // Reset Button Clicked: Check if CTRL modifier
         auto modifiers = ModifierKeys::getCurrentModifiers();
         if (modifiers.isCtrlDown()){
+            // CTRL Modifier: Open Config View
             configView = true;
             resized();
         }else{
-            audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
-            //sendAllNotesOff();
+            // No CTRL Modifier: Reset Model
+            audioProcessor.resetCurrentImproviser();
         }
     }
     
-    if (button == &returnToPerformModeButton){
+    if (button == &returnToPerformViewButton){
+        // Return to Perform View Button Clicked: Return to perform view
         configView = false;
         resized();
     }
@@ -175,76 +126,30 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
 void Dinverno_pluginAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == &posNegFeedbackCCSelector){
-        int test = 1;
+        audioProcessor.setPosNegFeedbackCC(posNegFeedbackCCSelector.getSelectedId());
     }
     if (comboBoxThatHasChanged == &leadFollowFeedbackCCSelector){
-    
+        audioProcessor.setLeadFollowFeedbackCC(leadFollowFeedbackCCSelector.getSelectedId());
     }
     if (comboBoxThatHasChanged == &feedbackValueRangeSelector){
-    
+        audioProcessor.setFeedbackBandwidth(feedbackValueRangeSelector.getSelectedId());
     }
-}
-
-void Dinverno_pluginAudioProcessorEditor::sendAllNotesOff()
-{
-    //MidiMessage msg = MidiMessage::allNotesOff(1);
-    //sendMidi(msg);
+    if (comboBoxThatHasChanged == &feedbackModeSelector){
+        int newProgramNumber = feedbackModeSelector.getSelectedId() - feedbackModeSelectorOffset;
+        if (audioProcessor.getCurrentProgram() != newProgramNumber){
+            audioProcessor.setCurrentProgram(newProgramNumber);
+        }
+    }
 }
 
 void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
 {
-    // set default colours
-    /*
-    parrotButton.setColour(TextButton::buttonColourId,
-                           Colours::lightsteelblue);
-    randomButton.setColour(TextButton::buttonColourId,
-                           Colours::lightsteelblue);
-    randomEnergyButton.setColour(TextButton::buttonColourId,
-                                 Colours::lightsteelblue);
-    polyButton.setColour(TextButton::buttonColourId,
-                         Colours::lightsteelblue);
-     */
     resetButton.setColour(TextButton::buttonColourId,
                           Colours::darkblue);
     
-    returnToPerformModeButton.setColour(TextButton::buttonColourId,
+    returnToPerformViewButton.setColour(TextButton::buttonColourId,
                                         Colours::darkgreen);
-
 }
-
-/* VST:
-void Dinverno_pluginAudioProcessorEditor::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
-{
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
-    
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
-    
-    // For more details, see the help for AudioProcessor::prepareToPlay()
-}
-
-
-void Dinverno_pluginAudioProcessorEditor::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
-{
-    // Your audio-processing code goes here!
-    
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-    
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    
-    bufferToFill.clearActiveBufferRegion();
-}
-
-void Dinverno_pluginAudioProcessorEditor::releaseResources()
-{
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
-    
-    // For more details, see the help for AudioProcessor::releaseResources()
-}
-*/
 
 //==============================================================================
 void Dinverno_pluginAudioProcessorEditor::paint (juce::Graphics& g)
@@ -255,28 +160,6 @@ void Dinverno_pluginAudioProcessorEditor::paint (juce::Graphics& g)
 
 void Dinverno_pluginAudioProcessorEditor::resized()
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
-    //int rowCount = 6;
-    //int col = getWidth()/2;
-    //int row = getHeight()/rowCount;
-    
-    //midiSetupComponent.setBounds(0, 0, getWidth()/2, row * 3);
-    
-    //mcEventMonitor.setBounds(0, row*3 , getWidth()/2, row);
-    //int loginCol = getWidth() / 2 / 3;
-    //usernameField.setBounds(0, row*4 + (row/2), loginCol, row/2);
-    //passwordField.setBounds(loginCol, row*4 + (row/2), loginCol, row/2);
-    //loginButton.setBounds(loginCol*2, row*4 + (row/2), loginCol, row/2);
-    
-    //parrotButton.setBounds(col, 0, col, row);
-    //randomButton.setBounds(col, row, col, row);
-    //randomEnergyButton.setBounds(col, row*2, col, row);
-    //polyButton.setBounds(col, row*3, col, row);
-    //resetButton.setBounds(col, row*4, col, row);
-    
-    //recordWidget.setBounds(0, row*5, getWidth(), row);
     if (!configView){
         // Perform View
         resetButton.setVisible(true);
@@ -286,7 +169,9 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         leadFollowFeedbackCCSelector.setVisible(false);
         feedbackValueRangeLabel.setVisible(false);
         feedbackValueRangeSelector.setVisible(false);
-        returnToPerformModeButton.setVisible(false);
+        feedbackModeLabel.setVisible(false);
+        feedbackModeSelector.setVisible(false);
+        returnToPerformViewButton.setVisible(false);
         
         resetButton.setBounds(0, 0, getWidth(),getHeight());
     }else{
@@ -298,10 +183,12 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         leadFollowFeedbackCCSelector.setVisible(true);
         feedbackValueRangeLabel.setVisible(true);
         feedbackValueRangeSelector.setVisible(true);
-        returnToPerformModeButton.setVisible(true);
+        feedbackModeLabel.setVisible(true);
+        feedbackModeSelector.setVisible(true);
+        returnToPerformViewButton.setVisible(true);
 
-        int selectorWidth = getWidth()*4/10;
-        int selectorHeight = getHeight()/4;
+        int selectorWidth = getWidth()*45/100;
+        int selectorHeight = getHeight()/5;
         int labelWidth = getWidth()-selectorWidth;
         int labelHeight = selectorHeight;
         
@@ -314,64 +201,14 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         feedbackValueRangeLabel.setBounds(0,2*selectorHeight, labelWidth, labelHeight);
         feedbackValueRangeSelector.setBounds(getWidth()-selectorWidth,2*selectorHeight,selectorWidth,selectorHeight);
         
-        returnToPerformModeButton.setBounds(0,3*selectorHeight,getWidth(),selectorHeight);
+        feedbackModeLabel.setBounds(0,3*selectorHeight, labelWidth, labelHeight);
+        feedbackModeSelector.setBounds(getWidth()-selectorWidth,3*selectorHeight,selectorWidth,selectorHeight);
+        
+        returnToPerformViewButton.setBounds(0,4*selectorHeight,getWidth(),selectorHeight);
     }
 }
 
-void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)
-{
-    // parse it and add it to the model
-    // if we are in the right mode!
-    //std::cout << "MainCom: receive MIDI " << message.getDescription() << std::endl;
-    //currentImproviser->addMidiMessage(message);
-}
 
-void Dinverno_pluginAudioProcessorEditor::sendMidi(MidiMessage& message)
-{
-    //std::cout << "MainCom: sendMidi " << message.getDescription() << std::endl;
-    //message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-    //midiSetupComponent.sendToOutputs (message);
-}
-
-void Dinverno_pluginAudioProcessorEditor::timerCallback()
-{
-    /*
-    //audioProcessor.tickCurrentImproviser();
-    
-    //std::cout << "maincompo:: timer sending some midi " << std::endl;
-    int sampleNumber;
-    
-    audioProcessor.currentImproviser->tick();
-    
-    MidiBuffer toSend = audioProcessor.currentImproviser->getPendingMidiMessages();
-    if (toSend.getNumEvents() > 0){
-        //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl;
-        MidiBuffer::Iterator iterator (toSend);
-        MidiMessage message;
-        while (iterator.getNextEvent (message, sampleNumber))
-        {
-            //sendMidi(message);
-        }
-    }
-    */
-}
-
-void Dinverno_pluginAudioProcessorEditor::recordingStarted()
-{
-    //loggin.resetClockAndAnnotationQueue();
-}
-
-
-void Dinverno_pluginAudioProcessorEditor::recordingComplete(File audioFile)
-{
-    /*
-    DBG("MainComponent::recordingComplete about to upload " << audioFile.getFullPathName());
-    loggin.postMedia(audioFile.getFullPathName().toStdString(), [this](int result){
-        std::cout << "MainComponent::recordingComplete postMedia callback result " << result << std::endl;
-        //loggin.sendQueuedAnnotations();
-    });
-     */
-}
 
 
 
