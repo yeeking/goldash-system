@@ -18,6 +18,7 @@
 #include "FeedbackControls.h"
 
 #pragma once
+//==============================================================================
 
 /**
  * This is an abstract class that specifies an interface for
@@ -42,6 +43,7 @@ public:
     LogginManager* loggin;
     bool isReadyToLog();
     virtual void feedback(FeedbackEventType fbType) override {}
+    virtual void setFeedbackMode(int mode) {}
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
 
 protected:
@@ -133,7 +135,7 @@ public:
   virtual void addMidiMessage(const MidiMessage& msg) override;
   virtual void reset() override;
   virtual void feedback(FeedbackEventType fbType) override;
-  void setFeedbackMode(int mode);
+  void setFeedbackMode(int mode) override;
     
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
@@ -181,7 +183,6 @@ private:
   void handleFeedbackPB(const MidiMessage& message);
   FeedbackEventType getReverseFeedbackType(FeedbackEventType fbType);
   void handleFeedbackMode(FeedbackEventType fbType);
-
 
   juce::Random random{};
 

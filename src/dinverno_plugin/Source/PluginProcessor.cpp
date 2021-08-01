@@ -74,22 +74,27 @@ double Dinverno_pluginAudioProcessor::getTailLengthSeconds() const
 
 int Dinverno_pluginAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    // NB: some hosts don't cope very well if you tell them there are 0 programs,
+    // so this should be at least 1, even if you're not really implementing programs.
+    return numPrograms > 0 ? numPrograms : 1;
 }
 
 int Dinverno_pluginAudioProcessor::getCurrentProgram()
 {
-    return 0;
+    return curProgram;
 }
 
 void Dinverno_pluginAudioProcessor::setCurrentProgram (int index)
 {
+    if (curProgram != index){
+        curProgram = index;
+        currentImproviser->setFeedbackMode(curProgram);
+    }
 }
 
 const juce::String Dinverno_pluginAudioProcessor::getProgramName (int index)
 {
-    return {};
+    return programNames[index];
 }
 
 void Dinverno_pluginAudioProcessor::changeProgramName (int index, const juce::String& newName)

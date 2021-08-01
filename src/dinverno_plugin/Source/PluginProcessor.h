@@ -74,6 +74,9 @@ public:
 private:
     //==============================================================================
     bool clearMidiBuffer = false;
+    const static int numPrograms = 4;
+    int curProgram = 0;
+    std::array<const String, numPrograms> programNames = {String("Practice"),String("ForwardFeedback"),String("ReverseFeedback"),String("NoFeedback")};
     
     ThreadedImprovisor threadedImprovisor;
     /*
