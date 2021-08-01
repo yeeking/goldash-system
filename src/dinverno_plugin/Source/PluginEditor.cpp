@@ -17,77 +17,43 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     // editor's size to whatever you need it to be.
     setSize (200, 100);
     
-    //mcClient.login();
-    //std::string default_username{"csys2"};
-    //std::string default_password{"test123"};
-    
-    // loggin = new LogginManager(default_username, default_password);
-    //loggin.addEventListener(this);
-    
-    // settings stuff:
-    
-    // MIDI
-    //midiSetupComponent.setMidiInputReceiver(this);
-    //addAndMakeVisible(midiSetupComponent);
-    
-    // MC login etc.
-    /*
-    addAndMakeVisible(mcEventMonitor);
-    mcEventMonitor.setMultiLine(true);
-    mcEventMonitor.setText("MusicCircle events appear here");
-    usernameField.setText(default_username);
-    passwordField.setText(default_password);
-    addAndMakeVisible(usernameField);
-    addAndMakeVisible(passwordField);
-    addAndMakeVisible(loginButton);
-    loginButton.addListener(this);
-    */
-    
-    // Record Widget
-    //recordWidget.addRecordingReceiver(this);
-    
-    // add the login to the improvisers:
-    /*
-    dinvernoParrot.setLogginManager(&loggin);
-    dinvernoRandomMidi.setLogginManager(&loggin);
-    dinvernoRandomEnergy.setLogginManager(&loggin);
-    dinvernoPolyMarkov.setLogginManager(&loggin);
-    */
-    //audioProcessor.setImprovisersLoginManager(&loggin);
-     
-    // add the listner to the improvisors:
-    //parrotButton.addListener(this);
-    //randomButton.addListener(this);
-    //randomEnergyButton.addListener(this);
-    //polyButton.addListener(this);
+    // Reset Button
     resetButton.addListener(this);
+    returnToPerformModeButton.addListener(this);
+    posNegFeedbackCCSelector.addListener(this);
+    leadFollowFeedbackCCSelector.addListener(this);
+    feedbackValueRangeSelector.addListener(this);
     
     // Add Buttons to GUI
     addAndMakeVisible(resetButton);
-    //addAndMakeVisible(recordWidget);
-    // disabling these for the Monash June trial
-    //addAndMakeVisible(parrotButton);
-    //addAndMakeVisible(randomButton);
-    //addAndMakeVisible(randomEnergyButton);
-    //addAndMakeVisible(polyButton);
-    // end of disabled buttons
+    addAndMakeVisible(posNegFeedbackLabel);
+    addAndMakeVisible(posNegFeedbackCCSelector);
+    addAndMakeVisible(leadFollowFeedbackLabel);
+    addAndMakeVisible(leadFollowFeedbackCCSelector);
+    addAndMakeVisible(feedbackValueRangeLabel);
+    addAndMakeVisible(feedbackValueRangeSelector);
+    addAndMakeVisible(returnToPerformModeButton);
     
     resetButtonColours();
-    //VST: setLookAndFeel(&lookAndFeel);
-    
-    //parrotButton.setButtonText("PARROT");
-    //randomButton.setButtonText("RANDOM");
-    //randomEnergyButton.setButtonText("RANDOM ENERGY");
-    //polyButton.setButtonText("POLY MARKOV");
     resetButton.setButtonText("Reset Model");
     
-    //parrotButton.setColour(TextButton::buttonColourId, Colours::red);
+    posNegFeedbackLabel.setText("Pos/Neg CC:", NotificationType::dontSendNotification);
+    posNegFeedbackCCSelector.addItem("PitchBend", -1);
+    posNegFeedbackCCSelector.addItem("1", 1);
+    posNegFeedbackCCSelector.setSelectedId(1);
     
-    //audioProcessor.setCurrentImproviser(&dinvernoPolyMarkov);  //currentImproviser = &dinvernoPolyMarkov;
-    //startTimer(50);
+    leadFollowFeedbackLabel.setText("Lead/Follow CC:", NotificationType::dontSendNotification);
+    leadFollowFeedbackCCSelector.addItem("PB", -1);
+    leadFollowFeedbackCCSelector.addItem("1", 1);
+    leadFollowFeedbackCCSelector.setSelectedId(-1);
     
-    //loggin.loginToMC(default_username, default_password);
+    feedbackValueRangeLabel.setText("Feedback Range:", NotificationType::dontSendNotification);
+    feedbackValueRangeSelector.addItem("1%",1);
+    feedbackValueRangeSelector.addItem("25%",25);
+    feedbackValueRangeSelector.addItem("50%",50);
+    feedbackValueRangeSelector.setSelectedId(25);
     
+    returnToPerformModeButton.setButtonText("Return To Perform Mode");
 }
 
 Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
@@ -190,9 +156,32 @@ void Dinverno_pluginAudioProcessorEditor::buttonClicked (Button* button)
     
     if (button == &resetButton)
     {
-        audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
-        //sendAllNotesOff();
-        
+        auto modifiers = ModifierKeys::getCurrentModifiers();
+        if (modifiers.isCtrlDown()){
+            configView = true;
+            resized();
+        }else{
+            audioProcessor.resetCurrentImproviser();                     //currentImproviser->reset();
+            //sendAllNotesOff();
+        }
+    }
+    
+    if (button == &returnToPerformModeButton){
+        configView = false;
+        resized();
+    }
+}
+
+void Dinverno_pluginAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    if (comboBoxThatHasChanged == &posNegFeedbackCCSelector){
+        int test = 1;
+    }
+    if (comboBoxThatHasChanged == &leadFollowFeedbackCCSelector){
+    
+    }
+    if (comboBoxThatHasChanged == &feedbackValueRangeSelector){
+    
     }
 }
 
@@ -217,6 +206,10 @@ void Dinverno_pluginAudioProcessorEditor::resetButtonColours()
      */
     resetButton.setColour(TextButton::buttonColourId,
                           Colours::darkblue);
+    
+    returnToPerformModeButton.setColour(TextButton::buttonColourId,
+                                        Colours::darkgreen);
+
 }
 
 /* VST:
@@ -284,8 +277,45 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     //resetButton.setBounds(col, row*4, col, row);
     
     //recordWidget.setBounds(0, row*5, getWidth(), row);
-    
-    resetButton.setBounds(0, 0, getWidth(),getHeight());
+    if (!configView){
+        // Perform View
+        resetButton.setVisible(true);
+        posNegFeedbackLabel.setVisible(false);
+        posNegFeedbackCCSelector.setVisible(false);
+        leadFollowFeedbackLabel.setVisible(false);
+        leadFollowFeedbackCCSelector.setVisible(false);
+        feedbackValueRangeLabel.setVisible(false);
+        feedbackValueRangeSelector.setVisible(false);
+        returnToPerformModeButton.setVisible(false);
+        
+        resetButton.setBounds(0, 0, getWidth(),getHeight());
+    }else{
+        // Config View
+        resetButton.setVisible(false);
+        posNegFeedbackLabel.setVisible(true);
+        posNegFeedbackCCSelector.setVisible(true);
+        leadFollowFeedbackLabel.setVisible(true);
+        leadFollowFeedbackCCSelector.setVisible(true);
+        feedbackValueRangeLabel.setVisible(true);
+        feedbackValueRangeSelector.setVisible(true);
+        returnToPerformModeButton.setVisible(true);
+
+        int selectorWidth = getWidth()*4/10;
+        int selectorHeight = getHeight()/4;
+        int labelWidth = getWidth()-selectorWidth;
+        int labelHeight = selectorHeight;
+        
+        posNegFeedbackLabel.setBounds(0,0*selectorHeight, labelWidth, labelHeight);
+        posNegFeedbackCCSelector.setBounds(getWidth()-selectorWidth,0*selectorHeight,selectorWidth,selectorHeight);
+        
+        leadFollowFeedbackLabel.setBounds(0,1*selectorHeight, labelWidth, labelHeight);
+        leadFollowFeedbackCCSelector.setBounds(getWidth()-selectorWidth,1*selectorHeight,selectorWidth,selectorHeight);
+        
+        feedbackValueRangeLabel.setBounds(0,2*selectorHeight, labelWidth, labelHeight);
+        feedbackValueRangeSelector.setBounds(getWidth()-selectorWidth,2*selectorHeight,selectorWidth,selectorHeight);
+        
+        returnToPerformModeButton.setBounds(0,3*selectorHeight,getWidth(),selectorHeight);
+    }
 }
 
 void Dinverno_pluginAudioProcessorEditor::receiveMidi(const MidiMessage& message)

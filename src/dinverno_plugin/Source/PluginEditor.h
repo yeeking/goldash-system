@@ -32,6 +32,7 @@ class Dinverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                     Timer,
                                                     MidiReceiver,
                                                     Button::Listener,
+                                                    ComboBox::Listener,
                                                     RecordingReceiver,
                                                     LogginListener
 {
@@ -61,6 +62,9 @@ public:
     
     // Listener interface for buttons
     void buttonClicked (Button* button) override;
+    
+    // Listner interface for combo box
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     
     // record listener
     void recordingStarted() override;
@@ -104,7 +108,19 @@ private:
     //TextButton polyButton;
     TextButton resetButton;
     CustomLookAndFeel lookAndFeel;
+    
+    // Configuration View
+    Label posNegFeedbackLabel;
+    ComboBox posNegFeedbackCCSelector;
+    Label leadFollowFeedbackLabel;
+    ComboBox leadFollowFeedbackCCSelector;
+    Label feedbackValueRangeLabel;
+    ComboBox feedbackValueRangeSelector;
+    TextButton returnToPerformModeButton;
+    
     //RecordWidget recordWidget;
+    
+    bool configView = false;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };
