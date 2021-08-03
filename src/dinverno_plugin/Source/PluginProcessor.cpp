@@ -226,6 +226,21 @@ void Dinverno_pluginAudioProcessor::setFeedbackBandwidth(int fbRange)
     currentImproviser->setFeedbackBandwidth(fbRange);
 }
 
+int Dinverno_pluginAudioProcessor::getPosNegFeedbackCC()
+{
+    return currentImproviser->getPosNegFeedbackController();
+}
+
+int Dinverno_pluginAudioProcessor::getLeadFollowFeedbackCC()
+{
+    return currentImproviser->getLeadFollowFeedbackController();
+}
+
+int Dinverno_pluginAudioProcessor::getFeedbackBandwidth()
+{
+    return currentImproviser->getFeedbackBandwidthPercent();
+}
+
 //==============================================================================
 bool Dinverno_pluginAudioProcessor::hasEditor() const
 {

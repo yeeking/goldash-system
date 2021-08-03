@@ -394,3 +394,23 @@ void DinvernoPolyMarkov::setFeedbackBandwidth(int fbRange)
         feedbackBandwidthPercent = fbRange;
     }
 }
+
+int DinvernoPolyMarkov::getFeedbackMode()
+{
+    return feedbackMode;
+}
+
+int DinvernoPolyMarkov::getPosNegFeedbackController()
+{
+    return posNegFeedbackController;
+}
+
+int DinvernoPolyMarkov::getLeadFollowFeedbackController()
+{
+    return leadFollowFeedbackController;
+}
+
+int DinvernoPolyMarkov::getFeedbackBandwidthPercent()
+{
+    return feedbackBandwidthPercent;
+}

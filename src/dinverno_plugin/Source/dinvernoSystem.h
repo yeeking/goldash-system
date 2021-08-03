@@ -47,6 +47,10 @@ public:
     virtual void setPosNegFeedbackController(int cc) {}
     virtual void setLeadFollowFeedbackController(int cc) {}
     virtual void setFeedbackBandwidth(int fbRange) {}
+    virtual int getFeedbackMode() {return 0;}
+    virtual int getPosNegFeedbackController() {return 0;}
+    virtual int getLeadFollowFeedbackController() {return 0;}
+    virtual int getFeedbackBandwidthPercent() {return 0;}
     
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
 
@@ -144,6 +148,10 @@ public:
   void setPosNegFeedbackController(int cc) override;
   void setLeadFollowFeedbackController(int cc) override;
   void setFeedbackBandwidth(int fbRange) override;
+  int getFeedbackMode() override;
+  int getPosNegFeedbackController() override;
+  int getLeadFollowFeedbackController() override;
+  int getFeedbackBandwidthPercent() override;
     
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
@@ -183,8 +191,8 @@ private:
 
   bool inLeadMode;
   int feedbackMode = FeedbackModes::Practice;
-  int posNegFeedbackController = 1;         // 1 for CC1: ModWheel
-  int leadFollowFeedbackController = -1;    // -1 for PitchBend
+  int posNegFeedbackController = 5;         // 5 for CC5: GlideControl on Moog One (-1 for PitchBend)
+  int leadFollowFeedbackController = 1;     // 1 for CC1: ModWheel
   int feedbackBandwidthPercent = 25;
   
   void handleFeedbackCC(const MidiMessage& message);

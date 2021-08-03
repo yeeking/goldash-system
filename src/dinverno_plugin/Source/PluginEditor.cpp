@@ -58,15 +58,15 @@ void Dinverno_pluginAudioProcessorEditor::initialiseGUI(){
     
     posNegFeedbackLabel.setText("Pos/Neg CC:", NotificationType::dontSendNotification);
     configureCCSelector(&posNegFeedbackCCSelector);
-    posNegFeedbackCCSelector.setSelectedId(1);
+    posNegFeedbackCCSelector.setSelectedId(audioProcessor.currentImproviser->getPosNegFeedbackController());
     
     leadFollowFeedbackLabel.setText("Lead/Follow CC:", NotificationType::dontSendNotification);
     configureCCSelector(&leadFollowFeedbackCCSelector);
-    leadFollowFeedbackCCSelector.setSelectedId(-1);
+    leadFollowFeedbackCCSelector.setSelectedId(audioProcessor.currentImproviser->getLeadFollowFeedbackController());
     
     feedbackValueRangeLabel.setText("Feedback Range:", NotificationType::dontSendNotification);
     configureFBRangeSelector(&feedbackValueRangeSelector);
-    feedbackValueRangeSelector.setSelectedId(25);
+    feedbackValueRangeSelector.setSelectedId(audioProcessor.currentImproviser->getFeedbackBandwidthPercent());
     
     feedbackModeLabel.setText("Feedback Mode:", NotificationType::dontSendNotification);
     configureFBModeSelector(&feedbackModeSelector);
@@ -207,6 +207,9 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         returnToPerformViewButton.setBounds(0,4*selectorHeight,getWidth(),selectorHeight);
         
         // Update dropdown if feedback Mode is changed by ProgramChange message outside GUI
+        posNegFeedbackCCSelector.setSelectedId(audioProcessor.getPosNegFeedbackCC());
+        leadFollowFeedbackCCSelector.setSelectedId(audioProcessor.getLeadFollowFeedbackCC());
+        feedbackValueRangeSelector.setSelectedId(audioProcessor.getFeedbackBandwidth());
         feedbackModeSelector.setSelectedId(audioProcessor.getCurrentProgram()+feedbackModeSelectorOffset);
     }
 }

@@ -69,6 +69,9 @@ public:
     void setPosNegFeedbackCC(int cc);
     void setLeadFollowFeedbackCC(int cc);
     void setFeedbackBandwidth(int fbRange);
+    int getPosNegFeedbackCC();
+    int getLeadFollowFeedbackCC();
+    int getFeedbackBandwidth();
     
     //==============================================================================
     // markov models
