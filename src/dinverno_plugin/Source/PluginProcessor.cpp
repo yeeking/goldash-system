@@ -25,8 +25,9 @@ Dinverno_pluginAudioProcessor::Dinverno_pluginAudioProcessor()
     //setCurrentImproviser(&dinvernoPolyMarkov);
     //setCurrentImproviser(&dinvernoPolyMarkov);
     setCurrentImproviser(&threadedImprovisor.dinvernoPolyMarkov);
-    
     threadedImprovisor.startThread();
+    
+    programChangeBroadcaster = new ChangeBroadcaster();
 }
 
 Dinverno_pluginAudioProcessor::~Dinverno_pluginAudioProcessor()
@@ -89,7 +90,7 @@ void Dinverno_pluginAudioProcessor::setCurrentProgram (int index)
     if (curProgram != index){
         curProgram = index;
         currentImproviser->setFeedbackMode(curProgram);
-        //std::cout << "[dinverno_plugin] Set Program Mode " + std::to_string(index) << std::endl;
+        programChangeBroadcaster->sendChangeMessage();
     }
 }
 

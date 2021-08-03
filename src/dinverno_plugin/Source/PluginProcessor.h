@@ -74,6 +74,9 @@ public:
     int getFeedbackBandwidth();
     
     //==============================================================================
+    ChangeBroadcaster* programChangeBroadcaster;
+    
+    //==============================================================================
     // markov models
     DinvernoImproviser* currentImproviser;
     //DinvernoPolyMarkov dinvernoPolyMarkov{44100};

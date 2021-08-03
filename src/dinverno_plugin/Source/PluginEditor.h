@@ -30,7 +30,8 @@ struct CustomLookAndFeel    : public LookAndFeel_V4 {
  */
 class Dinverno_pluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                     Button::Listener,
-                                                    ComboBox::Listener
+                                                    ComboBox::Listener,
+                                                    ChangeListener
 {
 public:
     Dinverno_pluginAudioProcessorEditor (Dinverno_pluginAudioProcessor&);
@@ -75,6 +76,8 @@ private:
     void configureCCSelector(ComboBox* selector);
     void configureFBRangeSelector(ComboBox* selector);
     void configureFBModeSelector(ComboBox* selector);
+    void changeListenerCallback(ChangeBroadcaster* source);
+
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dinverno_pluginAudioProcessorEditor)
 };

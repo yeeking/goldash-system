@@ -19,6 +19,9 @@ Dinverno_pluginAudioProcessorEditor::Dinverno_pluginAudioProcessorEditor (Dinver
     
     // Initialise the GUI objects
     initialiseGUI();
+    
+    // Configure Program Change Listener
+    audioProcessor.programChangeBroadcaster->addChangeListener(this);
 }
 
 Dinverno_pluginAudioProcessorEditor::~Dinverno_pluginAudioProcessorEditor()
@@ -214,6 +217,13 @@ void Dinverno_pluginAudioProcessorEditor::resized()
     }
 }
 
+void Dinverno_pluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster* source)
+{
+    if (source == audioProcessor.programChangeBroadcaster){
+        // Update FeedbackMode in GUI when changed via ProgramChange Midi Message
+        feedbackModeSelector.setSelectedId(audioProcessor.getCurrentProgram()+feedbackModeSelectorOffset);
+    }
+}
 
 
 
