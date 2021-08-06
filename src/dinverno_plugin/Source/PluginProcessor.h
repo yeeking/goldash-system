@@ -68,10 +68,15 @@ public:
     //==============================================================================
     void setPosNegFeedbackCC(int cc);
     void setLeadFollowFeedbackCC(int cc);
+    void setTrainingModeCC(int cc);
+    void setResetModelCC(int cc);
     void setFeedbackBandwidth(int fbRange);
+    void setTrainingMode(bool mode);
     int getPosNegFeedbackCC();
     int getLeadFollowFeedbackCC();
+    int getTrainingModeCC();
     int getFeedbackBandwidth();
+    bool getTrainingMode();
     
     //==============================================================================
     ChangeBroadcaster* programChangeBroadcaster;

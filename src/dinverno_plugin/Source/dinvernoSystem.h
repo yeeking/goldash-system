@@ -46,12 +46,17 @@ public:
     virtual void setFeedbackMode(int mode) {}
     virtual void setPosNegFeedbackController(int cc) {}
     virtual void setLeadFollowFeedbackController(int cc) {}
+    virtual void setTrainingModeController(int cc) {}
+    virtual void setResetModelController(int cc) {}
     virtual void setFeedbackBandwidth(int fbRange) {}
+    virtual void setTrainingMode(bool mode) {}
     virtual int getFeedbackMode() {return 0;}
     virtual int getPosNegFeedbackController() {return 0;}
     virtual int getLeadFollowFeedbackController() {return 0;}
+    virtual int getTrainingModeController() {return 0;}
+    virtual int getResetModelController() {return 0;}
     virtual int getFeedbackBandwidthPercent() {return 0;}
-    
+    virtual bool getTrainingMode() {return true;}
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
 
 protected:
@@ -147,11 +152,17 @@ public:
   void setFeedbackMode(int mode) override;
   void setPosNegFeedbackController(int cc) override;
   void setLeadFollowFeedbackController(int cc) override;
+  void setTrainingModeController(int cc) override;
+  void setResetModelController(int cc) override;
   void setFeedbackBandwidth(int fbRange) override;
+  void setTrainingMode(bool mode) override;
   int getFeedbackMode() override;
   int getPosNegFeedbackController() override;
   int getLeadFollowFeedbackController() override;
+  int getTrainingModeController() override;
+  int getResetModelController() override;
   int getFeedbackBandwidthPercent() override;
+  bool getTrainingMode() override;
     
 private:
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
@@ -193,7 +204,10 @@ private:
   int feedbackMode = FeedbackModes::Practice;
   int posNegFeedbackController = 5;         // 5 for CC5: GlideControl on Moog One (-1 for PitchBend)
   int leadFollowFeedbackController = 1;     // 1 for CC1: ModWheel
+  int trainingModeController = 10;
+  int resetModelController = 77;
   int feedbackBandwidthPercent = 25;
+  bool inTrainingMode = true;
   
   void handleFeedbackCC(const MidiMessage& message);
   void handleFeedbackPB(const MidiMessage& message);

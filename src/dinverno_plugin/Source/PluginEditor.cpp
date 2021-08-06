@@ -41,6 +41,8 @@ void Dinverno_pluginAudioProcessorEditor::initialiseGUI(){
     returnToPerformViewButton.addListener(this);
     posNegFeedbackCCSelector.addListener(this);
     leadFollowFeedbackCCSelector.addListener(this);
+    trainingModeCCSelector.addListener(this);
+    resetModelCCSelector.addListener(this);
     feedbackValueRangeSelector.addListener(this);
     feedbackModeSelector.addListener(this);
     
@@ -50,28 +52,40 @@ void Dinverno_pluginAudioProcessorEditor::initialiseGUI(){
     addAndMakeVisible(posNegFeedbackCCSelector);
     addAndMakeVisible(leadFollowFeedbackLabel);
     addAndMakeVisible(leadFollowFeedbackCCSelector);
+    addAndMakeVisible(resetModelLabel);
+    addAndMakeVisible(resetModelCCSelector);
     addAndMakeVisible(feedbackValueRangeLabel);
     addAndMakeVisible(feedbackValueRangeSelector);
     addAndMakeVisible(feedbackModeLabel);
     addAndMakeVisible(feedbackModeSelector);
+    addAndMakeVisible(trainingModeLabel);
+    addAndMakeVisible(trainingModeCCSelector);
     addAndMakeVisible(returnToPerformViewButton);
     
     resetButtonColours();
     resetButton.setButtonText("Reset Model");
     
-    posNegFeedbackLabel.setText("Pos/Neg CC:", NotificationType::dontSendNotification);
+    posNegFeedbackLabel.setText("+/-:", NotificationType::dontSendNotification);
     configureCCSelector(&posNegFeedbackCCSelector);
     posNegFeedbackCCSelector.setSelectedId(audioProcessor.currentImproviser->getPosNegFeedbackController());
     
-    leadFollowFeedbackLabel.setText("Lead/Follow CC:", NotificationType::dontSendNotification);
+    leadFollowFeedbackLabel.setText("L/F:", NotificationType::dontSendNotification);
     configureCCSelector(&leadFollowFeedbackCCSelector);
     leadFollowFeedbackCCSelector.setSelectedId(audioProcessor.currentImproviser->getLeadFollowFeedbackController());
     
-    feedbackValueRangeLabel.setText("Feedback Range:", NotificationType::dontSendNotification);
+    trainingModeLabel.setText("Train:", NotificationType::dontSendNotification);
+    configureCCSelector(&trainingModeCCSelector);
+    trainingModeCCSelector.setSelectedId(audioProcessor.currentImproviser->getTrainingModeController());
+    
+    resetModelLabel.setText("Reset:", NotificationType::dontSendNotification);
+    configureCCSelector(&resetModelCCSelector);
+    resetModelCCSelector.setSelectedId(audioProcessor.currentImproviser->getResetModelController());
+    
+    feedbackValueRangeLabel.setText("Range:", NotificationType::dontSendNotification);
     configureFBRangeSelector(&feedbackValueRangeSelector);
     feedbackValueRangeSelector.setSelectedId(audioProcessor.currentImproviser->getFeedbackBandwidthPercent());
     
-    feedbackModeLabel.setText("Feedback Mode:", NotificationType::dontSendNotification);
+    feedbackModeLabel.setText("Mode:", NotificationType::dontSendNotification);
     configureFBModeSelector(&feedbackModeSelector);
     feedbackModeSelector.setSelectedId(audioProcessor.getCurrentProgram()+feedbackModeSelectorOffset);
     
@@ -134,8 +148,14 @@ void Dinverno_pluginAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxTha
     if (comboBoxThatHasChanged == &leadFollowFeedbackCCSelector){
         audioProcessor.setLeadFollowFeedbackCC(leadFollowFeedbackCCSelector.getSelectedId());
     }
+    if (comboBoxThatHasChanged == &trainingModeCCSelector){
+        audioProcessor.setTrainingModeCC(trainingModeCCSelector.getSelectedId());
+    }
     if (comboBoxThatHasChanged == &feedbackValueRangeSelector){
         audioProcessor.setFeedbackBandwidth(feedbackValueRangeSelector.getSelectedId());
+    }
+    if (comboBoxThatHasChanged == &resetModelCCSelector){
+        audioProcessor.setResetModelCC(resetModelCCSelector.getSelectedId());
     }
     if (comboBoxThatHasChanged == &feedbackModeSelector){
         int newProgramNumber = feedbackModeSelector.getSelectedId() - feedbackModeSelectorOffset;
@@ -170,6 +190,10 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         posNegFeedbackCCSelector.setVisible(false);
         leadFollowFeedbackLabel.setVisible(false);
         leadFollowFeedbackCCSelector.setVisible(false);
+        trainingModeLabel.setVisible(false);
+        trainingModeCCSelector.setVisible(false);
+        resetModelLabel.setVisible(false);
+        resetModelCCSelector.setVisible(false);
         feedbackValueRangeLabel.setVisible(false);
         feedbackValueRangeSelector.setVisible(false);
         feedbackModeLabel.setVisible(false);
@@ -184,30 +208,40 @@ void Dinverno_pluginAudioProcessorEditor::resized()
         posNegFeedbackCCSelector.setVisible(true);
         leadFollowFeedbackLabel.setVisible(true);
         leadFollowFeedbackCCSelector.setVisible(true);
+        trainingModeLabel.setVisible(true);
+        trainingModeCCSelector.setVisible(true);
+        resetModelLabel.setVisible(true);
+        resetModelCCSelector.setVisible(true);
         feedbackValueRangeLabel.setVisible(true);
         feedbackValueRangeSelector.setVisible(true);
         feedbackModeLabel.setVisible(true);
         feedbackModeSelector.setVisible(true);
         returnToPerformViewButton.setVisible(true);
 
-        int selectorWidth = getWidth()*45/100;
-        int selectorHeight = getHeight()/5;
-        int labelWidth = getWidth()-selectorWidth;
+        int selectorWidth = 0.5*getWidth()*60/100;
+        int selectorHeight = getHeight()/4;
+        int labelWidth = 0.5*getWidth()-selectorWidth;
         int labelHeight = selectorHeight;
         
-        posNegFeedbackLabel.setBounds(0,0*selectorHeight, labelWidth, labelHeight);
-        posNegFeedbackCCSelector.setBounds(getWidth()-selectorWidth,0*selectorHeight,selectorWidth,selectorHeight);
+        posNegFeedbackLabel.setBounds(0*selectorWidth,0*selectorHeight, labelWidth, labelHeight);
+        posNegFeedbackCCSelector.setBounds(0*selectorWidth+labelWidth,0*selectorHeight,selectorWidth,selectorHeight);
         
-        leadFollowFeedbackLabel.setBounds(0,1*selectorHeight, labelWidth, labelHeight);
-        leadFollowFeedbackCCSelector.setBounds(getWidth()-selectorWidth,1*selectorHeight,selectorWidth,selectorHeight);
+        leadFollowFeedbackLabel.setBounds(0*selectorWidth,1*selectorHeight, labelWidth, labelHeight);
+        leadFollowFeedbackCCSelector.setBounds(0*selectorWidth+labelWidth,1*selectorHeight,selectorWidth,selectorHeight);
         
-        feedbackValueRangeLabel.setBounds(0,2*selectorHeight, labelWidth, labelHeight);
-        feedbackValueRangeSelector.setBounds(getWidth()-selectorWidth,2*selectorHeight,selectorWidth,selectorHeight);
+        trainingModeLabel.setBounds(0*selectorWidth,2*selectorHeight, labelWidth, labelHeight);
+        trainingModeCCSelector.setBounds(0*selectorWidth+labelWidth,2*selectorHeight,selectorWidth,selectorHeight);
         
-        feedbackModeLabel.setBounds(0,3*selectorHeight, labelWidth, labelHeight);
-        feedbackModeSelector.setBounds(getWidth()-selectorWidth,3*selectorHeight,selectorWidth,selectorHeight);
+        resetModelLabel.setBounds(0.5*getWidth(),0*selectorHeight, labelWidth, labelHeight);
+        resetModelCCSelector.setBounds(0.5*getWidth()+labelWidth,0*selectorHeight,selectorWidth,selectorHeight);
         
-        returnToPerformViewButton.setBounds(0,4*selectorHeight,getWidth(),selectorHeight);
+        feedbackValueRangeLabel.setBounds(0.5*getWidth(),1*selectorHeight, labelWidth, labelHeight);
+        feedbackValueRangeSelector.setBounds(0.5*getWidth()+labelWidth,1*selectorHeight,selectorWidth,selectorHeight);
+        
+        feedbackModeLabel.setBounds(0.5*getWidth(),2*selectorHeight, labelWidth, labelHeight);
+        feedbackModeSelector.setBounds(0.5*getWidth()+labelWidth,2*selectorHeight,selectorWidth,selectorHeight);
+        
+        returnToPerformViewButton.setBounds(0,3*selectorHeight,getWidth(),selectorHeight);
         
         // Update dropdown if feedback Mode is changed by ProgramChange message outside GUI
         posNegFeedbackCCSelector.setSelectedId(audioProcessor.getPosNegFeedbackCC());

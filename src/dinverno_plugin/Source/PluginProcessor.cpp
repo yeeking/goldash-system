@@ -159,18 +159,8 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     
     if (improviserReady){
         
+        // Send Buffer to Improvisor
         threadedImprovisor.setMidiBuffer(midiMessages);
-        /*
-        for (const auto metadata : midiMessages)
-        {
-            auto message = metadata.getMessage();
-            const auto time = metadata.samplePosition;
-            
-            // Add current midi message to improvisor
-            currentImproviser->addMidiMessage(message);
-        }
-        */
-    
         
         // Get Midi Messages from Improvisor: add to buffer if it is time to send
         int sampleNumber;
@@ -178,16 +168,6 @@ void Dinverno_pluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
         MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
 
         if (toSend.getNumEvents() > 0){
-            //std::cout << "timerCallback sending " << toSend.getNumEvents() << std::endl;
-            // MidiBuffer::Iterator iterator (toSend);
-            // MidiMessage message;
-            // while (iterator.getNextEvent (message, sampleNumber))
-            // {
-            //     //sendMidi(message);
-            //     message.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-            //     //MIDITimeStamp timeStamp = AudioGetCurrentHostTime();
-            //     generatedMidi.addEvent(message,0);
-            // }
             // myk: new JUCE 6 style message iteration
             for (const auto meta : toSend)
             {
@@ -222,9 +202,23 @@ void Dinverno_pluginAudioProcessor::setLeadFollowFeedbackCC(int cc)
     currentImproviser->setLeadFollowFeedbackController(cc);
 }
 
+void Dinverno_pluginAudioProcessor::setTrainingModeCC(int cc)
+{
+    currentImproviser->setTrainingModeController(cc);
+}
+
+void Dinverno_pluginAudioProcessor::setResetModelCC(int cc)
+{
+    currentImproviser->setResetModelController(cc);
+}
+
 void Dinverno_pluginAudioProcessor::setFeedbackBandwidth(int fbRange)
 {
     currentImproviser->setFeedbackBandwidth(fbRange);
+}
+
+void Dinverno_pluginAudioProcessor::setTrainingMode(bool mode){
+    currentImproviser->setTrainingMode(mode);
 }
 
 int Dinverno_pluginAudioProcessor::getPosNegFeedbackCC()
@@ -237,9 +231,18 @@ int Dinverno_pluginAudioProcessor::getLeadFollowFeedbackCC()
     return currentImproviser->getLeadFollowFeedbackController();
 }
 
+int Dinverno_pluginAudioProcessor::getTrainingModeCC()
+{
+    return currentImproviser->getTrainingModeController();
+}
+
 int Dinverno_pluginAudioProcessor::getFeedbackBandwidth()
 {
     return currentImproviser->getFeedbackBandwidthPercent();
+}
+
+bool Dinverno_pluginAudioProcessor::getTrainingMode(){
+    return currentImproviser->getTrainingMode();
 }
 
 //==============================================================================

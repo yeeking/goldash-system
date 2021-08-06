@@ -65,8 +65,9 @@ void DinvernoPolyMarkov::tick()
   double tDelta = nowSamples - lastTickSamples;
   accumTimeDelta += tDelta;
   double timeSinceLastNoteSeconds = (nowSamples - startTimeSamples - lastNoteOnAtSample) / sampleRate;
-  if (accumTimeDelta > timeBeforeNextNote &&  // time to play
-      timeSinceLastNoteSeconds < 15)  // it is less than 15 secs since human played
+  
+    // time to play and it is less than 15 secs since human played
+    if (accumTimeDelta > timeBeforeNextNote )//&& timeSinceLastNoteSeconds < 15)
   {
     //std::cout << "time since last note " << timeSinceLastNoteSeconds << " : "<< lastNoteOnAtSample << std::endl;
     
@@ -106,8 +107,9 @@ void DinvernoPolyMarkov::tick()
 void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 {
 
-  if (message.isNoteOn()){
-  if (!inLeadMode && random.nextDouble() > 0.95) reset();
+
+  if (message.isNoteOn() && inTrainingMode){
+    if (!inLeadMode && random.nextDouble() > 0.95) reset();
 
     std::string mgsDesc = message.getDescription().toStdString();
     if (isReadyToLog())
@@ -139,7 +141,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       lastNoteOnAtSample = elapsedSamples; 
     }
   }
-  if (message.isNoteOff()){
+  if (message.isNoteOff() && inTrainingMode){
     addNoteOffToModel(message.getNoteNumber());
     std::string mgsDesc = message.getDescription().toStdString();
     if (isReadyToLog())
@@ -183,6 +185,24 @@ void DinvernoPolyMarkov::handleFeedbackPB(const MidiMessage& message)
             handleFeedbackMode(FeedbackEventType::negative);
         }
     }
+    else if (trainingModeController == -1 && message.isPitchWheel()){
+        //Positive/Neagive Feedback
+        if (16383-feedbackBandwidthPB < message.getPitchWheelValue()){
+            // TrainingMode Signal Received
+            if (!inTrainingMode){
+                setTrainingMode(true);
+            }
+        }else if (message.getPitchWheelValue() < feedbackBandwidthPB){
+            // NOT TrainingMode Signal Received
+            if (inTrainingMode){
+                setTrainingMode(false);
+            }
+        }
+    }
+    else if (resetModelController == -1 && message.isPitchWheel()){
+        // ResetModel Signal Received
+        reset();
+    }
 }
 
 void DinvernoPolyMarkov::handleFeedbackCC(const MidiMessage& message)
@@ -211,6 +231,24 @@ void DinvernoPolyMarkov::handleFeedbackCC(const MidiMessage& message)
                 //Signal to Follow
                 handleFeedbackMode(FeedbackEventType::follow);
             }
+        }
+        else if(message.getControllerNumber() == trainingModeController){
+            //TrainingMode Control
+            if (127-feedbackBandwidthCC < message.getControllerValue()){
+                // TrainingMode Signal Received
+                if (!inTrainingMode){
+                    setTrainingMode(true);
+                }
+            }else if (message.getControllerValue() < feedbackBandwidthCC){
+                // NOT TrainingMode Signal Received
+                if (inTrainingMode){
+                    setTrainingMode(false);
+                }
+            }
+        }
+        else if(message.getControllerNumber() == resetModelController){
+            // ResetModel Signal Received
+            reset();
         }
     }
 }
@@ -264,6 +302,7 @@ void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
   // remember when this note started so we can measure length later
   pitchModel->putEvent(n_state);
 }
+
 state_single DinvernoPolyMarkov::notesToMarkovState(std::vector<int> notes)
 { 
   state_single mstate = "";
@@ -272,6 +311,7 @@ state_single DinvernoPolyMarkov::notesToMarkovState(std::vector<int> notes)
   }
   return mstate;
 }
+
 std::vector<int> DinvernoPolyMarkov::markovStateToNotes(state_single n_state)
 {
   std::vector<int> notes;
@@ -284,7 +324,6 @@ std::vector<int> DinvernoPolyMarkov::markovStateToNotes(state_single n_state)
   }
   return notes;
 }
-
 
 void DinvernoPolyMarkov::addNoteOffToModel(int note)
 {
@@ -387,12 +426,36 @@ void DinvernoPolyMarkov::setLeadFollowFeedbackController(int cc)
     }
 }
 
+void DinvernoPolyMarkov::setTrainingModeController(int cc)
+{
+    // Validate Controller index (-1 for pitch bend)
+    if (-1 <= cc && cc <= 127){
+        trainingModeController = cc;
+    }
+}
+
+void DinvernoPolyMarkov::setResetModelController(int cc)
+{
+    // Validate Controller index (-1 for pitch bend)
+    if (-1 <= cc && cc <= 127){
+        resetModelController = cc;
+    }
+}
+
 void DinvernoPolyMarkov::setFeedbackBandwidth(int fbRange)
 {
     // Validate Bandwidth is in range [0,50]
     if (1 <= fbRange && fbRange <= 50){
         feedbackBandwidthPercent = fbRange;
     }
+}
+
+void DinvernoPolyMarkov::setTrainingMode(bool mode){
+    inTrainingMode = mode;
+}
+
+bool DinvernoPolyMarkov::getTrainingMode(){
+    return inTrainingMode;
 }
 
 int DinvernoPolyMarkov::getFeedbackMode()
@@ -408,6 +471,16 @@ int DinvernoPolyMarkov::getPosNegFeedbackController()
 int DinvernoPolyMarkov::getLeadFollowFeedbackController()
 {
     return leadFollowFeedbackController;
+}
+
+int DinvernoPolyMarkov::getTrainingModeController()
+{
+    return trainingModeController;
+}
+
+int DinvernoPolyMarkov::getResetModelController()
+{
+    return resetModelController;
 }
 
 int DinvernoPolyMarkov::getFeedbackBandwidthPercent()

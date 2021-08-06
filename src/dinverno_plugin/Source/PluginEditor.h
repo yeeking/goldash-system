@@ -71,6 +71,10 @@ private:
     ComboBox feedbackValueRangeSelector;
     Label feedbackModeLabel;
     ComboBox feedbackModeSelector;
+    Label trainingModeLabel;
+    ComboBox trainingModeCCSelector;
+    Label resetModelLabel;
+    ComboBox resetModelCCSelector;
     int feedbackModeSelectorOffset = 10; // Map feedbackModeSelectorID to programNumber (as you can't add a comboBox item with id "0")
     TextButton returnToPerformViewButton;
     void configureCCSelector(ComboBox* selector);
