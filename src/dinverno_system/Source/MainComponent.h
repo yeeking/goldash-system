@@ -14,12 +14,9 @@
 #include "dinvernoSystem.h"
 #include "RecordWidget.h"
 #include "MusicCircleClient.h"
-<<<<<<< HEAD
 #include "FeedbackControls.h"
-
-=======
 #include "PolyLeadFollow.h"
->>>>>>> marks-original-version
+
 
 struct CustomLookAndFeel    : public LookAndFeel_V4 {
   Font getTextButtonFont (TextButton&, int buttonHeight) override {
@@ -99,14 +96,9 @@ private:
     DinvernoMidiParrot dinvernoParrot{44100};
     DinvernoRandomMidi dinvernoRandomMidi{44100};
     DinvernoRandomEnergy dinvernoRandomEnergy{44100};
-<<<<<<< HEAD
-=======
     DinvernoPolyMarkov dinvernoPolyMarkov{44100}; 
     PolyLeadFollow polyLeadFollow{44100};    
->>>>>>> marks-original-version
-    //DinvernoCCMarkov dinvernoPolyMarkov{44100};
-    
-    DinvernoPolyMarkov dinvernoPolyMarkov{44100};
+
     
     TextButton parrotButton;
     TextButton randomButton;    

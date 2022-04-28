@@ -253,73 +253,75 @@ void LogginManager::httpPostRequest(const std::string &apiMenu, std::queue<std::
 
 juce::String LogginManager::httpGetRequestForThreadPool(const std::string &apiMenu)
 {
-    juce::URL url{ urlBase + apiMenu };
-    if(sessionId != "") {
-        juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
-        std::unique_ptr<InputStream> inStream = (url.createInputStream(
-        //WebInputStream* inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
-                false, // false means GET
-                nullptr, //    OpenStreamProgressCallback *     progressCallback = nullptr,
-                nullptr, //void *     progressCallbackContext = nullptr,
-                extraHeaders
-            ));
+    // juce::URL url{ urlBase + apiMenu };
+    // if(sessionId != "") {
+    //     juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
+    //     std::unique_ptr<InputStream> inStream = (url.createInputStream(
+    //     //WebInputStream* inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
+    //             false, // false means GET
+    //             nullptr, //    OpenStreamProgressCallback *     progressCallback = nullptr,
+    //             nullptr, //void *     progressCallbackContext = nullptr,
+    //             extraHeaders
+    //         ));
     
-        juce::String response = inStream->readEntireStreamAsString();
-        //delete inStream;
-        return response;
-    }
-    else
+    //     juce::String response = inStream->readEntireStreamAsString();
+    //     //delete inStream;
+    //     return response;
+    // }
+    // else
         return "error";
 }
  
  juce::String LogginManager::httpPostRequestForThreadPool(const std::string &apiMenu, std::queue<std::pair<std::string,std::string>> postFields, std::string postdata)
 {
-    juce::URL url{ urlBase + apiMenu };
-    //WebInputStream* inStream;
-    juce::String result = "error";
+    // juce::URL url{ urlBase + apiMenu };
+    // //WebInputStream* inStream;
+    // juce::String result = "error";
     
-    if(sessionId != "") {
-        juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
-        extraHeaders += "\nContent-Type: application/json";
-        juce::String json{ postdata };
-        url = url.withPOSTData(json);
-        std::unique_ptr<InputStream> inStream = (url.createInputStream(
-        //inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
-            true, // false means GET
-            nullptr, //    OpenStreamProgressCallback * progressCallback = nullptr,
-            nullptr, //void *    progressCallbackContext = nullptr,
-            extraHeaders
-        ));
+    // if(sessionId != "") {
+    //     juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
+    //     extraHeaders += "\nContent-Type: application/json";
+    //     juce::String json{ postdata };
+    //     url = url.withPOSTData(json);
+    //     std::unique_ptr<InputStream> inStream = (url.createInputStream(
+    //     //inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
+    //         true, // false means GET
+    //         nullptr, //    OpenStreamProgressCallback * progressCallback = nullptr,
+    //         nullptr, //void *    progressCallbackContext = nullptr,
+    //         extraHeaders
+    //     ));
         
-        // Read Result
-        result = inStream->readEntireStreamAsString();
-    }
+    //     // Read Result
+    //     result = inStream->readEntireStreamAsString();
+    // }
     
-    if(!postFields.empty()) {
-        while (!postFields.empty()) {
-            std::pair<std::string,std::string> field = postFields.front();
-            const std::string &name = field.first;
-            const std::string &value = field.second;
-            url = url.withParameter(name, value);
-            postFields.pop();
-        }
-        // POST the details
-        std::unique_ptr<InputStream> inStream = (url.createInputStream(true));
-        // inStream = dynamic_cast<WebInputStream*>(url.createInputStream(true));
+    // if(!postFields.empty()) {
+    //     while (!postFields.empty()) {
+    //         std::pair<std::string,std::string> field = postFields.front();
+    //         const std::string &name = field.first;
+    //         const std::string &value = field.second;
+    //         url = url.withParameter(name, value);
+    //         postFields.pop();
+    //     }
+    //     // POST the details
+    //     std::unique_ptr<InputStream> inStream = (url.createInputStream(true));
+    //     // inStream = dynamic_cast<WebInputStream*>(url.createInputStream(true));
         
-        // Read Result
-        result = inStream->readEntireStreamAsString();
-    }
+    //     // Read Result
+    //     result = inStream->readEntireStreamAsString();
+    // }
     
-    //juce::String result = inStream->readEntireStreamAsString();
-    // delete inStream;
+    // //juce::String result = inStream->readEntireStreamAsString();
+    // // delete inStream;
 
-    /* TODO: Check if the request was successful */
-    //if (http_code == 200 && res != CURLE_ABORTED_BY_CALLBACK)
-    return result;
+    // /* TODO: Check if the request was successful */
+    // //if (http_code == 200 && res != CURLE_ABORTED_BY_CALLBACK)
+    // return result;
     
-    /* TODO: Return error if query not successful. */
-    //return "error";
+    // /* TODO: Return error if query not successful. */
+    // //return "error";
+    return "error";
+
 }
 
 
@@ -327,54 +329,54 @@ juce::String LogginManager::httpGetRequestForThreadPool(const std::string &apiMe
 /** upload the sent audio file, returns the id on MC or 0 if it fails*/
 unsigned int LogginManager::postMediaForThreadPool(std::string filePath)
 {
-    if (sessionId == "")
-    {
-        DBG("MusicCircleClient::postAnnotation Not logged in. call login first");
-        return false;
-    }
-    else
-    {
-        juce::URL url{ urlBase + "/media" };
-        url = url.withParameter("filename", "test.wav");
+    // if (sessionId == "")
+    // {
+    //     DBG("MusicCircleClient::postAnnotation Not logged in. call login first");
+    //     return false;
+    // }
+    // else
+    // {
+    //     juce::URL url{ urlBase + "/media" };
+    //     url = url.withParameter("filename", "test.wav");
 
-      //  url = url.withFileToUpload("files[]", File{ "C:\\Users\\matth\\Documents\\JUCE Demo Audio Recording.wav" }, "audio/wav");
-        url = url.withFileToUpload("files[]", File{ juce::String{filePath} }, "audio/wav");
-        juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
-        //extraHeaders += "\nContent-Type: application/json";
+    //   //  url = url.withFileToUpload("files[]", File{ "C:\\Users\\matth\\Documents\\JUCE Demo Audio Recording.wav" }, "audio/wav");
+    //     url = url.withFileToUpload("files[]", File{ juce::String{filePath} }, "audio/wav");
+    //     juce::String extraHeaders{ "Cookie:PHPSESSID=" + sessionId };
+    //     //extraHeaders += "\nContent-Type: application/json";
 
-        // "Content-Type: application/json"
-        std::unique_ptr<InputStream> inStream = (url.createInputStream(
-        //WebInputStream* inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
-            true, // false means GET
-            nullptr, //    OpenStreamProgressCallback *     progressCallback = nullptr,
-            nullptr, //void *     progressCallbackContext = nullptr,
-            extraHeaders
-            //int     connectionTimeOutMs = 0,
-            //StringPairArray *     responseHeaders = nullptr,
-            //int *     statusCode = nullptr,
-            //int     numRedirectsToFollow = 5,
-            //String     httpRequestCmd = {}
-        ));
-        juce::String result = inStream->readEntireStreamAsString();
-        //delete inStream;
-        DBG(result);
+    //     // "Content-Type: application/json"
+    //     std::unique_ptr<InputStream> inStream = (url.createInputStream(
+    //     //WebInputStream* inStream = dynamic_cast<WebInputStream*>(url.createInputStream(
+    //         true, // false means GET
+    //         nullptr, //    OpenStreamProgressCallback *     progressCallback = nullptr,
+    //         nullptr, //void *     progressCallbackContext = nullptr,
+    //         extraHeaders
+    //         //int     connectionTimeOutMs = 0,
+    //         //StringPairArray *     responseHeaders = nullptr,
+    //         //int *     statusCode = nullptr,
+    //         //int     numRedirectsToFollow = 5,
+    //         //String     httpRequestCmd = {}
+    //     ));
+    //     juce::String result = inStream->readEntireStreamAsString();
+    //     //delete inStream;
+    //     DBG(result);
 
-        // update the audio id
-        var data = JSON::parse(result);
+    //     // update the audio id
+    //     var data = JSON::parse(result);
 
-        if (data.hasProperty("id"))
-        {
-            juce::String aId = data["id"];
-            audioId = aId.toStdString();
-            DBG("Saving posted audio id " << audioId);
-        }
+    //     if (data.hasProperty("id"))
+    //     {
+    //         juce::String aId = data["id"];
+    //         audioId = aId.toStdString();
+    //         DBG("Saving posted audio id " << audioId);
+    //     }
          
 
-        //var data = JSON::parse(result);
-        return true;
-    }
+    //     //var data = JSON::parse(result);
+    //     return true;
+    // }
 
-    return false;
+    // return false;
 
     return 0;
 }

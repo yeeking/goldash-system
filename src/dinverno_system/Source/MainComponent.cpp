@@ -100,18 +100,13 @@ MainComponent::MainComponent()
     
     startTimer(50);
 
-<<<<<<< HEAD
-
     // new feedback buttons
     addAndMakeVisible(fbControls);
     //fbControls.addFeedbackListener(this);
     fbControls.addFeedbackListener(this->currentImproviser);
 
     loggin.loginToMC(default_username, default_password);
-=======
-   // loggin.loginToMC(default_username, default_password);
->>>>>>> marks-original-version
-  
+ 
 }
 
 MainComponent::~MainComponent()
@@ -364,7 +359,7 @@ void MainComponent::recordingComplete(File audioFile)
     });
 }  
 
-<<<<<<< HEAD
+
 void MainComponent::feedback(FeedbackEventType fbEvent)
 {
     std::cout << "MainComponent::feedback" << std::endl;
@@ -385,7 +380,7 @@ void MainComponent::feedback(FeedbackEventType fbEvent)
             break;  
     }
 }
-=======
+
 bool MainComponent::keyPressed (const KeyPress &key, Component *originatingComponent)
 {
     DBG("MainComponent::keyPressed...." << key.getKeyCode());
@@ -397,8 +392,6 @@ bool MainComponent::keyPressed (const KeyPress &key, Component *originatingCompo
            polyButton.setColour(TextButton::buttonColourId, 
                           Colours::orange);
                         
->>>>>>> marks-original-version
-
             break;
         case 50: // 2
             DBG("MainComponent::keyPressed. FOLLOWING22 ");
