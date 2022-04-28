@@ -11,7 +11,7 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MarkovManager.h"
+#include "MarkovModelCPP/src/MarkovManager.h"
 #include "ChordDetector.h"
 #include "LogginManager.h"
 #include "MusicCircleClient.h"
