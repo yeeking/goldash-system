@@ -14,8 +14,12 @@
 #include "dinvernoSystem.h"
 #include "RecordWidget.h"
 #include "MusicCircleClient.h"
+<<<<<<< HEAD
 #include "FeedbackControls.h"
 
+=======
+#include "PolyLeadFollow.h"
+>>>>>>> marks-original-version
 
 struct CustomLookAndFeel    : public LookAndFeel_V4 {
   Font getTextButtonFont (TextButton&, int buttonHeight) override {
@@ -33,6 +37,7 @@ class MainComponent   : public AudioAppComponent,
                                 Timer, 
                                 MidiReceiver,  
                                 Button::Listener, 
+                                KeyListener, 
                                 RecordingReceiver, 
                                 LogginListener, 
                                 FeedbackListener
@@ -60,6 +65,8 @@ public:
 
     // Listener interface for buttons
     void buttonClicked (Button* button) override;
+
+    bool keyPressed (const KeyPress &key, Component *originatingComponent) override;
 
     // record listener
     void recordingStarted() override;
@@ -92,6 +99,11 @@ private:
     DinvernoMidiParrot dinvernoParrot{44100};
     DinvernoRandomMidi dinvernoRandomMidi{44100};
     DinvernoRandomEnergy dinvernoRandomEnergy{44100};
+<<<<<<< HEAD
+=======
+    DinvernoPolyMarkov dinvernoPolyMarkov{44100}; 
+    PolyLeadFollow polyLeadFollow{44100};    
+>>>>>>> marks-original-version
     //DinvernoCCMarkov dinvernoPolyMarkov{44100};
     
     DinvernoPolyMarkov dinvernoPolyMarkov{44100};

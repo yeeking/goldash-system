@@ -50,12 +50,16 @@ MainComponent::MainComponent()
     addAndMakeVisible(passwordField);
     addAndMakeVisible(loginButton);
     loginButton.addListener(this);
-    
+
+    addKeyListener(this);
+
+
     // add the login to the improvisers:
     dinvernoParrot.setLogginManager(&loggin);
     dinvernoRandomMidi.setLogginManager(&loggin);
     dinvernoRandomEnergy.setLogginManager(&loggin);
     dinvernoPolyMarkov.setLogginManager(&loggin);
+    polyLeadFollow.setLogginManager(&loggin);
 
    // recordWidget.addRecordingReceiver(this);
    
@@ -68,12 +72,12 @@ MainComponent::MainComponent()
     resetButton.addListener(this);
     
     // disabling these for the Monash June trial
-    //addAndMakeVisible(parrotButton);
-    //addAndMakeVisible(randomButton);
-    //addAndMakeVisible(randomEnergyButton);
-    //addAndMakeVisible(polyButton);
-    
-    // end of disabled buttons
+    addAndMakeVisible(parrotButton);
+    addAndMakeVisible(randomButton);
+    addAndMakeVisible(randomEnergyButton);
+    addAndMakeVisible(polyButton);
+        
+    //end of disabled buttons
 
     addAndMakeVisible(resetButton);
     //addAndMakeVisible(recordWidget);
@@ -91,9 +95,12 @@ MainComponent::MainComponent()
     parrotButton.setColour(TextButton::buttonColourId, 
                           Colours::red);
     
-    currentImproviser = &dinvernoPolyMarkov;
+    //currentImproviser = &dinvernoPolyMarkov;
+    currentImproviser = &polyLeadFollow;
+    
     startTimer(50);
 
+<<<<<<< HEAD
 
     // new feedback buttons
     addAndMakeVisible(fbControls);
@@ -101,11 +108,20 @@ MainComponent::MainComponent()
     fbControls.addFeedbackListener(this->currentImproviser);
 
     loggin.loginToMC(default_username, default_password);
+=======
+   // loggin.loginToMC(default_username, default_password);
+>>>>>>> marks-original-version
   
 }
 
 MainComponent::~MainComponent()
 {
+    // send all notes off
+    for (auto i = 1; i < 17; i++)
+    {
+        MidiMessage msg = MidiMessage::allNotesOff(i);
+        sendMidi(msg);
+    }
     // this is needed to properly release the lookandfeel object.
     setLookAndFeel (nullptr);
     // This shuts down the audio device and clears the audio source.
@@ -169,6 +185,7 @@ void MainComponent::buttonClicked (Button* button)
 
         sendAllNotesOff();
         currentImproviser = &dinvernoParrot;
+        
         parrotButton.setColour(TextButton::buttonColourId, 
                           Colours::red);
     }
@@ -195,7 +212,9 @@ void MainComponent::buttonClicked (Button* button)
         resetButtonColours();
 
         sendAllNotesOff();
-        currentImproviser = &dinvernoPolyMarkov;
+        currentImproviser = &polyLeadFollow;
+        
+        //currentImproviser = &dinvernoPolyMarkov;
          polyButton.setColour(TextButton::buttonColourId, 
                           Colours::red);
     }
@@ -303,7 +322,9 @@ void MainComponent::receiveMidi(const MidiMessage& message)
     // parse it and add it to the model
     // if we are in the right mode!
     //std::cout << "MainCom: receive MIDI " << message.getDescription() << std::endl;
-    currentImproviser->addMidiMessage(message);
+    if (message.isNoteOnOrOff()){
+        currentImproviser->addMidiMessage(message);
+    }
 }
 
 
@@ -343,6 +364,7 @@ void MainComponent::recordingComplete(File audioFile)
     });
 }  
 
+<<<<<<< HEAD
 void MainComponent::feedback(FeedbackEventType fbEvent)
 {
     std::cout << "MainComponent::feedback" << std::endl;
@@ -363,6 +385,37 @@ void MainComponent::feedback(FeedbackEventType fbEvent)
             break;  
     }
 }
+=======
+bool MainComponent::keyPressed (const KeyPress &key, Component *originatingComponent)
+{
+    DBG("MainComponent::keyPressed...." << key.getKeyCode());
+    switch(key.getKeyCode()){
+        case 49: // 1
+            DBG("MainComponent::keyPressed. LEADING ");
+            polyLeadFollow.lead();
+            polyButton.setButtonText("LEADING");
+           polyButton.setColour(TextButton::buttonColourId, 
+                          Colours::orange);
+                        
+>>>>>>> marks-original-version
 
+            break;
+        case 50: // 2
+            DBG("MainComponent::keyPressed. FOLLOWING22 ");
+            polyLeadFollow.follow();
+            polyButton.setButtonText("FOLLOWING");
+           
+           polyButton.setColour(TextButton::buttonColourId, 
+                          Colours::green);
+         
+            break;
+        case 51: // 3
+            //polyLeadFollow.reset();
+            break;
+            
+    }
+    return true;
+   
+}
 
 

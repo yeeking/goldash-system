@@ -4,10 +4,17 @@
               jucerFormatVersion="1">
   <MAINGROUP id="cGttSq" name="dinverno_system">
     <GROUP id="{5D1A3CD8-A23B-4F86-E8E5-728180E9EB43}" name="Source">
+<<<<<<< HEAD
       <FILE id="uIv808" name="FeedbackControls.cpp" compile="1" resource="0"
             file="Source/FeedbackControls.cpp"/>
       <FILE id="saWGlH" name="FeedbackControls.h" compile="0" resource="0"
             file="Source/FeedbackControls.h"/>
+=======
+      <FILE id="obdUIg" name="PolyLeadFollow.h" compile="0" resource="0"
+            file="Source/PolyLeadFollow.h"/>
+      <FILE id="hUU2J7" name="DinvernoCCMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoCCMarkov.cpp"/>
+>>>>>>> marks-original-version
       <FILE id="SVs29W" name="MusicCircleClient.cpp" compile="1" resource="0"
             file="Source/MusicCircleClient.cpp"/>
       <FILE id="Lbule0" name="MusicCircleClient.h" compile="0" resource="0"
@@ -41,6 +48,8 @@
       <FILE id="yj6gFL" name="MidiSetupComponent.h" compile="1" resource="0"
             file="Source/MidiSetupComponent.h"/>
       <FILE id="jW7wSu" name="MainComponent.h" compile="1" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="UlorHI" name="PolyLeadFollow.cpp" compile="1" resource="0"
+            file="Source/PolyLeadFollow.cpp"/>
       <FILE id="aGquX8" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="vr4w1I" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
