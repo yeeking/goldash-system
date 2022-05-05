@@ -42,6 +42,7 @@ class ChordDetector{
     std::vector<int> notesForReturn;
     std::vector<std::pair<int,int>> storedCCs;
     std::vector<std::pair<int,int>> ccsForReturn;
+    
      
     double lastNoteTimeInSamples;
     double sampleRate;

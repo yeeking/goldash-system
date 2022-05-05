@@ -107,7 +107,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
   if (message.isNoteOn()){
   if (!inLeadMode && random.nextDouble() > 0.95) reset();
 
-    std::string mgsDesc = message.getDescription().toStdString();
+    //std::string mgsDesc = message.getDescription().toStdString();
     // if (isReadyToLog())
     //   loggin->logData("PolyMarkov", "Adding midi message: " + mgsDesc);
     // // compared to the mono markov, we check times of the notes
@@ -131,6 +131,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       // only add it if its not too long
       if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
       {
+        DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
         interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
       }
       
@@ -139,7 +140,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
   }
   if (message.isNoteOff()){
     addNoteOffToModel(message.getNoteNumber());
-    std::string mgsDesc = message.getDescription().toStdString();
+    //std::string mgsDesc = message.getDescription().toStdString();
     // if (isReadyToLog())
     //   loggin->logData("PolyMarkov", "Adding midi message off the model: " + mgsDesc);
   }  

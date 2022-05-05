@@ -49,7 +49,6 @@ MidiBuffer PolyLeadFollow::getPendingMidiMessages()
   return currentPoly->getPendingMidiMessages();
 }     
 
-
 void PolyLeadFollow::lead()
 {
   currentPoly = &longTermMarkov;
@@ -59,4 +58,3 @@ void PolyLeadFollow::follow()
 {
   currentPoly = &shortTermMarkov;
 }
-

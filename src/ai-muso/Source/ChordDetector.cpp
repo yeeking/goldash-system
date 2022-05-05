@@ -30,7 +30,7 @@ void ChordDetector::reset()
 
 void ChordDetector::notePlayed(int note, double timeInSamples)
 {
-  if (timeInSamples - lastNoteTimeInSamples > (sampleRate / 16)) // 1/8 of a econd
+  if (timeInSamples - lastNoteTimeInSamples > (sampleRate / 16)) // 1/16 of a econd
   {
     // individual note
     // prepare the previously collected notes for returning 

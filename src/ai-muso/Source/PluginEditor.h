@@ -51,6 +51,9 @@ private:
     juce::TextButton followModeBtn;
     juce::TextButton resetModeBtn;
     
+    signed int midiInFlash{0};
+    signed int midiOutFlash{0};
+    
     
     void setupUI();
     
