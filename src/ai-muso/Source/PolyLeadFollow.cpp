@@ -23,16 +23,18 @@ void PolyLeadFollow::tick()
 
 void PolyLeadFollow::addMidiMessage(const MidiMessage& msg)
 {
-  DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
-  
-  currentPoly->addMidiMessage(msg);
-  noteCounter ++;
-  if (noteCounter > 64)
-  {
-    DBG("PolyLeadFollow::addMidiMessage resetting short term model");
-  
-    shortTermMarkov.reset();
-    noteCounter = 0;
+  //DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
+  // only want notes for now 
+  if (msg.isNoteOn() || msg.isNoteOff()){
+    currentPoly->addMidiMessage(msg);
+    noteCounter ++;
+    if (noteCounter > 64)
+    {
+      DBG("PolyLeadFollow::addMidiMessage resetting short term model");
+    
+      shortTermMarkov.reset();
+      noteCounter = 0;
+    }
   }
 }
 

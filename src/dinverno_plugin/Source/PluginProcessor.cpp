@@ -273,6 +273,7 @@ void Dinverno_pluginAudioProcessor::setImprovisersLoginManager(LogginManager *lo
 
 void Dinverno_pluginAudioProcessor::timerCallback()
 {
+    DBG("Dinverno_pluginAudioProcessor::timerCallback called");
     tickCurrentImproviser();
 }
 

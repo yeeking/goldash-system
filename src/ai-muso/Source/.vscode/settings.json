@@ -56,13 +56,6 @@
         "random": "cpp",
         "set": "cpp",
         "string": "cpp",
-        "bit": "cpp",
-        "condition_variable": "cpp",
-        "list": "cpp",
-        "unordered_set": "cpp",
-        "future": "cpp",
-        "mutex": "cpp",
-        "shared_mutex": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "Enabled"
+        "*.mm": "cpp"
+    }
 }

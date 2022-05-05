@@ -49,6 +49,8 @@ private:
     juce::TextButton leadModeBtn;
     juce::TextButton interactModeBtn;
     juce::TextButton followModeBtn;
+    juce::TextButton resetModeBtn;
+    
     
     void setupUI();
     

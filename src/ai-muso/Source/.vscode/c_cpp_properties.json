@@ -2,22 +2,21 @@
     "configurations": [
         {
             "name": "Linux",
-
             "includePath": [
-                "${workspaceFolder}/**", 
-                "/home/matthewyk/src/creative-ai/goldash-system/src/ai-muso/JuceLibraryCode",
-                "/home/matthewyk/src/JUCE/current/modules/"
+                "${workspaceFolder}/*",
+                "${workspaceFolder}/**",
+                "/home/matthewyk/src/JUCE/current/modules/",
+                "/home/matthewyk/src/creative-ai/goldash-system/src/ai-muso/JuceLibraryCode"
             ],
-
             "browse": {
                 "limitSymbolsToIncludedHeaders": false,
                 "path": [
                     "${workspaceFolder}/**",
-                    "/home/matthewyk/src/JUCE/current/modules/**" 
+                    "/home/matthewyk/src/JUCE/current/modules/**"
                 ]
             },
-           "defines": [],
-            "compilerPath": "/usr/bin/clang-6.0",
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"

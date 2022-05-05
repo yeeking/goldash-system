@@ -22,15 +22,23 @@ AimusoAudioProcessor::AimusoAudioProcessor()
                        )
 #endif
 {
-
+    // calculate 
+    threadedImprovisor.setImproviser(currentImproviser);
     threadedImprovisor.startThread();
-
+    // call tick on the improviser every 50ms
+    startTimer(50);
 }
 
 AimusoAudioProcessor::~AimusoAudioProcessor()
 {
     threadedImprovisor.stopThread(30);
+    stopTimer();
 
+}
+
+void AimusoAudioProcessor::timerCallback()
+{
+    currentImproviser->tick();
 }
 
 //==============================================================================
@@ -135,7 +143,9 @@ bool AimusoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) c
 #endif
 
 void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
-{
+{   
+    // if (midiMessages.getNumEvents() > 0)
+    //     DBG("AimusoAudioProcessor::processBlock " + std::to_string(midiMessages.getNumEvents()));
     
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -146,26 +156,20 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     
     juce::MidiBuffer generatedMidi{};
     
-    //if (improviserReady){
-    if(true){
+    threadedImprovisor.setMidiBuffer(midiMessages);
         
-        threadedImprovisor.setMidiBuffer(midiMessages);
-           
-        // Get Midi Messages from Improvisor: add to buffer if it is time to send
-        int sampleNumber;
-        //currentImproviser->tick();
-        //juce::MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
-        juce::MidiBuffer toSend{};
+    // Get Midi Messages from Improvisor: add to buffer if it is time to send
+    int sampleNumber;
+    //currentImproviser->tick();
+    juce::MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
 
-        if (toSend.getNumEvents() > 0){
-            for (const auto meta : toSend)
-            {
-                auto msg = meta.getMessage();
-                msg.setTimeStamp(juce::Time::getApproximateMillisecondCounter() * 0.001);
-                generatedMidi.addEvent(msg, 0);
-            }
+    if (toSend.getNumEvents() > 0){
+        for (const auto meta : toSend)
+        {
+            auto msg = meta.getMessage();
+            msg.setTimeStamp(juce::Time::getApproximateMillisecondCounter() * 0.001);
+            generatedMidi.addEvent(msg, 0);
         }
-         
     }
     
     if (clearMidiBuffer) {

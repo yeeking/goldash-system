@@ -59,8 +59,6 @@ void DinvernoPolyMarkov::reset()
 // to the pendingevents list
 void DinvernoPolyMarkov::tick()
 {
-  // for now, just play a note every second
-  // with pitch and length from the length model.
   double nowSamples = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate);
   double tDelta = nowSamples - lastTickSamples;
   accumTimeDelta += tDelta;
