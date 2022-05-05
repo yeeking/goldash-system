@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="PTS4fU" name="ai-muso" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
               pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginProducesMidiOut,pluginWantsMidiIn"
               bundleIdentifier="uk.ac.gold" pluginManufacturer="Goldsmiths and Sensilab"
               pluginManufacturerCode="Gold" pluginName="ai-muso" pluginDesc="AI modelled MIDI generator"
               pluginVST3Category="Generator" pluginRTASCategory="2048">
   <MAINGROUP id="B3MCN5" name="ai-muso">
     <GROUP id="{A6E698E2-6FAF-6C05-39B7-264485FC5C59}" name="Source">
+      <FILE id="gcbprN" name="FeedbackControls.h" compile="0" resource="0"
+            file="Source/FeedbackControls.h"/>
+      <FILE id="nkM8L0" name="FeedbackControls.cpp" compile="1" resource="0"
+            file="Source/FeedbackControls.cpp"/>
+      <FILE id="Fynzx8" name="ChordDetector.h" compile="0" resource="0" file="Source/ChordDetector.h"/>
+      <FILE id="peeIBz" name="ChordDetector.cpp" compile="1" resource="0"
+            file="Source/ChordDetector.cpp"/>
+      <FILE id="JkUGcq" name="dinvernoSystem.h" compile="0" resource="0"
+            file="Source/dinvernoSystem.h"/>
+      <FILE id="OXF6J0" name="dinvernoSystem.cpp" compile="1" resource="0"
+            file="Source/dinvernoSystem.cpp"/>
+      <FILE id="ps37bA" name="DinvernoPolyMarkov.cpp" compile="1" resource="0"
+            file="Source/DinvernoPolyMarkov.cpp"/>
+      <FILE id="eLiuln" name="DinvernoRandom.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandom.cpp"/>
+      <FILE id="OcS2q8" name="DinvernoRandomEnergy.cpp" compile="1" resource="0"
+            file="Source/DinvernoRandomEnergy.cpp"/>
+      <FILE id="O661kZ" name="PolyLeadFollow.cpp" compile="1" resource="0"
+            file="Source/PolyLeadFollow.cpp"/>
+      <FILE id="DhNMHF" name="PolyLeadFollow.h" compile="0" resource="0"
+            file="Source/PolyLeadFollow.h"/>
       <FILE id="QENn8c" name="MarkovChain.cpp" compile="1" resource="0" file="Source/MarkovModelCPP/src/MarkovChain.cpp"/>
       <FILE id="V5RrK1" name="MarkovChain.h" compile="0" resource="0" file="Source/MarkovModelCPP/src/MarkovChain.h"/>
       <FILE id="InA3fV" name="MarkovManager.cpp" compile="1" resource="0"

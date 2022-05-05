@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "PolyLeadFollow.h"
 
 //==============================================================================
 /**
@@ -114,7 +115,8 @@ private:
         //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
     };
     
-    ThreadedImprovisor threadedImprovisor;
+    ThreadedImprovisor threadedImprovisor;    
+    PolyLeadFollow polyLeadFollow{44100};    
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AimusoAudioProcessor)
