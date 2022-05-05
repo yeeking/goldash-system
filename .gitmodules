@@ -1,3 +1,6 @@
 [submodule "src/dinverno_system/Source/MarkovModelCPP"]
 	path = src/dinverno_system/Source/MarkovModelCPP
 	url = git@github.com:yeeking/MarkovModelCPP.git
+[submodule "src/ai-muso/Source/MarkovModelCPP"]
+	path = src/ai-muso/Source/MarkovModelCPP
+	url = https://github.com/yeeking/MarkovModelCPP.git

@@ -1,4 +1,4 @@
-/*
+    /*
   ==============================================================================
 
     This file contains the basic framework code for a JUCE plugin processor.
@@ -69,7 +69,6 @@ private:
             while (! threadShouldExit())
             {
                 // Thread actions go here
-                
                 // Lock thread while processing midibuffer
                 processingBuffer.store(true);
                 for (const auto metadata : midiBuffer)

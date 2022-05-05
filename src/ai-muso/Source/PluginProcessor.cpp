@@ -22,10 +22,15 @@ AimusoAudioProcessor::AimusoAudioProcessor()
                        )
 #endif
 {
+
+    threadedImprovisor.startThread();
+
 }
 
 AimusoAudioProcessor::~AimusoAudioProcessor()
 {
+    threadedImprovisor.stopThread(30);
+
 }
 
 //==============================================================================
@@ -142,7 +147,7 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     juce::MidiBuffer generatedMidi{};
     
     //if (improviserReady){
-    if(false){
+    if(true){
         
         threadedImprovisor.setMidiBuffer(midiMessages);
            

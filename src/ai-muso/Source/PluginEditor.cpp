@@ -19,7 +19,7 @@ AimusoAudioProcessorEditor::AimusoAudioProcessorEditor (AimusoAudioProcessor& p)
     setResizable(true, true);
     
     setupUI();
-    
+    DBG("PluginEditor::cons done.");
     
 }
 void AimusoAudioProcessorEditor::setupUI()

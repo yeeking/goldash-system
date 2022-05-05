@@ -8,6 +8,11 @@
               pluginVST3Category="Generator" pluginRTASCategory="2048">
   <MAINGROUP id="B3MCN5" name="ai-muso">
     <GROUP id="{A6E698E2-6FAF-6C05-39B7-264485FC5C59}" name="Source">
+      <FILE id="QENn8c" name="MarkovChain.cpp" compile="1" resource="0" file="Source/MarkovModelCPP/src/MarkovChain.cpp"/>
+      <FILE id="V5RrK1" name="MarkovChain.h" compile="0" resource="0" file="Source/MarkovModelCPP/src/MarkovChain.h"/>
+      <FILE id="InA3fV" name="MarkovManager.cpp" compile="1" resource="0"
+            file="Source/MarkovModelCPP/src/MarkovManager.cpp"/>
+      <FILE id="SbdbzD" name="MarkovManager.h" compile="0" resource="0" file="Source/MarkovModelCPP/src/MarkovManager.h"/>
       <FILE id="i0cJh1" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="asMey3" name="PluginProcessor.h" compile="0" resource="0"
