@@ -34,7 +34,15 @@ public:
                                         startTimeSamples (juce::Time::getMillisecondCounterHiRes() * 0.001 * sampleRate), 
                                         readyToLog{false} {}
     virtual ~DinvernoImproviser() {}
+    /** general purpose tick call this from a thread or timer- would normally call both
+     * updateTick and generateTick
+    */
     virtual void tick() = 0;
+    /** periodically update the model (probably from a thread)*/
+    virtual void updateTick() {}
+    /** periodically generate from the model (probably from a thread) */
+    virtual void generateTick() {}
+    
     virtual void addMidiMessage(const juce::MidiMessage& msg) = 0;
     virtual void reset() = 0;
     virtual juce::MidiBuffer getPendingMidiMessages();
@@ -144,6 +152,9 @@ public:
    DinvernoPolyMarkov(int sampleRate);
    ~DinvernoPolyMarkov();
    virtual void tick() override;
+   virtual void updateTick() override; 
+   virtual void generateTick() override; 
+   
    virtual void addMidiMessage(const juce::MidiMessage& msg) override;
     virtual void reset() override;
     virtual void feedback(FeedbackEventType fbType) override;
@@ -151,13 +162,10 @@ public:
 private:
 /** stores queued updates for the model */
   std::queue<PolyUpdateData> updateQ;
-  /** call this to add an update to the update Q
-   * which means the model will be updated at some point in the
-   * future 
-  */
+  /** adds the sent update to the q of updates*/
   void queueModelUpdate(PolyUpdateData update);
-  /** dequeues and applies all model updates*/
-  void applyQueuedModelUpdates();
+/** calls front to get oldest update then pops it off and applies it to the*/
+  void applyOldestModelUpdate();
 
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
   void addNotesToModel(std::vector<int> notes);

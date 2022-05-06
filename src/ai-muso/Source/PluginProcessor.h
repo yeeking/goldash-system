@@ -62,80 +62,9 @@ private:
     
     bool clearMidiBuffer = false;
     
-    /** this class enables processing of incoming midi in a 
-     * separate thread, instead of doing it in the main audio thread
-     * I am not sure why we do this but maybe it allows 
-     * time consuming elements of midi processing to happen without 
-     * blocking the audio thread. Might do a test where I remove it
-     * and process in the audio/midi thread 
-    */
-    class ThreadedImprovisor : public juce::Thread
-    {
-    public:
-        ThreadedImprovisor() : juce::Thread ("Improvisor Thread") {}
-        
-        void run() override
-        {
-            while (! threadShouldExit())
-            {
-                // Thread actions go here
-                // Lock thread while processing midibuffer
-                processingBuffer.store(true);
-                if (improviser != 0) {
-                    for (const auto metadata : midiBuffer)
-                    {
-                        // Add current midi message to improvisor
-                        auto message = metadata.getMessage();
-                        improviser->addMidiMessage(message);
-                    }
-                    
-                    // Clear processed messages
-                    midiBuffer.clear();
-                }
-                
-                // Unlock thread and wait for next message to process
-                processingBuffer.store(false);
-                wait(-1);
-            }
-        }
-        
-        void setMidiBuffer(juce::MidiBuffer midiMessages){
-            // Thread locked while processing current buffer
-            if(processingBuffer.load())
-                return;  
-            // Thread not locked: add new midi messages for processing
-            if (midiMessages.getNumEvents() > 0) {
-                for (const auto metadata : midiMessages)
-                {
-                    auto message = metadata.getMessage();
-                    const auto time = metadata.samplePosition;
-                    
-                    // Add current midi message to improvisor
-                    midiBuffer.addEvent(message,time);
-                }
-                
-                // Notify thread new data to process
-                notify();
-            }
-        }
-        
-        //float value = 0.0f;
-        juce::MidiBuffer midiBuffer;
-        std::atomic<bool> processingBuffer {false};
-        DinvernoImproviser* improviser{0};
-
-        //DinvernoPolyMarkov dinvernoPolyMarkov{44100};
-    public: 
-        void setImproviser(DinvernoImproviser* improviser)
-        {
-            this->improviser = improviser;
-        }
-    }; // end threadedimproviser class definition
-    
 
 private: // private fields for PluginProcessor
-
-    ThreadedImprovisor threadedImprovisor;
+    //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    
     PolyLeadFollow polyLeadFollow{44100};    
     /** assign the polyleadfollow to the currentImproviser

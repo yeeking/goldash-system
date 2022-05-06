@@ -23,15 +23,16 @@ AimusoAudioProcessor::AimusoAudioProcessor()
 #endif
 {
     // calculate 
-    threadedImprovisor.setImproviser(currentImproviser);
-    threadedImprovisor.startThread();
-    // call tick on the improviser every 50ms
+    // threadedImprovisor.setImproviser(currentImproviser);
+    // threadedImprovisor.startThread();
+    // // call tick on the improviser every 'n'ms
     startTimer(10);
+        
 }
 
 AimusoAudioProcessor::~AimusoAudioProcessor()
 {
-    threadedImprovisor.stopThread(30);
+    //threadedImprovisor.stopThread(30);
     stopTimer();
 
 }
@@ -154,14 +155,18 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
-    juce::MidiBuffer generatedMidi{};
     
-    threadedImprovisor.setMidiBuffer(midiMessages);
+    //threadedImprovisor.setMidiBuffer(midiMessages);
+    for (const auto meta : midiMessages){
+        auto msg = meta.getMessage();
+        currentImproviser->addMidiMessage(msg);
+    }
         
     // Get Midi Messages from Improvisor: add to buffer if it is time to send
     int sampleNumber;
     //currentImproviser->tick();
     juce::MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+    juce::MidiBuffer generatedMidi{};
 
     if (toSend.getNumEvents() > 0){
         for (const auto meta : toSend)

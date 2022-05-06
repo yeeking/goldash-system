@@ -60,7 +60,13 @@ void DinvernoPolyMarkov::reset()
 // to the pendingevents list
 void DinvernoPolyMarkov::tick()
 {
-  double nowSamples = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate);
+  this->generateTick();
+  this->updateTick();
+}
+
+void DinvernoPolyMarkov::generateTick()
+{
+double nowSamples = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate);
   double tDelta = nowSamples - lastTickSamples;
   accumTimeDelta += tDelta;
   double timeSinceLastNoteSeconds = (nowSamples - startTimeSamples - lastNoteOnAtSample) / sampleRate;
@@ -99,8 +105,16 @@ void DinvernoPolyMarkov::tick()
       }
     }
   }
+
+  // now dequeue an update.
+  // do one at a time since the tick will run again soon anyways
   lastTickSamples = nowSamples;
 }
+void DinvernoPolyMarkov::updateTick()
+{
+  this->applyOldestModelUpdate();
+}
+
 
 void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 {
@@ -128,11 +142,14 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       DBG("DinvernoPolyMarkov::addMidiMessage complete. Took samples: " + std::to_string(elapsedSamplesNow - elapsedSamples));
     }
   }
+  // probably we need a chord detector 
+  // for note offs since otherwise we end with chords adding 
+  // > 1entry to the length model 
   if (message.isNoteOff()){
      PolyUpdateData update{
         length:getNoteLengthForModel(message.getNoteNumber()), lengthOnly:true
     };
-    this->queueModelUpdate(update);
+    //this->queueModelUpdate(update);
   }  
 }
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
@@ -224,24 +241,28 @@ void DinvernoPolyMarkov::queueModelUpdate(PolyUpdateData update)
   updateQ.push(update);
   DBG("DinvernoPolyMarkov::queueModelUpdate pending updates " + std::to_string(updateQ.size()));
 }
-/** dequeues and applies all model updates*/
-void DinvernoPolyMarkov::applyQueuedModelUpdates()
+/** dequeues and applies one model update*/
+void DinvernoPolyMarkov::applyOldestModelUpdate()
 {
-  // the gap between this and the previous note was sufficient
-      // to release notes into the model
-      //addNotesToModel(notes);
-      // remember velocity
-      //velocityModel->putEvent(std::to_string(message.getVelocity()));
-      // calculate and remember interonsetinterval
-//      std::cout << "time now " << elapsedSamples << "last on at " << lastNoteOnAtSample << " ioi " << (elapsedSamples - lastNoteOnAtSample) <<  std::endl;; 
-      // // only add it if its not too long
-      // if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
-      // {
-      //   ///DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
-      //   interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
-      // }
+  if (updateQ.size() == 0) return; 
+  DBG("DinvernoPolyMarkov::applyOldestModelUpdate pending updates " + std::to_string(updateQ.size()));
 
-// if length only
-          //lengthModel->putEvent(std::to_string(noteLen));
+  PolyUpdateData update = updateQ.front();
+  updateQ.pop();
+  // now process it 
+  if (update.lengthOnly) {// note off - update length
+    if (update.length > 0) lengthModel->putEvent(std::to_string(update.length));
+  }
+  else{// note on - update pitch, ioi and velocity
+    if (update.notes.size() > 0){
+      addNotesToModel(update.notes);
+      velocityModel->putEvent(std::to_string(update.velocity));
+      if (update.interOnsetTime < sampleRate * 3) {// 3 seconds or less
+          ///DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
+          interOnsetIntervalModel->putEvent(std::to_string(update.interOnsetTime));
+      }
+    }
+  }
+  DBG("DinvernoPolyMarkov::applyOldestModelUpdate pending updates " + std::to_string(updateQ.size()));
 
 }
