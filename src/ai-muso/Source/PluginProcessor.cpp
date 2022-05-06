@@ -26,20 +26,17 @@ AimusoAudioProcessor::AimusoAudioProcessor()
     // threadedImprovisor.setImproviser(currentImproviser);
     // threadedImprovisor.startThread();
     // // call tick on the improviser every 'n'ms
-    startTimer(10);
-        
+    updateTicker.setImproviser(this->currentImproviser);
+    generateTicker.setImproviser(this->currentImproviser);
+    updateTicker.startTimer(100);
+    generateTicker.startTimer(20);
 }
 
 AimusoAudioProcessor::~AimusoAudioProcessor()
 {
     //threadedImprovisor.stopThread(30);
-    stopTimer();
-
-}
-
-void AimusoAudioProcessor::timerCallback()
-{
-    currentImproviser->tick();
+    updateTicker.stopTimer();
+    generateTicker.stopTimer();
 }
 
 //==============================================================================

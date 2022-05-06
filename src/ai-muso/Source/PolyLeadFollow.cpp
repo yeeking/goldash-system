@@ -18,7 +18,15 @@ PolyLeadFollow::PolyLeadFollow(int sampleRate)
 
 void PolyLeadFollow::tick()
 {
-  currentPoly->tick();
+  
+}
+void PolyLeadFollow::generateTick()
+{
+  currentPoly->generateTick();
+}
+void PolyLeadFollow::updateTick()
+{
+  currentPoly->updateTick();
 }
 
 void PolyLeadFollow::addMidiMessage(const MidiMessage& msg)

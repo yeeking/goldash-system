@@ -17,6 +17,8 @@ class PolyLeadFollow :public DinvernoImproviser
   public: 
     PolyLeadFollow(int sampleRate);
     virtual void tick() override;
+    virtual void generateTick() override;
+    virtual void updateTick() override; 
     virtual void addMidiMessage(const MidiMessage& msg) override;
     virtual void reset() override;
 

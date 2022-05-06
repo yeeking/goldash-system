@@ -14,7 +14,7 @@
 //==============================================================================
 /**
 */
-class AimusoAudioProcessor  : public juce::AudioProcessor, juce::Timer
+class AimusoAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
@@ -54,9 +54,6 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-//    void setCurrentImproviser(DinvernoImproviser* improviser);
-    //==== timer override
-    void timerCallback() override;
 
 private:
     
@@ -64,6 +61,7 @@ private:
     
 
 private: // private fields for PluginProcessor
+
     //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    
     PolyLeadFollow polyLeadFollow{44100};    
@@ -72,5 +70,32 @@ private: // private fields for PluginProcessor
     */
     DinvernoImproviser* currentImproviser{&polyLeadFollow}; 
     //==============================================================================
+
+
+    class UpdateTicker : public juce::Timer
+    {
+        public: 
+        void timerCallback() override {
+            if (improviser != 0) improviser->updateTick();
+            else DBG("UpdateTicker: no improviser. call setImproviser");
+        }
+        void setImproviser(DinvernoImproviser* impro) {improviser = impro;}
+        private:
+        DinvernoImproviser* improviser{0}; 
+    };
+    class GenerateTicker : public juce::Timer
+    {
+        public: 
+        void timerCallback() override {
+            if (improviser != 0) improviser->generateTick();
+            else DBG("GenerateTicker: no improviser. call setImproviser");
+        }        
+        void setImproviser(DinvernoImproviser* impro) {improviser = impro;}
+        private:
+        DinvernoImproviser* improviser{0}; 
+    };
+    UpdateTicker updateTicker{};
+    GenerateTicker generateTicker{};
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AimusoAudioProcessor)
 };
