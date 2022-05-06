@@ -66,3 +66,9 @@ void PolyLeadFollow::follow()
 {
   currentPoly = &shortTermMarkov;
 }
+
+void PolyLeadFollow::setQuantisationMs(double ms)
+{
+  shortTermMarkov.setQuantisationMs(ms);
+  longTermMarkov.setQuantisationMs(ms);
+}

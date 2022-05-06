@@ -212,9 +212,15 @@ void AimusoAudioProcessor::setStateInformation (const void* data, int sizeInByte
     // whose contents will have been created by the getStateInformation() call.
 }
 
+void AimusoAudioProcessor::setQuantisationMs(double ms)
+{
+    polyLeadFollow.setQuantisationMs(ms);
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new AimusoAudioProcessor();
 }
+

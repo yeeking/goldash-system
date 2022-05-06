@@ -32,12 +32,12 @@ void ChordDetector::reset()
 void ChordDetector::notePlayed(int note, double timeInSamples)
 {
  // DBG("ChordDetector::notePlayed: notes " + std::to_string(storedNotes.size()));
-  double maxElapsed = sampleRate / 20; // 1/25 seems to work reasonably well for chords
+  double maxElapsed = sampleRate / 40; // 1/40 seems to work reasonably well for chords
   double elapsed = timeInSamples - lastNoteTimeInSamples;
-  DBG("ChordDetector::notePlayed elapsed " + std::to_string(elapsed) + " max " + std::to_string(maxElapsed));
+  //DBG("ChordDetector::notePlayed elapsed " + std::to_string(elapsed) + " max " + std::to_string(maxElapsed));
   if (elapsed > maxElapsed) // no longer a chord as too long as passed between notes
   {
-    DBG("ChordDetector::notePlayed: chord ends " + std::to_string(storedNotes.size()));
+    //DBG("ChordDetector::notePlayed: chord ends " + std::to_string(storedNotes.size()));
 
     // individual note
     // prepare the previously collected notes for returning 

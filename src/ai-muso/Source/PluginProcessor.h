@@ -54,6 +54,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    /** sets the quantisation on the improvisers in ms */
+    void setQuantisationMs(double ms);
 
 private:
     

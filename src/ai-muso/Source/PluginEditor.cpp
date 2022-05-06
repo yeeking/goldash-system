@@ -47,6 +47,9 @@ void AimusoAudioProcessorEditor::setupUI()
     addAndMakeVisible(quantiseLabel);
     quantiseLabel.setText("QUANT", juce::NotificationType::dontSendNotification);
     addAndMakeVisible(quantiseSelector);
+    quantiseSelector.setRange(0, 250, 10);
+    quantiseSelector.setTextValueSuffix("ms");
+    quantiseSelector.addListener(this);
     
     // group for mode buttons
     //addAndMakeVisible(modeBox);
@@ -124,4 +127,12 @@ void AimusoAudioProcessorEditor::resized()
     interactModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
     xPos += colWidth;
     followModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
+}
+
+
+void AimusoAudioProcessorEditor::sliderValueChanged(Slider* slider)
+{
+    if (slider == &this->quantiseSelector)
+        audioProcessor.setQuantisationMs(slider->getValue());
+    
 }

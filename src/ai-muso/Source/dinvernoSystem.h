@@ -42,6 +42,8 @@ public:
     virtual void updateTick() {}
     /** periodically generate from the model (probably from a thread) */
     virtual void generateTick() {}
+    /** set quanitisation in ms. comes with a default empty implementation*/
+    virtual void setQuantisationMs(double msD) {} 
     
     virtual void addMidiMessage(const juce::MidiMessage& msg) = 0;
     virtual void reset() = 0;
@@ -154,6 +156,8 @@ public:
    virtual void tick() override;
    virtual void updateTick() override; 
    virtual void generateTick() override; 
+   virtual void setQuantisationMs(double ms) override; 
+
    
    virtual void addMidiMessage(const juce::MidiMessage& msg) override;
     virtual void reset() override;
@@ -184,6 +188,8 @@ private:
   double accumTimeDelta;
   double timeBeforeNextNote;
   double lastNoteOnAtSample;
+  /** used to round off length and ioi values ignored if zero*/
+  int quantisationSamples{0}; 
   std::map<int,double> noteOnTimesSamples;
 
   // MarkovManager followPitchModel{}; // pitches of notes
@@ -212,6 +218,14 @@ private:
 
 class ImproviserUtils {
   public:
+static int round(int val, int quant)
+{
+  int a = val % quant;
+  int z = val - a;
+  if (z == 0) return quant;
+  if (a < quant / 2) return z;
+  else return z + quant;
+}
 static std::vector<std::string> tokenise(const std::string& input, char sep)
 {
   std::vector<std::string> vec;

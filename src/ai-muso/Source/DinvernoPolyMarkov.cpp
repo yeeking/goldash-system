@@ -256,7 +256,14 @@ void DinvernoPolyMarkov::applyOldestModelUpdate()
   // now process it 
   if (update.lengthOnly) {// note off - update length
     //DBG("DinvernoPolyMarkov::applyOldestModelUpdate len  " << update.length) ;
-    if (update.length > 0) lengthModel->putEvent(std::to_string(update.length));
+    if (update.length > 0) {
+      // apply quaunt
+      if (this->quantisationSamples != 0){
+        DBG("DinvernoPolyMarkov::applyOldestModelUpdate quanting with "<< this->quantisationSamples << " from " << update.length << " to " << ImproviserUtils::round(update.length, this->quantisationSamples));
+        update.length = ImproviserUtils::round(update.length, this->quantisationSamples);
+      }
+      lengthModel->putEvent(std::to_string(update.length));
+    }
   }
   else{// note on - update pitch, ioi and velocity
     if (update.notes.size() > 0){
@@ -264,10 +271,19 @@ void DinvernoPolyMarkov::applyOldestModelUpdate()
       addNotesToModel(update.notes);
       velocityModel->putEvent(std::to_string(update.velocity));
       if (update.interOnsetTime < sampleRate * 3) {// 3 seconds or less
+          // apply quantisation
+          if (this->quantisationSamples != 0){
+            update.interOnsetTime = ImproviserUtils::round(update.interOnsetTime, this->quantisationSamples);
+          }
           interOnsetIntervalModel->putEvent(std::to_string(update.interOnsetTime));
       }
     }
   }
   //DBG("DinvernoPolyMarkov::applyOldestModelUpdate pending updates " + std::to_string(updateQ.size()));
 
+}
+
+void DinvernoPolyMarkov::setQuantisationMs(double msD)
+{
+  this->quantisationSamples = (int) (msD * 0.001 * sampleRate);
 }

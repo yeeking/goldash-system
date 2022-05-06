@@ -14,7 +14,8 @@
 //==============================================================================
 /**
 */
-class AimusoAudioProcessorEditor  : public juce::AudioProcessorEditor
+class AimusoAudioProcessorEditor  : public juce::AudioProcessorEditor, 
+                                           juce::Slider::Listener
 {
 public:
     AimusoAudioProcessorEditor (AimusoAudioProcessor&);
@@ -23,6 +24,9 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    /** respond to the sliders*/
+    void sliderValueChanged(Slider* slider) override; 
         
 private:
     // This reference is provided as a quick way for your editor to
