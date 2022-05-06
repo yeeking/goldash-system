@@ -50,7 +50,7 @@ void DinvernoPolyMarkov::reset()
     interOnsetIntervalModel->reset();
 
     chordDetector.reset();
-  
+
 }
 
 
@@ -115,39 +115,24 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
     // see if the chord detector has anything for us
     std::vector<int> notes = chordDetector.getReadyNotes();
     if (notes.size() > 0){
-      // now we are going put the model update request on a Q
-      // 
+      // Q the update 
+      int interOnsetInterval = elapsedSamples - lastNoteOnAtSample;
+      PolyUpdateData update{
+        notes, message.getVelocity(), interOnsetInterval, 0, false
+      };
+      this->queueModelUpdate(update);
 
-
-      // the gap between this and the previous note was sufficient
-      // to release notes into the model
-      addNotesToModel(notes);
-      // remember velocity
-      velocityModel->putEvent(std::to_string(message.getVelocity()));
-      // calculate and remember interonsetinterval
-//      std::cout << "time now " << elapsedSamples << "last on at " << lastNoteOnAtSample << " ioi " << (elapsedSamples - lastNoteOnAtSample) <<  std::endl;; 
-      double interOnsetInterval = elapsedSamples - lastNoteOnAtSample;
-      // only add it if its not too long
-      if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
-      {
-        ///DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
-        interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
-      }
-      
       lastNoteOnAtSample = elapsedSamples; 
-
       // test: how long did it take?
       double elapsedSamplesNow  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
       DBG("DinvernoPolyMarkov::addMidiMessage complete. Took samples: " + std::to_string(elapsedSamplesNow - elapsedSamples));
-
-
     }
   }
   if (message.isNoteOff()){
-    addNoteOffToModel(message.getNoteNumber());
-    //std::string mgsDesc = message.getDescription().toStdString();
-    // if (isReadyToLog())
-    //   loggin->logData("PolyMarkov", "Adding midi message off the model: " + mgsDesc);
+     PolyUpdateData update{
+        length:getNoteLengthForModel(message.getNoteNumber()), lengthOnly:true
+    };
+    this->queueModelUpdate(update);
   }  
 }
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)
@@ -178,12 +163,12 @@ std::vector<int> DinvernoPolyMarkov::markovStateToNotes(state_single n_state)
 }
 
 
-void DinvernoPolyMarkov::addNoteOffToModel(int note)
+int DinvernoPolyMarkov::getNoteLengthForModel(int note)
 {
     double noteStart = getNoteOnTimeSamples(note);
     int elapsedSamples  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
     int noteLen = elapsedSamples - noteStart;
-    lengthModel->putEvent(std::to_string(noteLen));
+    return noteLen;
 }
 
 double DinvernoPolyMarkov::getNoteOnTimeSamples(int note)
@@ -233,3 +218,30 @@ void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
     }
 }
 
+
+void DinvernoPolyMarkov::queueModelUpdate(PolyUpdateData update)
+{
+  updateQ.push(update);
+  DBG("DinvernoPolyMarkov::queueModelUpdate pending updates " + std::to_string(updateQ.size()));
+}
+/** dequeues and applies all model updates*/
+void DinvernoPolyMarkov::applyQueuedModelUpdates()
+{
+  // the gap between this and the previous note was sufficient
+      // to release notes into the model
+      //addNotesToModel(notes);
+      // remember velocity
+      //velocityModel->putEvent(std::to_string(message.getVelocity()));
+      // calculate and remember interonsetinterval
+//      std::cout << "time now " << elapsedSamples << "last on at " << lastNoteOnAtSample << " ioi " << (elapsedSamples - lastNoteOnAtSample) <<  std::endl;; 
+      // // only add it if its not too long
+      // if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
+      // {
+      //   ///DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
+      //   interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
+      // }
+
+// if length only
+          //lengthModel->putEvent(std::to_string(noteLen));
+
+}

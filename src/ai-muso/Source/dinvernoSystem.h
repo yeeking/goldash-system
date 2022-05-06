@@ -16,7 +16,7 @@
 //#include "LogginManager.h"
 //#include "MusicCircleClient.h"
 #include "FeedbackControls.h"
-
+#include <queue>
 #pragma once
 
 /**
@@ -126,7 +126,20 @@ private:
   MarkovManager lengthModel; 
 };
 
+
+
 class DinvernoPolyMarkov : public DinvernoImproviser {
+/** data needed when adding an observation to the 
+ * polymarkov model: pitch, velocity and length
+ * if lengthOnly, just add to the length model
+*/
+struct PolyUpdateData{
+  std::vector<int> notes{};
+  int velocity{0};
+  int interOnsetTime{0}; 
+  int length{0};
+  bool lengthOnly{false}; 
+};
 public:
    DinvernoPolyMarkov(int sampleRate);
    ~DinvernoPolyMarkov();
@@ -136,10 +149,20 @@ public:
     virtual void feedback(FeedbackEventType fbType) override;
 
 private:
+/** stores queued updates for the model */
+  std::queue<PolyUpdateData> updateQ;
+  /** call this to add an update to the update Q
+   * which means the model will be updated at some point in the
+   * future 
+  */
+  void queueModelUpdate(PolyUpdateData update);
+  /** dequeues and applies all model updates*/
+  void applyQueuedModelUpdates();
+
 /**add a vector of notes to the model. If it is a chord, there will be > 1 note*/
   void addNotesToModel(std::vector<int> notes);
-  /** add note offs, used to build the note length model */
-  void addNoteOffToModel(int note);
+  /** calculate the length for the length mode of the sent note */
+  int getNoteLengthForModel(int note);
   /** helper function to convert a vector of notes into a state string */
   state_single notesToMarkovState(std::vector<int> notes);
   /** does the opposite of notesToMarkovState - converts a state back to a vector */
@@ -176,6 +199,7 @@ private:
   juce::Random random{};
 
   ChordDetector chordDetector;
+
 };
 
 class ImproviserUtils {
