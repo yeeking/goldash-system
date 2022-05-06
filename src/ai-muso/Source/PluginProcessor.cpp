@@ -217,10 +217,27 @@ void AimusoAudioProcessor::setQuantisationMs(double ms)
     polyLeadFollow.setQuantisationMs(ms);
 }
 
+void AimusoAudioProcessor::leadMode()
+{
+    polyLeadFollow.lead();
+}
+
+void AimusoAudioProcessor::followMode()
+{
+    polyLeadFollow.follow();
+}
+
+void AimusoAudioProcessor::resetModels()
+{
+    polyLeadFollow.reset();
+}
+
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new AimusoAudioProcessor();
 }
+
 

@@ -54,15 +54,20 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+
+    //==== custom stuff relating to controlling the algorithms ///
     /** sets the quantisation on the improvisers in ms */
     void setQuantisationMs(double ms);
-
-private:
-    
-    bool clearMidiBuffer = false;
-    
+    /** set the improviser to lead mode */
+    void leadMode();
+    /** set the improviser to follow mode */
+    void followMode(); 
+    /** clears the memories on all the models*/   
+    void resetModels();
 
 private: // private fields for PluginProcessor
+
+    bool clearMidiBuffer = false;
 
     //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    

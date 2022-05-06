@@ -259,7 +259,6 @@ void DinvernoPolyMarkov::applyOldestModelUpdate()
     if (update.length > 0) {
       // apply quaunt
       if (this->quantisationSamples != 0){
-        DBG("DinvernoPolyMarkov::applyOldestModelUpdate quanting with "<< this->quantisationSamples << " from " << update.length << " to " << ImproviserUtils::round(update.length, this->quantisationSamples));
         update.length = ImproviserUtils::round(update.length, this->quantisationSamples);
       }
       lengthModel->putEvent(std::to_string(update.length));

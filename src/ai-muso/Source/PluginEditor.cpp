@@ -55,10 +55,19 @@ void AimusoAudioProcessorEditor::setupUI()
     //addAndMakeVisible(modeBox);
     addAndMakeVisible(leadModeBtn);
     leadModeBtn.setButtonText("Algo lead");
-    addAndMakeVisible(interactModeBtn);
-    interactModeBtn.setButtonText("Algo interact");
+    leadModeBtn.addListener(this);
+
+    // addAndMakeVisible(interactModeBtn);
+    // interactModeBtn.setButtonText("Algo interact");
+    // interactModeBtn.addListener(this);
+
     addAndMakeVisible(followModeBtn);
     followModeBtn.setButtonText("Algo follow");
+    followModeBtn.addListener(this);
+
+    addAndMakeVisible(resetModelBtn);
+    resetModelBtn.setButtonText("Reset model");
+    resetModelBtn.addListener(this);
 }
 
 AimusoAudioProcessorEditor::~AimusoAudioProcessorEditor()
@@ -124,9 +133,13 @@ void AimusoAudioProcessorEditor::resized()
     yPos += rowHeight;
     leadModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
     xPos += colWidth;
-    interactModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
-    xPos += colWidth;
     followModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
+    xPos += colWidth;
+    interactModeBtn.setBounds(xPos, yPos, colWidth, rowHeight);
+    
+    xPos += colWidth;
+    resetModelBtn.setBounds(xPos, yPos, colWidth, rowHeight);
+    
 }
 
 
@@ -135,4 +148,28 @@ void AimusoAudioProcessorEditor::sliderValueChanged(Slider* slider)
     if (slider == &this->quantiseSelector)
         audioProcessor.setQuantisationMs(slider->getValue());
     
+}
+
+
+void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
+{
+    //juce::Colour bg = getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId);
+    followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+    leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+    interactModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+    
+
+    if (btn == &this->followModeBtn){
+        followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+        audioProcessor.followMode();
+    }
+    if (btn == &this->leadModeBtn){
+        leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+        audioProcessor.leadMode(); 
+    } 
+    if (btn == &this->resetModelBtn){
+        audioProcessor.resetModels();
+        leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+        audioProcessor.leadMode(); 
+    }
 }

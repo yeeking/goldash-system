@@ -15,7 +15,8 @@
 /**
 */
 class AimusoAudioProcessorEditor  : public juce::AudioProcessorEditor, 
-                                           juce::Slider::Listener
+                                           juce::Slider::Listener, 
+                                           juce::Button::Listener
 {
 public:
     AimusoAudioProcessorEditor (AimusoAudioProcessor&);
@@ -26,7 +27,9 @@ public:
     void resized() override;
 
     /** respond to the sliders*/
-    void sliderValueChanged(Slider* slider) override; 
+    void sliderValueChanged(Slider* slider) override;
+    /** respond to the buttons*/
+    void buttonClicked(Button* button) override;  
         
 private:
     // This reference is provided as a quick way for your editor to
@@ -53,7 +56,7 @@ private:
     juce::TextButton leadModeBtn;
     juce::TextButton interactModeBtn;
     juce::TextButton followModeBtn;
-    juce::TextButton resetModeBtn;
+    juce::TextButton resetModelBtn;
     
     void setupUI();
     
