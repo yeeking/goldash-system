@@ -12,19 +12,27 @@
 
 DinvernoPolyMarkov::DinvernoPolyMarkov(int sampleRate) : 
               chordDetector(ChordDetector{sampleRate}), 
-              inLeadMode{true}, 
+              //inLeadMode{true}, 
               DinvernoImproviser(sampleRate)
 {
   lastTickSamples = 0;
   accumTimeDelta = 0;
   timeBeforeNextNote = 0;
   lastNoteOnAtSample = 0;
-  
-  gotoLeadMode();
+  pitchModel = new MarkovManager(); // pitches of notes
+  lengthModel = new MarkovManager();  // length of notes
+  velocityModel = new MarkovManager(); // loudness of notes
+  interOnsetIntervalModel = new MarkovManager(); // time between note onts
+
+ // gotoLeadMode();
 
 }
 DinvernoPolyMarkov::~DinvernoPolyMarkov()
 {
+  delete pitchModel; // pitches of notes
+  delete lengthModel;  // length of notes
+  delete velocityModel; // loudness of notes
+  delete interOnsetIntervalModel; // time between note onts
 
 }
 
@@ -35,21 +43,14 @@ void DinvernoPolyMarkov::reset()
     pendingMessages.clear();
     // send all notes off
     pendingMessages.addEvent(MidiMessage::allNotesOff(1), 0);
-    // reset leaders and followers: 
-    followPitchModel.reset(); // pitches of notes
-    followLengthModel.reset();  // length of notes
-    followVelocityModel.reset(); // loudness of notes
-    followInterOnsetIntervalModel.reset(); // time between note onts
 
-    leadPitchModel.reset(); // pitches of notes
-    leadLengthModel.reset();  // length of notes
-    leadVelocityModel.reset(); // loudness of notes
-    leadInterOnsetIntervalModel.reset(); // time between note onts
-    
+    pitchModel->reset();
+    lengthModel->reset();
+    velocityModel->reset();
+    interOnsetIntervalModel->reset();
+
     chordDetector.reset();
-
-    // if (isReadyToLog())
-    //   loggin->logData("PolyMarkov", "Reset applied.");
+  
 }
 
 
@@ -105,21 +106,19 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
 {
 
   if (message.isNoteOn()){
-  if (!inLeadMode && random.nextDouble() > 0.95) reset();
-
-    //std::string mgsDesc = message.getDescription().toStdString();
-    // if (isReadyToLog())
-    //   loggin->logData("PolyMarkov", "Adding midi message: " + mgsDesc);
-    // // compared to the mono markov, we check times of the notes
-    // here not in addNotesToModel as the chord detector can 
-    // delay the processing of notes
-    double elapsedSamples  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
+  //if (!inLeadMode && random.nextDouble() > 0.95) reset();
+    // how long since we started running the algorithm?
+    double elapsedSamples  = getElapsedTimeSamples();//(Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
     noteOnTimesSamples[message.getNoteNumber()] = elapsedSamples;
     // now tell the chord detector about the note
-    chordDetector.notePlayed(message.getNoteNumber(), getElapsedTimeSamples());
+    chordDetector.notePlayed(message.getNoteNumber(), elapsedSamples);
     // see if the chord detector has anything for us
     std::vector<int> notes = chordDetector.getReadyNotes();
     if (notes.size() > 0){
+      // now we are going put the model update request on a Q
+      // 
+
+
       // the gap between this and the previous note was sufficient
       // to release notes into the model
       addNotesToModel(notes);
@@ -131,11 +130,17 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       // only add it if its not too long
       if (interOnsetInterval < sampleRate * 3) // 3 seconds or less
       {
-        DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
+        ///DBG("DinvernoPolyMarkov::addMidiMessage IOI " + std::to_string(interOnsetInterval));
         interOnsetIntervalModel->putEvent(std::to_string(interOnsetInterval));
       }
       
       lastNoteOnAtSample = elapsedSamples; 
+
+      // test: how long did it take?
+      double elapsedSamplesNow  = (Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
+      DBG("DinvernoPolyMarkov::addMidiMessage complete. Took samples: " + std::to_string(elapsedSamplesNow - elapsedSamples));
+
+
     }
   }
   if (message.isNoteOff()){
@@ -215,34 +220,16 @@ void DinvernoPolyMarkov::feedback(FeedbackEventType fbType)
             break;
         case FeedbackEventType::positive:
             pitchModel->givePositiveFeedback();             
-            leadLengthModel.givePositiveFeedback();
+            lengthModel->givePositiveFeedback();
             velocityModel->givePositiveFeedback(); 
             interOnsetIntervalModel->givePositiveFeedback(); 
             break;
-        case FeedbackEventType::follow:
-            gotoFollowMode();
-            break;
-        case FeedbackEventType::lead:
-            gotoLeadMode();
-            break;  
+        // case FeedbackEventType::follow:
+        //     gotoFollowMode();
+        //     break;
+        // case FeedbackEventType::lead:
+        //     gotoLeadMode();
+        //     break;  
     }
-}
-
-void DinvernoPolyMarkov::gotoFollowMode()
-{
-    pitchModel = &followPitchModel;
-    lengthModel = &followLengthModel;
-    velocityModel = &followVelocityModel;
-    interOnsetIntervalModel = &followInterOnsetIntervalModel;
-    inLeadMode = false;  
-}
-
-void DinvernoPolyMarkov::gotoLeadMode()
-{
-    pitchModel = &leadPitchModel;
-    lengthModel = &leadLengthModel;
-    velocityModel = &leadVelocityModel;
-    interOnsetIntervalModel = &leadInterOnsetIntervalModel; 
-    inLeadMode = true; 
 }
 

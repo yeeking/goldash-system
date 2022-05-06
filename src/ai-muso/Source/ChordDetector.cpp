@@ -9,6 +9,7 @@
 */
 
 #include "ChordDetector.h"
+#include <JuceHeader.h>
 #include <iostream>
 
 ChordDetector::ChordDetector(int sampleRate) : sampleRate(sampleRate)
@@ -30,8 +31,14 @@ void ChordDetector::reset()
 
 void ChordDetector::notePlayed(int note, double timeInSamples)
 {
-  if (timeInSamples - lastNoteTimeInSamples > (sampleRate / 16)) // 1/16 of a econd
+ // DBG("ChordDetector::notePlayed: notes " + std::to_string(storedNotes.size()));
+  double maxElapsed = sampleRate / 20; // 1/25 seems to work reasonably well for chords
+  double elapsed = timeInSamples - lastNoteTimeInSamples;
+  DBG("ChordDetector::notePlayed elapsed " + std::to_string(elapsed) + " max " + std::to_string(maxElapsed));
+  if (elapsed > maxElapsed) // no longer a chord as too long as passed between notes
   {
+    DBG("ChordDetector::notePlayed: chord ends " + std::to_string(storedNotes.size()));
+
     // individual note
     // prepare the previously collected notes for returning 
     // might be no collected notes, that's fine

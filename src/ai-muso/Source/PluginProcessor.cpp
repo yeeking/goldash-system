@@ -26,7 +26,7 @@ AimusoAudioProcessor::AimusoAudioProcessor()
     threadedImprovisor.setImproviser(currentImproviser);
     threadedImprovisor.startThread();
     // call tick on the improviser every 50ms
-    startTimer(50);
+    startTimer(10);
 }
 
 AimusoAudioProcessor::~AimusoAudioProcessor()
