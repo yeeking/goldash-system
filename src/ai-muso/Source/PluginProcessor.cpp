@@ -156,7 +156,8 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //threadedImprovisor.setMidiBuffer(midiMessages);
     for (const auto meta : midiMessages){
         auto msg = meta.getMessage();
-        currentImproviser->addMidiMessage(msg);
+        if (midiInChannel == 0 || msg.getChannel() == midiInChannel)
+            currentImproviser->addMidiMessage(msg);
     }
         
     // Get Midi Messages from Improvisor: add to buffer if it is time to send
@@ -166,10 +167,10 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     juce::MidiBuffer generatedMidi{};
 
     if (toSend.getNumEvents() > 0){
-        for (const auto meta : toSend)
-        {
+        for (const auto meta : toSend){
             auto msg = meta.getMessage();
             msg.setTimeStamp(juce::Time::getApproximateMillisecondCounter() * 0.001);
+            msg.setChannel(midiOutChannel);
             generatedMidi.addEvent(msg, 0);
         }
     }
@@ -212,10 +213,6 @@ void AimusoAudioProcessor::setStateInformation (const void* data, int sizeInByte
     // whose contents will have been created by the getStateInformation() call.
 }
 
-void AimusoAudioProcessor::setQuantisationMs(double ms)
-{
-    polyLeadFollow.setQuantisationMs(ms);
-}
 
 void AimusoAudioProcessor::leadMode()
 {
@@ -230,6 +227,27 @@ void AimusoAudioProcessor::followMode()
 void AimusoAudioProcessor::resetModels()
 {
     polyLeadFollow.reset();
+}
+
+void AimusoAudioProcessor::setQuantisationMs(double ms)
+{
+    if (ms < 0) return;
+    polyLeadFollow.setQuantisationMs(ms);
+}
+
+
+void AimusoAudioProcessor::setMidiInChannel(int ch)
+{
+    // if in is zero, listen to all channels
+    if (ch < 0 || ch > 16) return; 
+    midiInChannel = ch;
+}
+
+void AimusoAudioProcessor::setMidiOutChannel(int ch)
+{
+    // out in range 1-16
+    if (ch < 1 || ch > 16) return; 
+    midiOutChannel = ch;
 }
 
 

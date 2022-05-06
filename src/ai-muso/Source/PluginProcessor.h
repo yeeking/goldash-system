@@ -64,9 +64,14 @@ public:
     void followMode(); 
     /** clears the memories on all the models*/   
     void resetModels();
-
+    /** sets the midi output channel range 1-16*/
+    void setMidiOutChannel(int ch); 
+    /** sets the midi input channel range 0-16. If zero, listens to all channels*/
+    void setMidiInChannel(int ch); 
+    
 private: // private fields for PluginProcessor
-
+    int midiOutChannel{1};
+    int midiInChannel{0}; 
     bool clearMidiBuffer = false;
 
     //ThreadedImprovisor threadedImprovisor;

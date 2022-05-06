@@ -35,12 +35,14 @@ void AimusoAudioProcessorEditor::setupUI()
     addAndMakeVisible(midiInSelector);
     addAndMakeVisible(midiInLabel);
     midiInLabel.setText("MIDI IN: ", juce::NotificationType::dontSendNotification);
-    midiInSelector.setRange(1, 16, 1);
+    midiInSelector.setRange(0, 16, 1);
+    midiInSelector.addListener(this);
     
     addAndMakeVisible(midiOutSelector);
     addAndMakeVisible(midiOutLabel);
     midiOutLabel.setText("MIDI OUT: ", juce::NotificationType::dontSendNotification);
     midiOutSelector.setRange(1, 16, 1);
+    midiOutSelector.addListener(this);
                             
 
     // quantise
@@ -147,6 +149,11 @@ void AimusoAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
     if (slider == &this->quantiseSelector)
         audioProcessor.setQuantisationMs(slider->getValue());
+    if (slider == &this->midiInSelector)
+        audioProcessor.setMidiInChannel(slider->getValue());
+    if (slider == &this->midiOutSelector)
+        audioProcessor.setMidiOutChannel(slider->getValue());
+            
     
 }
 
