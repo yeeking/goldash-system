@@ -118,11 +118,10 @@ void DinvernoPolyMarkov::updateTick()
 }
 
 
-void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
+void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message, bool trainFromInput)
 {
 
   if (message.isNoteOn()){
-  //if (!inLeadMode && random.nextDouble() > 0.95) reset();
     // how long since we started running the algorithm?
     double elapsedSamples  = getElapsedTimeSamples();//(Time::getMillisecondCounterHiRes() * 0.001 * sampleRate) - startTimeSamples;
     noteOnTimesSamples[message.getNoteNumber()] = elapsedSamples;
@@ -136,7 +135,9 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message)
       PolyUpdateData update{
         notes, message.getVelocity(), interOnsetInterval, 0, false
       };
-      this->queueModelUpdate(update);
+      // only queue the model update
+      // if we are training
+      if (trainFromInput) this->queueModelUpdate(update);
 
       lastNoteOnAtSample = elapsedSamples; 
       // test: how long did it take?

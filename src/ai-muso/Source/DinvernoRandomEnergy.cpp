@@ -20,7 +20,7 @@ DinvernoRandomEnergy::~DinvernoRandomEnergy()
 
 }
 
-void DinvernoRandomEnergy::addMidiMessage(const MidiMessage& message)
+void DinvernoRandomEnergy::addMidiMessage(const MidiMessage& message, bool trainFromInput)
 {
   if (message.isNoteOn()){
     std::string mgsDesc = message.getDescription().toStdString();

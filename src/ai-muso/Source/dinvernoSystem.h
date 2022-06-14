@@ -44,8 +44,12 @@ public:
     virtual void generateTick() {}
     /** set quanitisation in ms. comes with a default empty implementation*/
     virtual void setQuantisationMs(double msD) {} 
-    
-    virtual void addMidiMessage(const juce::MidiMessage& msg) = 0;
+    /** single entry point for passing incoming midi to the improviser. 
+     * Typically it will use this input for training and 
+     * for triggering a response. if trainFromInput is false, the model 
+     * should not train from the input. If true, it should train from the input
+    */
+    virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) = 0;
     virtual void reset() = 0;
     virtual juce::MidiBuffer getPendingMidiMessages();
     //void setLogginManager(LogginManager* loggin);
@@ -75,7 +79,7 @@ public:
    DinvernoMidiParrot(int sampleRate);
    ~DinvernoMidiParrot();
    virtual void tick() override;
-   virtual void addMidiMessage(const juce::MidiMessage& msg) override;
+   virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
 private:
 };
@@ -90,7 +94,7 @@ public:
    DinvernoRandomMidi(int sampleRate);
    ~DinvernoRandomMidi();
    virtual void tick() override;
-   virtual void addMidiMessage(const juce::MidiMessage& msg) override;
+   virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
     /** prepare a note seq starting at sent time, returns the length.*/
     virtual double prepareRandomNoteSequence(double startTime);
@@ -113,7 +117,7 @@ class DinvernoRandomEnergy : public DinvernoRandomMidi {
 
   private:
     double energy; 
-    void addMidiMessage(const juce::MidiMessage& msg) override;
+    void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
 };
 
 class DinvernoMonoMarkov : public DinvernoImproviser {
@@ -121,7 +125,7 @@ public:
    DinvernoMonoMarkov(int sampleRate);
    ~DinvernoMonoMarkov();
    virtual void tick() override;
-   virtual void addMidiMessage(const juce::MidiMessage& msg) override;
+   virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
 
 private:
@@ -159,7 +163,7 @@ public:
    virtual void setQuantisationMs(double ms) override; 
 
    
-   virtual void addMidiMessage(const juce::MidiMessage& msg) override;
+   virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
     virtual void feedback(FeedbackEventType fbType) override;
 

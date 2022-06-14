@@ -75,7 +75,7 @@ double DinvernoRandomMidi::prepareRandomNoteSequence(double startTime)
 }
 
 // don't respond to incoming midi
-void DinvernoRandomMidi::addMidiMessage(const MidiMessage& message)
+void DinvernoRandomMidi::addMidiMessage(const MidiMessage& message, bool trainFromInput)
 {
 
 }

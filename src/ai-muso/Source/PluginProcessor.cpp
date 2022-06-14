@@ -153,11 +153,14 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
         buffer.clear (i, 0, buffer.getNumSamples());
     
     
-    //threadedImprovisor.setMidiBuffer(midiMessages);
-    for (const auto meta : midiMessages){
-        auto msg = meta.getMessage();
-        if (midiInChannel == 0 || msg.getChannel() == midiInChannel)
-            currentImproviser->addMidiMessage(msg);
+    // passing incoming midi messages
+    // to the improviser
+    if (iAmTraining){
+        for (const auto meta : midiMessages){
+            auto msg = meta.getMessage();
+            if (midiInChannel == 0 || msg.getChannel() == midiInChannel)
+                currentImproviser->addMidiMessage(msg, iAmTraining);
+        }
     }
         
     // Get Midi Messages from Improvisor: add to buffer if it is time to send
@@ -251,11 +254,27 @@ void AimusoAudioProcessor::setMidiOutChannel(int ch)
 }
 
 
+bool AimusoAudioProcessor::isTraining()
+{
+    return iAmTraining;
+}
+void AimusoAudioProcessor::enableTraining()
+{
+    iAmTraining = true;
+}
+void AimusoAudioProcessor::disableTraining()
+{
+    iAmTraining = false; 
+}
+
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new AimusoAudioProcessor();
 }
+
+
 
 

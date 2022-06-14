@@ -31,6 +31,13 @@ void AimusoAudioProcessorEditor::setupUI()
     saveModelBtn.setButtonText("Save model");
     addAndMakeVisible(currentModelLabel);
 
+    addAndMakeVisible(trainToggle);
+    trainToggle.setButtonText("AI is learning");
+    trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+    trainToggle.addListener(this);
+
+   // addAndMakeVisible(trainModeLabel);
+
     // midi channel select controls
     addAndMakeVisible(midiInSelector);
     addAndMakeVisible(midiInLabel);
@@ -58,6 +65,9 @@ void AimusoAudioProcessorEditor::setupUI()
     addAndMakeVisible(leadModeBtn);
     leadModeBtn.setButtonText("Algo lead");
     leadModeBtn.addListener(this);
+    leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+    // make sure the mode matches the highlighted button
+    audioProcessor.leadMode(); 
 
     // addAndMakeVisible(interactModeBtn);
     // interactModeBtn.setButtonText("Algo interact");
@@ -101,12 +111,11 @@ void AimusoAudioProcessorEditor::resized()
     
     // model load and save controls
     // [load][save][current model]
+    trainToggle.setBounds(xPos, yPos, colWidth, rowHeight);
+    xPos += colWidth;
     loadModelBtn.setBounds(xPos, yPos, colWidth, rowHeight);
     xPos += colWidth;
     saveModelBtn.setBounds(xPos, yPos, colWidth, rowHeight);
-    xPos += colWidth;
-    currentModelLabel.setBounds(xPos, yPos, colWidth * 2, rowHeight);
-
     // midi channel select controls
     // [midi in 15 [-----]]
     xPos = 0;
@@ -161,22 +170,40 @@ void AimusoAudioProcessorEditor::sliderValueChanged(Slider* slider)
 void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
 {
     //juce::Colour bg = getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId);
-    followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
-    leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
-    interactModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+    //interactModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
     
 
     if (btn == &this->followModeBtn){
+        // reset mode buttons
+        leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);   
+        // highlight this button
         followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
         audioProcessor.followMode();
     }
     if (btn == &this->leadModeBtn){
+        // reset mode buttons
+        followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+        // highlight correct button
         leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
         audioProcessor.leadMode(); 
     } 
     if (btn == &this->resetModelBtn){
         audioProcessor.resetModels();
+        followModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
         leadModeBtn.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
         audioProcessor.leadMode(); 
+    }
+    if (btn == &this->trainToggle){
+        if (audioProcessor.isTraining()){
+            trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+            trainToggle.setButtonText("AI is not learning");
+            audioProcessor.disableTraining();
+        }
+        else {
+            trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+            trainToggle.setButtonText("AI is learning");
+
+            audioProcessor.enableTraining();
+        }     
     }
 }

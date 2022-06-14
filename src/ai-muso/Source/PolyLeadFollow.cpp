@@ -29,12 +29,12 @@ void PolyLeadFollow::updateTick()
   currentPoly->updateTick();
 }
 
-void PolyLeadFollow::addMidiMessage(const MidiMessage& msg)
+void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
 {
   //DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
   // only want notes for now 
   if (msg.isNoteOn() || msg.isNoteOff()){
-    currentPoly->addMidiMessage(msg);
+    currentPoly->addMidiMessage(msg, trainFromInput);
     noteCounter ++;
     if (noteCounter > 64)
     {

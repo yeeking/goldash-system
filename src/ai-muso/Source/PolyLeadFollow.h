@@ -21,7 +21,7 @@ class PolyLeadFollow :public DinvernoImproviser
     virtual void updateTick() override; 
     virtual void setQuantisationMs(double ms) override; 
 
-    virtual void addMidiMessage(const MidiMessage& msg) override;
+    virtual void addMidiMessage(const MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
 
     void follow();

@@ -38,6 +38,9 @@ private:
     // model load and save controls
     juce::TextButton loadModelBtn;
     juce::TextButton saveModelBtn;
+    juce::TextButton trainToggle;
+        
+    
     juce::Label currentModelLabel;
     
     // midi channel select controls

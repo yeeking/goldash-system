@@ -68,11 +68,21 @@ public:
     void setMidiOutChannel(int ch); 
     /** sets the midi input channel range 0-16. If zero, listens to all channels*/
     void setMidiInChannel(int ch); 
+    /** returns true if the model is training
+     * returns false if the model is not training
+    */
+    bool isTraining();
+    /** allow the model to train */
+    void enableTraining();
+    /** stop the model from training */
+    void disableTraining();
+
     
 private: // private fields for PluginProcessor
     int midiOutChannel{1};
     int midiInChannel{0}; 
-    bool clearMidiBuffer = false;
+    bool clearMidiBuffer{false};
+    bool iAmTraining{true};
 
     //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    

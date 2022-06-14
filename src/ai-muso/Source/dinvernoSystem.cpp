@@ -104,14 +104,13 @@ void DinvernoMidiParrot::reset()
 // call this to tell the parrot about a message
 // a fair bit of this code hacked from here:
 // based on https://docs.juce.com/master/tutorial_midi_message.html#tutorial_midi_message_midi_buffer
-void DinvernoMidiParrot::addMidiMessage(const MidiMessage& message)
+void DinvernoMidiParrot::addMidiMessage(const MidiMessage& message, bool trainFromInput)
 {
   // assume timestamp is 'now' + 1 - so it'll play this
   // back in 1 second's time
     auto sampleNumber =  getElapsedTimeSamples() + sampleRate; // 1 second late
     if (message.isNoteOn() || message.isNoteOff())
     {
-      //std::cout << "DinvernoMidiParrot::addMidiMessage adding event at " << sampleNumber << std::endl;
       pendingMessages.addEvent(message, sampleNumber);
       std::string mgsDesc = message.getDescription().toStdString();
       // myk: just commenting this as
@@ -173,7 +172,7 @@ void DinvernoMonoMarkov::tick()
   lastTickSamples = nowSamples;
 }
 
-void DinvernoMonoMarkov::addMidiMessage(const MidiMessage& message)
+void DinvernoMonoMarkov::addMidiMessage(const MidiMessage& message, bool trainFromInput)
 {
   if (message.isNoteOn()){
     addNoteOnToModel(message.getNoteNumber(), message.getVelocity());
