@@ -59,6 +59,7 @@ void AimusoAudioProcessorEditor::setupUI()
     quantiseSelector.setRange(0, 250, 10);
     quantiseSelector.setTextValueSuffix("ms");
     quantiseSelector.addListener(this);
+    quantiseSelector.setValue(50);// start with a 25ms quant.
     
     // group for mode buttons
     //addAndMakeVisible(modeBox);

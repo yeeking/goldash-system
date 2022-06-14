@@ -34,7 +34,12 @@ void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
   //DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
   // only want notes for now 
   if (msg.isNoteOn() || msg.isNoteOff()){
-    currentPoly->addMidiMessage(msg, trainFromInput);
+    // slightly different behaviour depending
+    // on if it is using the short or long term model
+    // -> short term is always training
+    if (currentPoly == &shortTermMarkov) currentPoly->addMidiMessage(msg, true);
+    if (currentPoly == &longTermMarkov) currentPoly->addMidiMessage(msg, trainFromInput);
+    
     noteCounter ++;
     if (noteCounter > 64)
     {

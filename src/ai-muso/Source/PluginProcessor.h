@@ -76,13 +76,23 @@ public:
     void enableTraining();
     /** stop the model from training */
     void disableTraining();
-
+    /** load model data from the sent filename
+     * and use it to setup the 'lead' model
+     * return true if it works, false otherwise
+    */
+    bool loadModel(std::string filename);
+    /**
+     * Save the lead model to the sent filename 
+     * return true if it works, false otherwise
+     */
+    bool saveModel(std::string filename);
     
 private: // private fields for PluginProcessor
     int midiOutChannel{1};
     int midiInChannel{0}; 
     bool clearMidiBuffer{false};
     bool iAmTraining{true};
+    
 
     //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    
@@ -92,8 +102,9 @@ private: // private fields for PluginProcessor
     */
     DinvernoImproviser* currentImproviser{&polyLeadFollow}; 
     //==============================================================================
-
-
+    /** background thread that 
+     * passes queud updates to the model
+    */
     class UpdateTicker : public juce::Timer
     {
         public: 

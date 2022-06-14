@@ -155,11 +155,12 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     
     // passing incoming midi messages
     // to the improviser
-    if (iAmTraining){
-        for (const auto meta : midiMessages){
-            auto msg = meta.getMessage();
-            if (midiInChannel == 0 || msg.getChannel() == midiInChannel)
-                currentImproviser->addMidiMessage(msg, iAmTraining);
+    for (const auto meta : midiMessages){
+        auto msg = meta.getMessage();
+        if (midiInChannel == 0 || msg.getChannel() == midiInChannel){
+            // pass iAmTraining to tell it if it should
+            // learn from the inputs as well as responding
+            currentImproviser->addMidiMessage(msg, iAmTraining);
         }
     }
         
