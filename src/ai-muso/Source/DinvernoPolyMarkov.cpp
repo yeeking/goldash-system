@@ -9,6 +9,8 @@
 */
 
 #include "dinvernoSystem.h"
+#include <fstream>
+
 
 DinvernoPolyMarkov::DinvernoPolyMarkov(int sampleRate) : 
               chordDetector(ChordDetector{sampleRate}), 
@@ -287,3 +289,64 @@ void DinvernoPolyMarkov::setQuantisationMs(double msD)
 {
   this->quantisationSamples = (int) (msD * 0.001 * sampleRate);
 }
+
+bool DinvernoPolyMarkov::loadModel(std::string filename)
+{
+  if (std::ifstream in {filename})
+  {
+    std::ostringstream sstr{};
+    sstr << in.rdbuf();
+    std::string data = sstr.str();
+    in.close();
+    // now split the data on the header 
+    std::vector<std::string> modelStrings = MarkovChain::tokenise(data, this->FILE_SEP_FOR_SAVE);
+    // do some checks on the modelStrings
+    if (modelStrings.size() != 4) {
+      DBG("DinvernoPolyMarkov::loadModel did not find 4 model strings in file " << filename);
+      return false; 
+    }
+    std::vector<MarkovManager*> mms = {pitchModel, lengthModel, velocityModel, interOnsetIntervalModel};
+    for (auto i = 0; i<mms.size();i++)
+    {
+      bool loaded = mms[i]->setupModelFromString(modelStrings[i]);
+      if (!loaded){
+        DBG("DinvernoPolyMarkov::loadModel error loading model "<<i << " from " << filename);
+        return false; 
+      }
+      else{
+        DBG("DinvernoPolyMarkov::loadModel loaded model "<<i << " from " << filename);
+      }
+    }
+
+    return true; 
+
+
+  }
+  else {
+    std::cout << "DinvernoPolyMarkov::loadModel failed to load from file " << filename << std::endl;
+    return false; 
+  }
+}
+bool DinvernoPolyMarkov::saveModel(std::string filename)
+{
+  // we have four models so write each to a temp file
+  // read it in as a string
+  std::string data{""};
+  std::vector<MarkovManager*> mms = {pitchModel, lengthModel, velocityModel, interOnsetIntervalModel};
+  for (MarkovManager* mm : mms)
+  {
+    data += this->FILE_SEP_FOR_SAVE;
+    data += mm->getModelAsString();
+  }
+  if (std::ofstream ofs{filename}){
+    ofs << data;
+    ofs.close();
+    return true; 
+  }
+  else {
+    std::cout << "DinvernoPolyMarkov::saveModel failed to save to file " << filename << std::endl;
+    return false; 
+  }
+
+}
+

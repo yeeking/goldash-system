@@ -27,9 +27,14 @@ void AimusoAudioProcessorEditor::setupUI()
     // model load and save controls
     addAndMakeVisible(loadModelBtn);
     loadModelBtn.setButtonText("Load model");
+    loadModelBtn.addListener(this);
+    
     addAndMakeVisible(saveModelBtn);
     saveModelBtn.setButtonText("Save model");
+    saveModelBtn.addListener(this);
+
     addAndMakeVisible(currentModelLabel);
+
 
     addAndMakeVisible(trainToggle);
     trainToggle.setButtonText("AI is learning");
@@ -207,4 +212,12 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
             audioProcessor.enableTraining();
         }     
     }
+
+    if (btn == &this->loadModelBtn){
+        audioProcessor.loadModel("/tmp/test.txt");
+    }
+    if (btn == &this->saveModelBtn){
+        audioProcessor.saveModel("/tmp/test.txt");
+    }
+
 }

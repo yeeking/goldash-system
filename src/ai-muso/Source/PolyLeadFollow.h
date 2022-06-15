@@ -24,6 +24,9 @@ class PolyLeadFollow :public DinvernoImproviser
     virtual void addMidiMessage(const MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
 
+    virtual bool loadModel(std::string filename) override; 
+    virtual bool saveModel(std::string filename) override;
+
     void follow();
     void lead();
 

@@ -77,3 +77,14 @@ void PolyLeadFollow::setQuantisationMs(double ms)
   shortTermMarkov.setQuantisationMs(ms);
   longTermMarkov.setQuantisationMs(ms);
 }
+
+
+bool PolyLeadFollow::loadModel(std::string filename)
+{
+  return longTermMarkov.loadModel(filename);
+} 
+
+bool PolyLeadFollow::saveModel(std::string filename) 
+{
+  return longTermMarkov.saveModel(filename);
+}

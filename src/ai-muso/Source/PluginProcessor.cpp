@@ -268,6 +268,16 @@ void AimusoAudioProcessor::disableTraining()
     iAmTraining = false; 
 }
 
+bool AimusoAudioProcessor::loadModel(std::string filename)
+{
+    return this->polyLeadFollow.loadModel(filename);
+}
+
+bool AimusoAudioProcessor::saveModel(std::string filename)
+{
+    return this->polyLeadFollow.saveModel(filename);
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..

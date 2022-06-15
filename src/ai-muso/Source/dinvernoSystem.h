@@ -19,6 +19,7 @@
 #include <queue>
 #pragma once
 
+
 /**
  * This is an abstract class that specifies an interface for
  * the DinvernoImproviser type of improviser
@@ -58,6 +59,16 @@ public:
     virtual void feedback(FeedbackEventType fbType) override {}
     //MusicCircleClient mcClient{"teresa", "mjlcdm07"};;
    
+    /** load model data from the sent filename
+     * and use it to setup the 'lead' model
+     * default implementation returns ImproviserError::unknown
+    */
+    virtual bool loadModel(std::string filename){return false;}
+    /**
+     * Save the lead model to the sent filename 
+     * default implementation returns ImproviserError::unknown
+     */
+    virtual bool saveModel(std::string filename){return false;}
     
 protected:
   double getElapsedTimeSamples();   
@@ -166,6 +177,9 @@ public:
    virtual void addMidiMessage(const juce::MidiMessage& msg, bool trainFromInput) override;
     virtual void reset() override;
     virtual void feedback(FeedbackEventType fbType) override;
+    virtual bool loadModel(std::string filename) override;
+    virtual bool saveModel(std::string filename) override;
+
 
 private:
 /** stores queued updates for the model */
@@ -215,6 +229,8 @@ private:
   //bool inLeadMode;
 
   juce::Random random{};
+
+  char FILE_SEP_FOR_SAVE{'@'};
 
   ChordDetector chordDetector;
 
