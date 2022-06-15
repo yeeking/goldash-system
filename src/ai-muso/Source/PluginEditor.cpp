@@ -214,10 +214,66 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
     }
 
     if (btn == &this->loadModelBtn){
-        audioProcessor.loadModel("/tmp/test.txt");
+        // juce::FileChooser chooser{"Select a file..."};
+        // if (chooser.browseForFileToOpen())
+        // {
+        //     audioProcessor.loadModel(chooser.getResult());
+        // }
+
+    
+        auto fileChooserFlags = 
+        FileBrowserComponent::canSelectFiles;
+        fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
+        {
+            File chosenFile = chooser.getResult();
+            if (chosenFile.exists()){
+                std::cout << "AimusoAudioProcessorEditor::buttonClicked loading model file " << chosenFile.getFullPathName() << std::endl;
+                bool res = audioProcessor.loadModel(chosenFile.getFullPathName().toStdString());
+                if (!res){
+                    AlertWindow::showMessageBoxAsync(
+                        juce::MessageBoxIconType::WarningIcon, 
+                        "Whoops", 
+                        "Could not load model sorry", 
+                        "OK");                 	
+                }
+                else {
+                    AlertWindow::showMessageBoxAsync(
+                        juce::MessageBoxIconType::WarningIcon, 
+                        "", 
+                        "Model file loaded", 
+                        "OK");   
+
+                }
+            }
+            // here is my code to handle chosen files data
+        });
+        //FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+
     }
     if (btn == &this->saveModelBtn){
-        audioProcessor.saveModel("/tmp/test.txt");
+           auto fileChooserFlags = 
+        FileBrowserComponent::saveMode;
+        fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
+        {
+            File chosenFile = chooser.getResult();
+            std::cout << "AimusoAudioProcessorEditor::buttonClicked saving model file " << chosenFile.getFullPathName() << std::endl;
+            bool res = audioProcessor.saveModel(chosenFile.getFullPathName().toStdString());            
+              if (!res){
+                    AlertWindow::showMessageBoxAsync(
+                        juce::MessageBoxIconType::WarningIcon, 
+                        "Whoops", 
+                        "Could not save model sorry", 
+                        "OK");                 	
+                }
+                else {
+                    AlertWindow::showMessageBoxAsync(
+                        juce::MessageBoxIconType::WarningIcon, 
+                        "", 
+                        "Model file saved", 
+                        "OK");   
+
+                }
+        });
     }
 
 }

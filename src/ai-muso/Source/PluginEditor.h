@@ -38,6 +38,8 @@ private:
     // model load and save controls
     juce::TextButton loadModelBtn;
     juce::TextButton saveModelBtn;
+    juce::FileChooser fChooser{"Select a file..."};
+    
     juce::TextButton trainToggle;
         
     
