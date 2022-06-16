@@ -36,6 +36,12 @@ class PolyLeadFollow :public DinvernoImproviser
     DinvernoPolyMarkov longTermMarkov{0};// setting samplerate to 0 as we'll use iniitaliser lists to do it properly
     DinvernoPolyMarkov shortTermMarkov{0};
     DinvernoPolyMarkov* currentPoly;
+    /** used to keep track of the number of incoming notes so can 
+     * decide when to reset the short term memory
+    */
     int noteCounter;
+    /** used to prevent short term model querying whilst resetting*/ 
+    bool resettingShortTermModel{false}; 
+    
 };
 

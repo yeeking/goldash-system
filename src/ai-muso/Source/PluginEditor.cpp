@@ -214,12 +214,6 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
     }
 
     if (btn == &this->loadModelBtn){
-        // juce::FileChooser chooser{"Select a file..."};
-        // if (chooser.browseForFileToOpen())
-        // {
-        //     audioProcessor.loadModel(chooser.getResult());
-        // }
-
     
         auto fileChooserFlags = 
         FileBrowserComponent::canSelectFiles;
@@ -238,7 +232,7 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
                 }
                 else {
                     AlertWindow::showMessageBoxAsync(
-                        juce::MessageBoxIconType::WarningIcon, 
+                        juce::MessageBoxIconType::InfoIcon, 
                         "", 
                         "Model file loaded", 
                         "OK");   
@@ -267,7 +261,7 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
                 }
                 else {
                     AlertWindow::showMessageBoxAsync(
-                        juce::MessageBoxIconType::WarningIcon, 
+                        juce::MessageBoxIconType::InfoIcon, 
                         "", 
                         "Model file saved", 
                         "OK");   

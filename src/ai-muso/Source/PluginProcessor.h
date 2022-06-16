@@ -129,6 +129,6 @@ private: // private fields for PluginProcessor
     };
     UpdateTicker updateTicker{};
     GenerateTicker generateTicker{};
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AimusoAudioProcessor)
 };

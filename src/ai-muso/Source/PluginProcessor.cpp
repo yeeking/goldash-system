@@ -160,14 +160,21 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
         if (midiInChannel == 0 || msg.getChannel() == midiInChannel){
             // pass iAmTraining to tell it if it should
             // learn from the inputs as well as responding
+            //DBG("AimusoAudioProcessor::processBlock adding midi messages to impro");
+
             currentImproviser->addMidiMessage(msg, iAmTraining);
+            //DBG("AimusoAudioProcessor::processBlock done adding midi messages to impro");
+
         }
     }
         
     // Get Midi Messages from Improvisor: add to buffer if it is time to send
     int sampleNumber;
     //currentImproviser->tick();
+    //DBG("AimusoAudioProcessor::processBlock getting midi messages from impro");
     juce::MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+    //DBG("AimusoAudioProcessor::processBlock done getting midi messages from impro");
+
     juce::MidiBuffer generatedMidi{};
 
     if (toSend.getNumEvents() > 0){
