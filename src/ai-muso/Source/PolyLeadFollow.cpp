@@ -31,9 +31,11 @@ void PolyLeadFollow::updateTick()
 
 void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
 {
+  // reset is pending 
+  if(resetShortTermBeforeNextAccess) return; 
+
   //DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
   // only want notes for now 
-  if (resettingShortTermModel) return; // do not add messages when resetting
   if (msg.isNoteOn() || msg.isNoteOff()){
     // slightly different behaviour depending
     // on if it is using the short or long term model
@@ -47,9 +49,7 @@ void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
   if (noteCounter > 64)
   {
     //DBG("PolyLeadFollow::addMidiMessage resetting short term model");
-    resettingShortTermModel = true;
-    shortTermMarkov.reset();
-    resettingShortTermModel = false; 
+    resetShortTermBeforeNextAccess = true;
     noteCounter = 0;
     //DBG("PolyLeadFollow::addMidiMessage reset complete");
   }
@@ -64,7 +64,10 @@ void PolyLeadFollow::reset()
 
 MidiBuffer PolyLeadFollow::getPendingMidiMessages()
 {
-  if (resettingShortTermModel) return juce::MidiBuffer{};
+  if (resetShortTermBeforeNextAccess) {
+    shortTermMarkov.reset();
+    resetShortTermBeforeNextAccess = false; 
+  }
   return currentPoly->getPendingMidiMessages();
 }     
 

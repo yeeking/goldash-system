@@ -41,7 +41,7 @@ class PolyLeadFollow :public DinvernoImproviser
     */
     int noteCounter;
     /** used to prevent short term model querying whilst resetting*/ 
-    bool resettingShortTermModel{false}; 
+    bool resetShortTermBeforeNextAccess{false}; 
     
 };
 
