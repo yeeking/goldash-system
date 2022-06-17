@@ -22,18 +22,20 @@ void PolyLeadFollow::tick()
 }
 void PolyLeadFollow::generateTick()
 {
+    inTick = true;
   currentPoly->generateTick();
+    inTick = false;
 }
 void PolyLeadFollow::updateTick()
 {
+    inTick = true;
   currentPoly->updateTick();
+    inTick = false;
 }
 
 void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
 {
-  // reset is pending 
-  if(resetShortTermBeforeNextAccess) return; 
-
+  // reset is pending
   //DBG("PolyLeadFollow::addMidiMessage " << noteCounter);
   // only want notes for now 
   if (msg.isNoteOn() || msg.isNoteOff()){
@@ -64,10 +66,14 @@ void PolyLeadFollow::reset()
 
 MidiBuffer PolyLeadFollow::getPendingMidiMessages()
 {
-  if (resetShortTermBeforeNextAccess) {
-    shortTermMarkov.reset();
+  if (resetShortTermBeforeNextAccess && !inTick) {
+      DBG("Plf::Going for a reset");
+    //shortTermMarkov.reset();
     resetShortTermBeforeNextAccess = false; 
   }
+    if (resetShortTermBeforeNextAccess && inTick) {
+        DBG("Plf:getPending want to reset but in a tick :( ");
+    }
   return currentPoly->getPendingMidiMessages();
 }     
 
