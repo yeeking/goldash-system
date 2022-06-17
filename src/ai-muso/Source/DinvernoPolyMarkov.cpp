@@ -154,8 +154,7 @@ void DinvernoPolyMarkov::addMidiMessage(const MidiMessage& message, bool trainFr
      PolyUpdateData update{
         length:getNoteLengthForModel(message.getNoteNumber()), lengthOnly:true
     };
-    
-    this->queueModelUpdate(update);
+    if (trainFromInput) this->queueModelUpdate(update);
   }  
 }
 void DinvernoPolyMarkov::addNotesToModel(std::vector<int> notes)

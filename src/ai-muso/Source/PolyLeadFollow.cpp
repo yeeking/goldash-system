@@ -67,13 +67,13 @@ void PolyLeadFollow::reset()
 MidiBuffer PolyLeadFollow::getPendingMidiMessages()
 {
   if (resetShortTermBeforeNextAccess && !inTick) {
-      DBG("Plf::Going for a reset");
-    //shortTermMarkov.reset();
+//      DBG("Plf::Going for a reset");
+    shortTermMarkov.reset();
     resetShortTermBeforeNextAccess = false; 
   }
-    if (resetShortTermBeforeNextAccess && inTick) {
-        DBG("Plf:getPending want to reset but in a tick :( ");
-    }
+    // if (resetShortTermBeforeNextAccess && inTick) {
+    //     DBG("Plf:getPending want to reset but in a tick :( ");
+    // }
   return currentPoly->getPendingMidiMessages();
 }     
 
