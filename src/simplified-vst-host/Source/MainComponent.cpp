@@ -52,13 +52,16 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     File macOSPath = exePath.getParentDirectory();
     File contentsPath = macOSPath.getParentDirectory();
     File resourcesPath = contentsPath.getChildFile("Resources");
-//    plist.scanAndAddFile(resourcesPath.getFullPathName()+"/dinverno_plugin.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/dinverno_plugin.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/ai-muso.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/DinvernoAudioMidiRecorder.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
 
-
+    
     jassert (pluginDescriptions.size() > 0);
     String msg ("Error Loading Plugin: ");
     
