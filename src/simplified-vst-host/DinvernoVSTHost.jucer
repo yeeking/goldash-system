@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="rGKPVN" name="DinvernoVSTHost" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="SensiLab" bundleIdentifier="com.sensilab.DinvernoVSTHost"
+              version="2.0.0">
+  <MAINGROUP id="oEKGvl" name="DinvernoVSTHost">
+    <GROUP id="{11E7C70F-ACCB-EB08-2BC4-EE05955611F2}" name="Source">
+      <FILE id="LWYvhc" name="VstControlComponent.cpp" compile="1" resource="0"
+            file="Source/VstControlComponent.cpp"/>
+      <FILE id="XfIvoH" name="VstControlComponent.h" compile="0" resource="0"
+            file="Source/VstControlComponent.h"/>
+      <FILE id="VbgCVb" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="gK8Olk" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="s3Fbx1" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="1" JUCE_WASAPI="1"
+               JUCE_DIRECTSOUND="1" JUCE_ALSA="1"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="DinvernoVSTHost"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="DinvernoVSTHost"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../AlonProjects/MusicApps/JUCE2/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
