@@ -50,10 +50,8 @@ void PolyLeadFollow::addMidiMessage(const MidiMessage& msg, bool trainFromInput)
   }
   if (noteCounter > 64)
   {
-    //DBG("PolyLeadFollow::addMidiMessage resetting short term model");
-    resetShortTermBeforeNextAccess = true;
-    noteCounter = 0;
-    //DBG("PolyLeadFollow::addMidiMessage reset complete");
+      shortTermMarkov.reset();
+      noteCounter = 0;
   }
 
 }
@@ -66,14 +64,6 @@ void PolyLeadFollow::reset()
 
 MidiBuffer PolyLeadFollow::getPendingMidiMessages()
 {
-  if (resetShortTermBeforeNextAccess && !inTick) {
-//      DBG("Plf::Going for a reset");
-    shortTermMarkov.reset();
-    resetShortTermBeforeNextAccess = false; 
-  }
-    // if (resetShortTermBeforeNextAccess && inTick) {
-    //     DBG("Plf:getPending want to reset but in a tick :( ");
-    // }
   return currentPoly->getPendingMidiMessages();
 }     
 

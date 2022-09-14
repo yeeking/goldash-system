@@ -1,47 +1,47 @@
 #N canvas 1076 196 1180 997 36;
 #X obj 517 1476 noteout;
-#X floatatom 388 1362 5 0 0 0 - - -;
-#X floatatom 525 1367 5 0 0 0 - - -;
-#X floatatom 668 1368 5 0 0 0 - - -;
+#X floatatom 388 1362 5 0 0 0 - - -, f 5;
+#X floatatom 525 1367 5 0 0 0 - - -, f 5;
+#X floatatom 668 1368 5 0 0 0 - - -, f 5;
 #X text 89 1173 comment;
 #X msg 221 1230 64;
 #X obj 109 966 t b b b;
 #X obj 379 1139 t b b;
 #X text 301 1236 vel;
 #X msg 515 1267 0;
-#X obj 21 765 bng 100 250 50 0 empty empty empty 17 7 0 10 -4034 -1
--1;
+#X obj 21 765 bng 100 250 50 0 empty empty empty 17 7 0 10 #00fc04
+#000000 #000000;
 #X obj 485 1643 phasor~ 300;
 #X obj 442 1816 dac~;
 #X obj 126 1556 notein;
 #X obj 474 1746 *~;
-#X floatatom 322 1758 5 0 0 0 - - -;
-#X obj 128 1433 bng 100 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X floatatom 322 1758 5 0 0 0 - - -, f 5;
+#X obj 128 1433 bng 100 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 133 1715 mtof;
 #X obj 280 1649 / 127;
-#X floatatom 391 887 5 0 0 0 - - -;
+#X floatatom 391 887 5 0 0 0 - - -, f 5;
 #X obj 387 1208 int 64;
 #X obj 59 1285 int 64;
 #X obj 434 971 delay 5000;
-#X obj 355 605 bng 100 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 355 605 bng 100 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 408 679 random 64;
 #X obj 468 792 + 32;
 #X obj 167 642 t b b;
-#X obj 162 507 bng 100 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 112 303 metro 500;
-#X obj 146 147 tgl 100 0 empty empty empty 17 7 0 10 -262144 -1 -1
-0 1;
+#X obj 162 507 bng 100 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 113 303 metro 500;
+#X obj 147 146 tgl 100 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 140 364 t b b b;
-#X floatatom 162 612 5 0 0 0 - - -;
-#X floatatom 355 247 5 0 0 0 - - -;
-#X obj 659 1067 bng 100 250 50 0 empty empty empty 17 7 0 10 -258113
--1 -1;
-#X floatatom 343 1595 5 0 0 0 - - -;
-#X obj 671 685 random 100;
-#X obj 693 790 + 50;
+#X floatatom 162 612 5 0 0 0 - - -, f 5;
+#X floatatom 355 247 5 0 0 0 - - -, f 5;
+#X obj 659 1067 bng 100 250 50 0 empty empty empty 17 7 0 10 #fc0400
+#000000 #000000;
+#X floatatom 343 1595 5 0 0 0 - - -, f 5;
+#X obj 738 576 + 50;
+#X obj 788 430 random 50;
 #X connect 1 0 0 0;
 #X connect 2 0 0 1;
 #X connect 3 0 0 2;
@@ -69,7 +69,7 @@
 #X connect 22 0 7 0;
 #X connect 22 0 33 0;
 #X connect 23 0 24 0;
-#X connect 23 0 35 0;
+#X connect 23 0 36 0;
 #X connect 24 0 25 0;
 #X connect 25 0 19 0;
 #X connect 26 0 10 0;
@@ -82,6 +82,6 @@
 #X connect 30 1 27 0;
 #X connect 30 2 27 0;
 #X connect 32 0 28 1;
-#X connect 35 0 36 0;
-#X connect 36 0 22 1;
-#X connect 36 0 32 0;
+#X connect 35 0 22 1;
+#X connect 35 0 32 0;
+#X connect 36 0 35 0;
