@@ -25,11 +25,6 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     m_ioProcMidiIn      = std::make_unique<AudioProcessorGraph::AudioGraphIOProcessor> (AudioProcessorGraph::AudioGraphIOProcessor::midiInputNode);
     m_ioProcMidiOut     = std::make_unique<AudioProcessorGraph::AudioGraphIOProcessor> (AudioProcessorGraph::AudioGraphIOProcessor::midiOutputNode);
     
-    //AudioPluginInstance * instance = new AudioProcessorGraph::AudioGraphIOProcessor (AudioProcessorGraph::AudioGraphIOProcessor::audioOutputNode);
-    
-    //std::unique_ptr<AudioProcessor> ap = new AudioProcessorGraph::AudioGraphIOProcessor (AudioProcessorGraph::AudioGraphIOProcessor::audioOutputNode);
-    //std::unique_ptr<AudioPluginInstance> instance = std::make_unique<AudioProcessorGraph::AudioGraphIOProcessor> (AudioProcessorGraph::AudioGraphIOProcessor::audioInputNode);
-    
     m_ioProcOutNode     = m_pMainGraph->addNode (std::move (m_ioProcOut) );
     m_ioProcMidiInNode  = m_pMainGraph->addNode (std::move (m_ioProcMidiIn) );
     m_ioProcMidiOutNode = m_pMainGraph->addNode (std::move (m_ioProcMidiOut) );
@@ -286,7 +281,7 @@ void MainComponent::resized()
     col = 0;
     // seems to ignore size changes
     dinvernoSystemGUI->setBounds(0, row*rowHeight, getWidth()*1.5, rowHeight*3);
-    
+    dinvernoSystemGUI->repaint(0, row*rowHeight, getWidth(), rowHeight*3);
 }
 
 // Button Listener
