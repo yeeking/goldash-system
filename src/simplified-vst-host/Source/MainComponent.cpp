@@ -56,9 +56,7 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/ai-muso.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/DinvernoAudioMidiRecorder.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
 
-    //juce::String synthName = "/Dexed.vst3";
-    juce::String synthName = "/Surge XT.vst3";
-    
+
     plist.scanAndAddFile(resourcesPath.getFullPathName()+synthName, true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+synthName, true, pluginDescriptions, *pluginFormatManager.getFormat(0));
 
@@ -72,42 +70,8 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     humanPlugin = pluginFormatManager.createPluginInstance(*pluginDescriptions[2], 44100.0, 512, msg);
     aiPlugin = pluginFormatManager.createPluginInstance(*pluginDescriptions[3], 44100.0, 512, msg);
     
-// how to load an fxp file directly into a vst plugin
-//https://forum.juce.com/t/managing-plugin-parameters-in-audioplugininstance/30013
-    // To use this, create a derived implementation of ExtensionsVisitor and pass it to AudioPluginInstance::getExtensions. The plugin instance will call visitVST3Client on your extensions instance, and you can then call setPreset on the provided VST3Client argument.
-    class VSTVisitor : public juce::ExtensionsVisitor {
-        void visitVST3Client (const VST3Client &) override
-        {
-            DBG("visitVST3Client called! - can now trigger fxp load probably.");
-        }
-    };
-    VSTVisitor visitor{};
+   
 
-    humanPlugin->getExtensions(visitor);
-    //humanPlugin.getExtensions(visitor);
-    
-    
-    
-    
-    
-//    juce::MemoryBlock mb;
-//    juce::File f("my.fxp");
-//    f.loadFileAsData (mb);
-//
-    //juce::VSTPluginFormat();
-    
-//    VST3PluginFormat::loadFromFXBFile (m_helmMachinePresetPluginInstance, mb.getData(), mb.getSize());
-//    
-    humanPlugin->setCurrentProgram(1);
-    int numPrograms = humanPlugin->getNumPrograms();
-    int curProgram_human = humanPlugin->getCurrentProgram();
-    String programName_human = humanPlugin->getProgramName(curProgram_human);
-    
-    aiPlugin->setCurrentProgram(2);
-    int curProgram_machine = aiPlugin->getCurrentProgram();
-    String programName_machine = aiPlugin->getProgramName(curProgram_machine);
-    
-    DBG("MainComponent:: presets " << numPrograms << " h:" << programName_human << ", m: " << programName_machine);
     
     // Create Plugin Nodes
     m_dinvernoSystemPluginInstanceNode = m_pMainGraph->addNode (std::move (m_dinvernoSystemPluginInstance) );
@@ -116,17 +80,17 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     m_dinvernoRecorderPluginInstanceNode = m_pMainGraph->addNode (std::move (m_dinvernoRecorderPluginInstance) );
     m_dinvernoRecorderPluginInstanceNode->getProcessor()->enableAllBuses();
     
-    m_helmMachinePresetPluginInstanceNode = m_pMainGraph->addNode (std::move (aiPlugin) );
-    m_helmMachinePresetPluginInstanceNode->getProcessor()->enableAllBuses();
+    aiPluginNode = m_pMainGraph->addNode (std::move (aiPlugin) );
+    aiPluginNode->getProcessor()->enableAllBuses();
     
-    m_helmHumanPresetPluginInstanceNode = m_pMainGraph->addNode (std::move (humanPlugin) );
-    m_helmHumanPresetPluginInstanceNode->getProcessor()->enableAllBuses();
+    humanPluginNode = m_pMainGraph->addNode (std::move (humanPlugin) );
+    humanPluginNode->getProcessor()->enableAllBuses();
     //addAndMakeVisible(&graphHolder);
     
     // Connect Plugin Nodes
     // Midi: Input -> helmHuman
     m_pMainGraph->addConnection({ {m_ioProcMidiInNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex},
-                                  {m_helmHumanPresetPluginInstanceNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}
+                                  {humanPluginNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}
                                 });
     
     // Midi: Input -> dinvernoSystem
@@ -147,24 +111,24 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     
     // Midi: dinvernoSystem -> helmMachine
     m_pMainGraph->addConnection({ {m_dinvernoSystemPluginInstanceNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex},
-                                  {m_helmMachinePresetPluginInstanceNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}
+                                  {aiPluginNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}
     });
     
     // Audio: helmMachine -> dinvernoRecorder (x2)
-    m_pMainGraph->addConnection({ {m_helmMachinePresetPluginInstanceNode->nodeID, 0},
+    m_pMainGraph->addConnection({ {aiPluginNode->nodeID, 0},
                                   {m_dinvernoRecorderPluginInstanceNode->nodeID, 0}
     });
     
-    m_pMainGraph->addConnection({ {m_helmMachinePresetPluginInstanceNode->nodeID, 0},
+    m_pMainGraph->addConnection({ {aiPluginNode->nodeID, 0},
                                   {m_dinvernoRecorderPluginInstanceNode->nodeID, 1}
     });
     
     // Audio: helmHuman -> dinvernoRecorder (x2)
-    m_pMainGraph->addConnection({ {m_helmHumanPresetPluginInstanceNode->nodeID, 0},
+    m_pMainGraph->addConnection({ {humanPluginNode->nodeID, 0},
                                   {m_dinvernoRecorderPluginInstanceNode->nodeID, 0}
     });
     
-    m_pMainGraph->addConnection({ {m_helmHumanPresetPluginInstanceNode->nodeID, 0},
+    m_pMainGraph->addConnection({ {humanPluginNode->nodeID, 0},
                                   {m_dinvernoRecorderPluginInstanceNode->nodeID, 1}
     });
     
@@ -179,47 +143,18 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     
     player.setProcessor (m_pMainGraph.get());
     
-    // GUI Setup
-    // Window Size
-    int buf = 10;
-    int compWidth = 200;
-    int compHeight = 100;
-    setSize (2*compWidth+3*buf, 2*compHeight+3*buf);
-    //int buffer = getWidth()/80;
     
-    // Open Plugin GUI Editor: Human
-    m_dinvernoSystemPluginEditor = m_dinvernoSystemPluginInstanceNode->getProcessor()->createEditor();
-    auto dinvernoSystemContainer = m_dinvernoSystemPluginEditor->getConstrainer();
-    m_dinvernoSystemPluginEditor->setBounds(buf, compHeight+2*buf, compWidth,compHeight);      //dinvernoSystemContainer->getMinimumWidth(), dinvernoSystemContainer->getMinimumHeight());
-    addAndMakeVisible (m_dinvernoSystemPluginEditor);
+    setupGUI();
     
-    // Open Plugin GUI Editor: Machine
-    m_dinvernoRecorderPluginEditor = m_dinvernoRecorderPluginInstanceNode->getProcessor()->createEditor();
-    auto dinvernoRecorderContainer = m_dinvernoRecorderPluginEditor->getConstrainer();
-    m_dinvernoRecorderPluginEditor->setBounds(compWidth+2*buf, compHeight+2*buf, compWidth,compHeight); // dinvernoRecorderContainer->getMinimumWidth(), dinvernoRecorderContainer->getMinimumHeight());
-    addAndMakeVisible (m_dinvernoRecorderPluginEditor);
-    
-    // VST Control Components: GUI Positioning
-    m_humanControlComponent.setBounds(buf,buf,compWidth,compHeight);
-    m_machineControlComponent.setBounds(compWidth+2*buf,buf,compWidth,compHeight);
-    
-    // VST Control Components: Human Setup
-    m_humanControlComponent.setTitle("Human Player");
-    m_humanControlComponent.setProgramName(programName_human);
-    m_humanControlComponent.setProgramNumber(curProgram_human);
-    m_humanControlComponent.addButtonListner(this);
-    
-    // VST Control Components: Machine setup
-    m_machineControlComponent.setTitle("Machine Player");
-    m_machineControlComponent.setProgramName(programName_machine);
-    m_machineControlComponent.setProgramNumber(curProgram_machine);
-    m_machineControlComponent.addButtonListner(this);
-    
-    addAndMakeVisible(m_humanControlComponent);
-    addAndMakeVisible(m_machineControlComponent);
-
     startTimer (100);
+    
+    // now we have done our work, sort out the programs
+    setPresetAndUpdateGUI(humanPluginNode, 5, humanSynthGUI);
+    setPresetAndUpdateGUI(aiPluginNode, 3, aiSynthGUI);
+    
 }
+
+
 
 MainComponent::~MainComponent()
 {
@@ -239,7 +174,9 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     // You can use this function to initialise any resources you might need,
     // but be careful - it will be called on the audio thread, not the GUI thread.
     
-    // For more details, see the help for AudioProcessor::prepareToPlay()
+    // For more etails, see the help for AudioProcessor::prepareToPlay()
+
+
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -262,6 +199,61 @@ void MainComponent::releaseResources()
     // For more details, see the help for AudioProcessor::releaseResources()
 }
 
+// GUI lifecycyle
+//setupGUI is called once from the constructor
+//paint is called every time the gui is redrawn and it does any custom painting
+// on top of inner components
+//resize is called when the window opens and whenever it is resized
+
+void MainComponent::setupGUI()
+{
+    DBG("MainComponent::setupGUI");
+
+    //int numPrograms = humanPlugin->getNumPrograms();
+    int curProgram_human = humanPluginNode->getProcessor()->getCurrentProgram();
+    String programName_human = humanPluginNode->getProcessor()->getProgramName(curProgram_human);
+    
+    //aiPlugin->setCurrentProgram(2);
+    int curProgram_machine = aiPluginNode->getProcessor()->getCurrentProgram();
+    String programName_machine = aiPluginNode->getProcessor()->getProgramName(curProgram_machine);
+    
+    //DBG("MainComponent:: presets " << numPrograms << " h:" << programName_human << ", m: " << programName_machine);
+
+    
+    
+    // plugin editor for the algorithmic musician
+    dinvernoSystemGUI = m_dinvernoSystemPluginInstanceNode->getProcessor()->createEditor();
+    
+    // Open Plugin GUI Editor: recorder
+    recorderPluginGUI = m_dinvernoRecorderPluginInstanceNode->getProcessor()->createEditor();
+    
+    // VST Control Components: Human Setup
+    humanSynthGUI.setTitle("Human Player");
+    humanSynthGUI.setProgramName(programName_human);
+    humanSynthGUI.setProgramNumber(curProgram_human);
+    humanSynthGUI.addButtonListner(this);
+    
+    // VST Control Components: Machine setup
+    aiSynthGUI.setTitle("Machine Player");
+    aiSynthGUI.setProgramName(programName_machine);
+    aiSynthGUI.setProgramNumber(curProgram_machine);
+    aiSynthGUI.addButtonListner(this);
+    
+    addAndMakeVisible(humanSynthGUI);
+    addAndMakeVisible(aiSynthGUI);
+    addAndMakeVisible (recorderPluginGUI);
+    addAndMakeVisible (dinvernoSystemGUI);
+
+    
+    
+    // this triggers a call to resized, so doing it here to make
+    // sure all the gui bits are ready
+    setSize (800, 600);
+    DBG("MainComponent::setupGUI: size set!");
+
+
+}
+
 //==============================================================================
 void MainComponent::paint (juce::Graphics& g)
 {
@@ -275,55 +267,54 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
+    DBG("MainComponent::resized");
     // This is called when the MainComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+
+    int colWidth = getWidth() / 3;
+    int rowHeight = getHeight() / 4;
+    int col = 0;
+    int row = 0;
     
-    
+    humanSynthGUI.setBounds(col*colWidth, row*rowHeight, colWidth, rowHeight);
+    col++;
+    aiSynthGUI.setBounds(col*colWidth, row*rowHeight, colWidth, rowHeight);
+    col++;
+    recorderPluginGUI->setBounds(col*colWidth + colWidth/4, row*rowHeight, colWidth*0.74, rowHeight);
+    row++;
+    col = 0;
+    // seems to ignore size changes
+    dinvernoSystemGUI->setBounds(0, row*rowHeight, getWidth()*1.5, rowHeight*3);
     
 }
 
 // Button Listener
 void MainComponent::buttonClicked (Button* button)
 {
+    int curProgram_human = humanPluginNode->getProcessor()->getCurrentProgram();
+    int curProgram_machine = aiPluginNode->getProcessor()->getCurrentProgram();
 
-    int curProgram_human = m_helmHumanPresetPluginInstanceNode->getProcessor()->getCurrentProgram();
-    //int curProgram_human = m_helmHumanPresetPluginInstance->getCurrentProgram();
-    String programName_human = m_helmHumanPresetPluginInstanceNode->getProcessor()->getProgramName(curProgram_human);
-    
-    int curProgram_machine = m_helmMachinePresetPluginInstanceNode->getProcessor()->getCurrentProgram();
-    //int curProgram_machine = m_helmMachinePresetPluginInstance->getCurrentProgram();
-    String programName_machine = m_helmMachinePresetPluginInstanceNode->getProcessor()->getProgramName(curProgram_machine);
-    
-    if (button == &m_humanControlComponent.prevButton){
+    if (button == &humanSynthGUI.prevButton){
         // Human Prev Preset
         int nextProgram_human = curProgram_human - 1;
-        m_helmHumanPresetPluginInstanceNode->getProcessor()->setCurrentProgram(nextProgram_human);
-    }else if (button == &m_humanControlComponent.nextButton){
+        humanPluginNode->getProcessor()->setCurrentProgram(nextProgram_human);
+    }else if (button == &humanSynthGUI.nextButton){
         // Human Next Preset
         int nextProgram_human = curProgram_human + 1;
-        m_helmHumanPresetPluginInstanceNode->getProcessor()->setCurrentProgram(nextProgram_human);
-    }else if (button == &m_machineControlComponent.prevButton){
+        humanPluginNode->getProcessor()->setCurrentProgram(nextProgram_human);
+    }else if (button == &aiSynthGUI.prevButton){
         // Machine Next Preset
         int nextProgram_machine = curProgram_machine - 1;
-        m_helmMachinePresetPluginInstanceNode->getProcessor()->setCurrentProgram(nextProgram_machine);
-    }else if (button == &m_machineControlComponent.nextButton){
+        aiPluginNode->getProcessor()->setCurrentProgram(nextProgram_machine);
+    }else if (button == &aiSynthGUI.nextButton){
          // Machine Next Preset
         int nextProgram_machine = curProgram_machine + 1;
-        m_helmMachinePresetPluginInstanceNode->getProcessor()->setCurrentProgram(nextProgram_machine);
+        aiPluginNode->getProcessor()->setCurrentProgram(nextProgram_machine);
     }
+    setPresetAndUpdateGUI(humanPluginNode, humanPluginNode->getProcessor()->getCurrentProgram(), humanSynthGUI);
+    setPresetAndUpdateGUI(aiPluginNode, aiPluginNode->getProcessor()->getCurrentProgram(), aiSynthGUI);
     
-    // Update GUI
-    curProgram_human = m_helmHumanPresetPluginInstanceNode->getProcessor()->getCurrentProgram();
-    programName_human = m_helmHumanPresetPluginInstanceNode->getProcessor()->getProgramName(curProgram_human);
-    m_humanControlComponent.setProgramName(programName_human);
-    m_humanControlComponent.setProgramNumber(curProgram_human);
-    
-    // Update GUI
-    curProgram_machine = m_helmMachinePresetPluginInstanceNode->getProcessor()->getCurrentProgram();
-    programName_machine = m_helmMachinePresetPluginInstanceNode->getProcessor()->getProgramName(curProgram_machine);
-    m_machineControlComponent.setProgramName(programName_machine);
-    m_machineControlComponent.setProgramNumber(curProgram_machine);
 }
 
 void MainComponent::updateGraph()
@@ -340,4 +331,22 @@ void MainComponent::updateGraph()
                                                         mainProcessor->getBlockSize());
         }
     }*/
+}
+
+void MainComponent::loadFXPFiles(const juce::File humanFile, const juce::File aiFile)
+{
+// this does not work for the serge xt unfortunately
+    // it just ignores the fxp passed in setPreset in the visitor
+    VSTVisitor visitor{};
+    ((juce::AudioPluginInstance*) humanPluginNode->getProcessor())->getExtensions(visitor);
+    
+}
+
+void MainComponent::setPresetAndUpdateGUI(AudioProcessorGraph::Node::Ptr& node, unsigned int index, VstControlComponent& gui)
+{
+    node->getProcessor()->setCurrentProgram(index);
+    int index_ = node->getProcessor()->getCurrentProgram();
+    
+    gui.setProgramNumber(index_);
+    gui.setProgramName(node->getProcessor()->getProgramName(index_));
 }
