@@ -52,14 +52,15 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     File macOSPath = exePath.getParentDirectory();
     File contentsPath = macOSPath.getParentDirectory();
     File resourcesPath = contentsPath.getChildFile("Resources");
-//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/dinverno_plugin.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/ai-muso.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
     plist.scanAndAddFile(resourcesPath.getFullPathName()+"/DinvernoAudioMidiRecorder.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
-//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
-//plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
 
-    plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
-    plist.scanAndAddFile(resourcesPath.getFullPathName()+"/Dexed.vst3", true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+    //juce::String synthName = "/Dexed.vst3";
+    juce::String synthName = "/Surge XT.vst3";
+    
+    plist.scanAndAddFile(resourcesPath.getFullPathName()+synthName, true, pluginDescriptions, *pluginFormatManager.getFormat(0));
+    plist.scanAndAddFile(resourcesPath.getFullPathName()+synthName, true, pluginDescriptions, *pluginFormatManager.getFormat(0));
 
     
     jassert (pluginDescriptions.size() > 0);
@@ -68,17 +69,45 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     // Load Plugins
     m_dinvernoSystemPluginInstance = pluginFormatManager.createPluginInstance(*pluginDescriptions[0], 44100.0, 512, msg);
     m_dinvernoRecorderPluginInstance = pluginFormatManager.createPluginInstance(*pluginDescriptions[1], 44100.0, 512, msg);
-    m_helmHumanPresetPluginInstance = pluginFormatManager.createPluginInstance(*pluginDescriptions[2], 44100.0, 512, msg);
-    m_helmMachinePresetPluginInstance = pluginFormatManager.createPluginInstance(*pluginDescriptions[3], 44100.0, 512, msg);
-
-    m_helmHumanPresetPluginInstance->setCurrentProgram(103);
-    int numPrograms = m_helmHumanPresetPluginInstance->getNumPrograms();
-    int curProgram_human = m_helmHumanPresetPluginInstance->getCurrentProgram();
-    String programName_human = m_helmHumanPresetPluginInstance->getProgramName(curProgram_human);
+    humanPlugin = pluginFormatManager.createPluginInstance(*pluginDescriptions[2], 44100.0, 512, msg);
+    aiPlugin = pluginFormatManager.createPluginInstance(*pluginDescriptions[3], 44100.0, 512, msg);
     
-    m_helmMachinePresetPluginInstance->setCurrentProgram(108);
-    int curProgram_machine = m_helmMachinePresetPluginInstance->getCurrentProgram();
-    String programName_machine = m_helmMachinePresetPluginInstance->getProgramName(curProgram_machine);
+// how to load an fxp file directly into a vst plugin
+//https://forum.juce.com/t/managing-plugin-parameters-in-audioplugininstance/30013
+    // To use this, create a derived implementation of ExtensionsVisitor and pass it to AudioPluginInstance::getExtensions. The plugin instance will call visitVST3Client on your extensions instance, and you can then call setPreset on the provided VST3Client argument.
+    class VSTVisitor : public juce::ExtensionsVisitor {
+        void visitVST3Client (const VST3Client &) override
+        {
+            DBG("visitVST3Client called! - can now trigger fxp load probably.");
+        }
+    };
+    VSTVisitor visitor{};
+
+    humanPlugin->getExtensions(visitor);
+    //humanPlugin.getExtensions(visitor);
+    
+    
+    
+    
+    
+//    juce::MemoryBlock mb;
+//    juce::File f("my.fxp");
+//    f.loadFileAsData (mb);
+//
+    //juce::VSTPluginFormat();
+    
+//    VST3PluginFormat::loadFromFXBFile (m_helmMachinePresetPluginInstance, mb.getData(), mb.getSize());
+//    
+    humanPlugin->setCurrentProgram(1);
+    int numPrograms = humanPlugin->getNumPrograms();
+    int curProgram_human = humanPlugin->getCurrentProgram();
+    String programName_human = humanPlugin->getProgramName(curProgram_human);
+    
+    aiPlugin->setCurrentProgram(2);
+    int curProgram_machine = aiPlugin->getCurrentProgram();
+    String programName_machine = aiPlugin->getProgramName(curProgram_machine);
+    
+    DBG("MainComponent:: presets " << numPrograms << " h:" << programName_human << ", m: " << programName_machine);
     
     // Create Plugin Nodes
     m_dinvernoSystemPluginInstanceNode = m_pMainGraph->addNode (std::move (m_dinvernoSystemPluginInstance) );
@@ -87,10 +116,10 @@ MainComponent::MainComponent(): m_pMainGraph (new AudioProcessorGraph())
     m_dinvernoRecorderPluginInstanceNode = m_pMainGraph->addNode (std::move (m_dinvernoRecorderPluginInstance) );
     m_dinvernoRecorderPluginInstanceNode->getProcessor()->enableAllBuses();
     
-    m_helmMachinePresetPluginInstanceNode = m_pMainGraph->addNode (std::move (m_helmMachinePresetPluginInstance) );
+    m_helmMachinePresetPluginInstanceNode = m_pMainGraph->addNode (std::move (aiPlugin) );
     m_helmMachinePresetPluginInstanceNode->getProcessor()->enableAllBuses();
     
-    m_helmHumanPresetPluginInstanceNode = m_pMainGraph->addNode (std::move (m_helmHumanPresetPluginInstance) );
+    m_helmHumanPresetPluginInstanceNode = m_pMainGraph->addNode (std::move (humanPlugin) );
     m_helmHumanPresetPluginInstanceNode->getProcessor()->enableAllBuses();
     //addAndMakeVisible(&graphHolder);
     

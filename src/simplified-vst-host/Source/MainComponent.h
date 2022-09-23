@@ -58,12 +58,12 @@ private:
     AudioProcessorEditor*                           m_dinvernoRecorderPluginEditor;
     
     // Helm Synth for Machine Audio Plugin and Node
-    std::unique_ptr<AudioPluginInstance>            m_helmMachinePresetPluginInstance;
+    std::unique_ptr<AudioPluginInstance>            aiPlugin;
     AudioProcessorGraph::Node::Ptr                  m_helmMachinePresetPluginInstanceNode;
     //AudioProcessorEditor*                           m_helmMachinePresetPluginEditor;
-    
+
     // Helm Synth for Human Audio Plugin and Node
-    std::unique_ptr<AudioPluginInstance>            m_helmHumanPresetPluginInstance;
+    std::unique_ptr<AudioPluginInstance>            humanPlugin;
     AudioProcessorGraph::Node::Ptr                  m_helmHumanPresetPluginInstanceNode;
     //AudioProcessorEditor*                           m_helmHumanPresetPluginEditor;
     
