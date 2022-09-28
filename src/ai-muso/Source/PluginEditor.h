@@ -42,7 +42,9 @@ private:
     
     
     juce::TextButton trainToggle;
-    juce::ToggleButton aiPlayingToggle;    
+    juce::TextButton aiPlayingToggle;
+    /** helper to set button msg and colour in a one liner*/
+    static void setButtonMsgAndColour(TextButton& btn, String msg, Colour col);  
     
     juce::Label currentModelLabel;
     

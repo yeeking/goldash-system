@@ -42,11 +42,15 @@ void AimusoAudioProcessorEditor::setupUI()
     trainToggle.addListener(this);
 
     addAndMakeVisible(aiPlayingToggle);
+    aiPlayingToggle.setButtonText("AI is playing");
+    aiPlayingToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
+    aiPlayingToggle.addListener(this);
+
 
    // addAndMakeVisible(trainModeLabel);
 
     // midi channel select controls
-    //addAndMakeVisible(midiInSelector);
+    addAndMakeVisible(midiInSelector);
     addAndMakeVisible(midiInLabel);
     midiInLabel.setText("MIDI IN: ", juce::NotificationType::dontSendNotification);
     midiInSelector.setRange(0, 16, 1);
@@ -205,17 +209,26 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
     }
     if (btn == &this->trainToggle){
         if (audioProcessor.isTraining()){
-            trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::darkgrey);
-            trainToggle.setButtonText("AI is not learning");
+            AimusoAudioProcessorEditor::setButtonMsgAndColour(trainToggle, "AI is not learning", Colours::darkgrey);
             audioProcessor.disableTraining();
         }
         else {
-            trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
-            trainToggle.setButtonText("AI is learning");
-
+            AimusoAudioProcessorEditor::setButtonMsgAndColour(trainToggle, "AI is learning", Colours::green);
             audioProcessor.enableTraining();
         }     
     }
+     if (btn == &this->aiPlayingToggle){
+        if (audioProcessor.isPlaying()){
+            AimusoAudioProcessorEditor::setButtonMsgAndColour(aiPlayingToggle, "AI is not playing", Colours::darkgrey);
+            audioProcessor.disablePlaying();
+        }
+        else {
+            AimusoAudioProcessorEditor::setButtonMsgAndColour(aiPlayingToggle, "AI is playing", Colours::green);
+            audioProcessor.enablePlaying();
+        }     
+    }
+
+
 
     if (btn == &this->loadModelBtn){
     
@@ -274,4 +287,11 @@ void AimusoAudioProcessorEditor::buttonClicked(Button* btn)
         });
     }
 
+
+}
+
+void AimusoAudioProcessorEditor::setButtonMsgAndColour(TextButton& btn, String msg, Colour col)
+{
+    btn.setColour(juce::TextButton::ColourIds::buttonColourId, col);
+    btn.setButtonText(msg);
 }

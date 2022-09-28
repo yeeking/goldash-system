@@ -41,7 +41,7 @@ DinvernoPolyMarkov::~DinvernoPolyMarkov()
 void DinvernoPolyMarkov::reset()
 {
 
-    std::cout << "DinvernoPolyMarkov::reset" << std::endl;
+    //std::cout << "DinvernoPolyMarkov::reset" << std::endl;
     pendingMessages.clear();
     // send all notes off
     pendingMessages.addEvent(MidiMessage::allNotesOff(1), 0);
@@ -52,6 +52,8 @@ void DinvernoPolyMarkov::reset()
     interOnsetIntervalModel->reset();
 
     chordDetector.reset();
+  // clear the update Q
+  while(updateQ.size() > 0) updateQ.pop();
 
 }
 

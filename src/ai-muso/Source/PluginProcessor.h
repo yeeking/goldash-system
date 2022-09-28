@@ -76,6 +76,12 @@ public:
     void enableTraining();
     /** stop the model from training */
     void disableTraining();
+    /** are you playing? */
+    bool isPlaying();
+    /** ai will play*/
+    void enablePlaying();
+    /** ai will not play*/
+    void disablePlaying();
     /** load model data from the sent filename
      * and use it to setup the 'lead' model
      * return true if it works, false otherwise
@@ -92,6 +98,7 @@ private: // private fields for PluginProcessor
     int midiInChannel{0}; 
     bool clearMidiBuffer{false};
     bool iAmTraining{true};
+    bool iAmPlaying{true};
     
 
     //ThreadedImprovisor threadedImprovisor;

@@ -172,7 +172,8 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     int sampleNumber;
     //currentImproviser->tick();
     //DBG("AimusoAudioProcessor::processBlock getting midi messages from impro");
-    juce::MidiBuffer toSend = currentImproviser->getPendingMidiMessages();
+    juce::MidiBuffer toSend;
+    if (iAmPlaying) toSend = currentImproviser->getPendingMidiMessages();
     //DBG("AimusoAudioProcessor::processBlock done getting midi messages from impro");
 
     juce::MidiBuffer generatedMidi{};
@@ -194,8 +195,7 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     }
     
     // Remove Raw midi input and only transmit dinverno generated messages
-    midiMessages.swapWith(generatedMidi);
-    
+    midiMessages.swapWith(generatedMidi); 
 }
 
 
@@ -274,6 +274,20 @@ void AimusoAudioProcessor::disableTraining()
 {
     iAmTraining = false; 
 }
+
+bool AimusoAudioProcessor::isPlaying()
+{
+    return iAmPlaying;
+}
+void AimusoAudioProcessor::enablePlaying()
+{
+    iAmPlaying = true;
+}
+void AimusoAudioProcessor::disablePlaying()
+{
+    iAmPlaying = false; 
+}
+
 
 bool AimusoAudioProcessor::loadModel(std::string filename)
 {
