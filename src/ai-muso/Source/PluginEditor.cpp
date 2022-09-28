@@ -41,10 +41,12 @@ void AimusoAudioProcessorEditor::setupUI()
     trainToggle.setColour(juce::TextButton::ColourIds::buttonColourId, Colours::green);
     trainToggle.addListener(this);
 
+    addAndMakeVisible(aiPlayingToggle);
+
    // addAndMakeVisible(trainModeLabel);
 
     // midi channel select controls
-    addAndMakeVisible(midiInSelector);
+    //addAndMakeVisible(midiInSelector);
     addAndMakeVisible(midiInLabel);
     midiInLabel.setText("MIDI IN: ", juce::NotificationType::dontSendNotification);
     midiInSelector.setRange(0, 16, 1);
@@ -118,6 +120,8 @@ void AimusoAudioProcessorEditor::resized()
     // model load and save controls
     // [load][save][current model]
     trainToggle.setBounds(xPos, yPos, colWidth, rowHeight);
+    xPos += colWidth;
+    aiPlayingToggle.setBounds(xPos, yPos, colWidth, rowHeight);
     xPos += colWidth;
     loadModelBtn.setBounds(xPos, yPos, colWidth, rowHeight);
     xPos += colWidth;

@@ -40,8 +40,9 @@ private:
     juce::TextButton saveModelBtn;
     juce::FileChooser fChooser{"Select a file..."};
     
+    
     juce::TextButton trainToggle;
-        
+    juce::ToggleButton aiPlayingToggle;    
     
     juce::Label currentModelLabel;
     
