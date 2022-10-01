@@ -67,7 +67,7 @@ void AimusoAudioProcessorEditor::setupUI()
     addAndMakeVisible(quantiseLabel);
     quantiseLabel.setText("QUANT", juce::NotificationType::dontSendNotification);
     addAndMakeVisible(quantiseSelector);
-    quantiseSelector.setRange(0, 250, 10);
+    quantiseSelector.setRange(0, 250, 1);
     quantiseSelector.setTextValueSuffix("ms");
     quantiseSelector.addListener(this);
     quantiseSelector.setValue(50);// start with a 25ms quant.
