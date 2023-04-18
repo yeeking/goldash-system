@@ -188,9 +188,12 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     }
     
     if (clearMidiBuffer) {
-        juce::MidiMessage allOff = juce::MidiMessage::allNotesOff(1);
-        midiMessages.addEvent(allOff,0);
-        generatedMidi.addEvent(allOff,0);
+        for (auto ch = 0; ch < 16; ++ch){
+            juce::MidiMessage allOff = juce::MidiMessage::allNotesOff(ch);
+            generatedMidi.addEvent(allOff,0);
+
+        }
+        //midiMessages.addEvent(allOff,0);
         clearMidiBuffer = false;
     }
     
@@ -227,16 +230,19 @@ void AimusoAudioProcessor::setStateInformation (const void* data, int sizeInByte
 
 void AimusoAudioProcessor::leadMode()
 {
+    clearMidiBuffer = true;
     polyLeadFollow.lead();
 }
 
 void AimusoAudioProcessor::followMode()
 {
+    clearMidiBuffer = true;
     polyLeadFollow.follow();
 }
 
 void AimusoAudioProcessor::resetModels()
 {
+    clearMidiBuffer = true;
     polyLeadFollow.reset();
 }
 
@@ -249,6 +255,7 @@ void AimusoAudioProcessor::setQuantisationMs(double ms)
 
 void AimusoAudioProcessor::setMidiInChannel(int ch)
 {
+    clearMidiBuffer = true;
     // if in is zero, listen to all channels
     if (ch < 0 || ch > 16) return; 
     midiInChannel = ch;
@@ -256,6 +263,7 @@ void AimusoAudioProcessor::setMidiInChannel(int ch)
 
 void AimusoAudioProcessor::setMidiOutChannel(int ch)
 {
+    clearMidiBuffer = true;
     // out in range 1-16
     if (ch < 1 || ch > 16) return; 
     midiOutChannel = ch;
@@ -268,10 +276,12 @@ bool AimusoAudioProcessor::isTraining()
 }
 void AimusoAudioProcessor::enableTraining()
 {
+    clearMidiBuffer = true;
     iAmTraining = true;
 }
 void AimusoAudioProcessor::disableTraining()
 {
+    clearMidiBuffer = true;
     iAmTraining = false; 
 }
 
