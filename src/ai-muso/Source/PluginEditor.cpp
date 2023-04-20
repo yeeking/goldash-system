@@ -19,7 +19,8 @@ AimusoAudioProcessorEditor::AimusoAudioProcessorEditor (AimusoAudioProcessor& p)
     setResizable(true, true);
     
     setupUI();
-    DBG("PluginEditor::cons done.");
+    startTimer(250);
+    //DBG("PluginEditor::cons done.");
     
 }
 void AimusoAudioProcessorEditor::setupUI()
@@ -53,11 +54,18 @@ void AimusoAudioProcessorEditor::setupUI()
     addAndMakeVisible(midiInSelector);
     addAndMakeVisible(midiInLabel);
     midiInLabel.setText("MIDI IN: ", juce::NotificationType::dontSendNotification);
+    midiInSelector.setSliderStyle(Slider::IncDecButtons);
+    //midiInSelector.setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
+    midiInSelector.setIncDecButtonsMode (Slider::incDecButtonsDraggable_Vertical);
+    
     midiInSelector.setRange(0, 16, 1);
     midiInSelector.addListener(this);
-    
+    // midi out 1-16
     addAndMakeVisible(midiOutSelector);
     addAndMakeVisible(midiOutLabel);
+    midiOutSelector.setSliderStyle(Slider::IncDecButtons);
+   // midiOutSelector.setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
+    midiOutSelector.setIncDecButtonsMode (Slider::incDecButtonsDraggable_Vertical);
     midiOutLabel.setText("MIDI OUT: ", juce::NotificationType::dontSendNotification);
     midiOutSelector.setRange(1, 16, 1);
     midiOutSelector.addListener(this);
@@ -71,6 +79,26 @@ void AimusoAudioProcessorEditor::setupUI()
     quantiseSelector.setTextValueSuffix("ms");
     quantiseSelector.addListener(this);
     quantiseSelector.setValue(50);// start with a 25ms quant.
+    
+    // probability override slider
+    // cc select
+    addAndMakeVisible(playProbCCLabel);
+    addAndMakeVisible(playProbCCSelect);
+    playProbCCLabel.setText("PROB CC", juce::NotificationType::dontSendNotification);
+    playProbCCSelect.setSliderStyle(Slider::IncDecButtons);
+   // playProbCCSelect.setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
+    playProbCCSelect.setIncDecButtonsMode (Slider::incDecButtonsDraggable_Vertical);
+    playProbCCSelect.setRange(1, 127, 1);
+    playProbCCSelect.addListener(this);
+    
+    // prob setter
+    addAndMakeVisible(playProbLabel);
+    playProbLabel.setText("PROB", juce::NotificationType::dontSendNotification);
+    addAndMakeVisible(playProbSlider);
+    playProbSlider.setRange(0, 1);
+    playProbSlider.addListener(this);
+    playProbSlider.setValue(1);
+    
     
     // group for mode buttons
     //addAndMakeVisible(modeBox);
@@ -96,6 +124,7 @@ void AimusoAudioProcessorEditor::setupUI()
 
 AimusoAudioProcessorEditor::~AimusoAudioProcessorEditor()
 {
+    stopTimer();
 }
 
 //==============================================================================
@@ -116,7 +145,7 @@ void AimusoAudioProcessorEditor::resized()
     // subcomponents in your editor..
     int colCount = 4;
     int colWidth = getWidth() / colCount;
-    int rowCount = 5;
+    int rowCount = 7;
     int rowHeight = getHeight() / rowCount;
     int xPos = 0;
     int yPos = 0;
@@ -152,6 +181,20 @@ void AimusoAudioProcessorEditor::resized()
     xPos += colWidth;
     quantiseSelector.setBounds(xPos, yPos, colWidth*3, rowHeight);
        
+    // playback prob
+    xPos = 0;
+    yPos += rowHeight;
+    playProbCCLabel.setBounds(xPos, yPos, colWidth, rowHeight);
+    xPos += colWidth;
+    playProbCCSelect.setBounds(xPos, yPos, colWidth*3, rowHeight);
+    
+    xPos = 0;
+    yPos += rowHeight;
+    playProbLabel.setBounds(xPos, yPos, colWidth, rowHeight);
+    xPos += colWidth;
+    playProbSlider.setBounds(xPos, yPos, colWidth*3, rowHeight);
+    
+       
     // group for mode buttons
     //modeBox
     xPos = 0;
@@ -176,8 +219,14 @@ void AimusoAudioProcessorEditor::sliderValueChanged(Slider* slider)
         audioProcessor.setMidiInChannel(slider->getValue());
     if (slider == &this->midiOutSelector)
         audioProcessor.setMidiOutChannel(slider->getValue());
-            
-    
+    if (slider == &this->playProbSlider){
+        //DBG("play prob " << slider->getValue());
+        this->audioProcessor.setPlayProb(slider->getValue());
+    }
+    if (slider == &this->playProbCCSelect){
+        //DBG("play prob cc " << slider->getValue());
+        this->audioProcessor.setPlayProbCC(slider->getValue());
+    }
 }
 
 
@@ -295,3 +344,18 @@ void AimusoAudioProcessorEditor::setButtonMsgAndColour(TextButton& btn, String m
     btn.setColour(juce::TextButton::ColourIds::buttonColourId, col);
     btn.setButtonText(msg);
 }
+
+
+
+
+void AimusoAudioProcessorEditor::timerCallback()
+{
+    // check we are in sync with processor state
+    //DBG("UI checking if prob changed... procs: " << audioProcessor.getPlayProb() << " mine " << playProbSlider.getValue() );
+    if (audioProcessor.getPlayProb() != playProbSlider.getValue()){
+        //DBG("UI: prob changed" );
+        playProbSlider.setValue(audioProcessor.getPlayProb());
+    }
+}
+
+

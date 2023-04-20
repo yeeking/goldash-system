@@ -142,9 +142,7 @@ bool AimusoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) c
 
 void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {   
-    // if (midiMessages.getNumEvents() > 0)
-    //     DBG("AimusoAudioProcessor::processBlock " + std::to_string(midiMessages.getNumEvents()));
-    
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -157,7 +155,11 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     // to the improviser
     for (const auto meta : midiMessages){
         auto msg = meta.getMessage();
+        if (msg.isController()){
+            this->handleCC(msg);
+        }
         if (midiInChannel == 0 || msg.getChannel() == midiInChannel){
+        
             // pass iAmTraining to tell it if it should
             // learn from the inputs as well as responding
             //DBG("AimusoAudioProcessor::processBlock adding midi messages to impro");
@@ -173,12 +175,21 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //currentImproviser->tick();
     //DBG("AimusoAudioProcessor::processBlock getting midi messages from impro");
     juce::MidiBuffer toSend;
-    if (iAmPlaying) toSend = currentImproviser->getPendingMidiMessages();
-    //DBG("AimusoAudioProcessor::processBlock done getting midi messages from impro");
+    // note always pull notes from AI - that
+    // means it does not get clogged up :) 
+    toSend = currentImproviser->getPendingMidiMessages();
 
     juce::MidiBuffer generatedMidi{};
+    // apply 'play' mode filters on
+    // here
+    if (iAmPlaying &&
+        toSend.getNumEvents() > 0 &&
+        playbackProb > 0 &&
+        rng.nextDouble() < playbackProb){
+      //  DBG("ai plays " << playbackProb);
 
-    if (toSend.getNumEvents() > 0){
+        // only add them if prob high enough
+        
         for (const auto meta : toSend){
             auto msg = meta.getMessage();
             msg.setTimeStamp(juce::Time::getApproximateMillisecondCounter() * 0.001);
@@ -188,7 +199,7 @@ void AimusoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     }
     
     if (clearMidiBuffer) {
-        for (auto ch = 0; ch < 16; ++ch){
+        for (auto ch = 1; ch < 17; ++ch){
             juce::MidiMessage allOff = juce::MidiMessage::allNotesOff(ch);
             generatedMidi.addEvent(allOff,0);
 
@@ -318,5 +329,35 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 
+
+
+void AimusoAudioProcessor::setPlayProb(double _playProb)
+{
+    if (_playProb >= 0 && _playProb <= 1){
+        this->playbackProb = _playProb;
+    }
+}
+
+void  AimusoAudioProcessor::setPlayProbCC(int ccNum)
+{
+    if (ccNum >= 0 && ccNum < 127){
+        this->playbackProbCC = ccNum;
+    }
+}
+
+double AimusoAudioProcessor::getPlayProb()
+{
+    return this->playbackProb;
+}
+
+void AimusoAudioProcessor::handleCC(MidiMessage& ccMsg)
+{
+    
+    //DBG("got cc " << ccMsg.getControllerNumber() << " : " << ccMsg.getControllerValue());
+    // now update the playback prob if needed
+    if (ccMsg.getControllerNumber() == this->playbackProbCC){
+        this->playbackProb = ccMsg.getControllerValue() / 127.0;
+    }
+}
 
 
