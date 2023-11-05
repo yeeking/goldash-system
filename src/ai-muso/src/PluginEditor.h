@@ -16,7 +16,8 @@
 */
 class AimusoAudioProcessorEditor  : public juce::AudioProcessorEditor, 
                                            juce::Slider::Listener, 
-                                           juce::Button::Listener
+                                           juce::Button::Listener,
+                                           juce::Timer
 {
 public:
     AimusoAudioProcessorEditor (AimusoAudioProcessor&);
@@ -29,7 +30,9 @@ public:
     /** respond to the sliders*/
     void sliderValueChanged(Slider* slider) override;
     /** respond to the buttons*/
-    void buttonClicked(Button* button) override;  
+    void buttonClicked(Button* button) override;
+
+    void timerCallback() override;
         
 private:
     // This reference is provided as a quick way for your editor to
@@ -53,11 +56,17 @@ private:
     juce::Slider midiOutSelector;
     juce::Label midiInLabel;
     juce::Label midiOutLabel;
-    
-    
     // quantise
     juce::Slider quantiseSelector;
     juce::Label quantiseLabel;
+    // prbbability cc select input
+    juce::Slider playProbCCSelect;
+    juce::Label playProbCCLabel;
+
+    // probability override slider
+    juce::Slider playProbSlider;
+    juce::Label playProbLabel;
+    
     
     // group for mode buttons
     juce::GroupComponent modeBox;

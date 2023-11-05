@@ -93,13 +93,23 @@ public:
      */
     bool saveModel(std::string filename);
     
+    /** update the play probability  value */
+    void setPlayProb(double playProb);
+    double getPlayProb();
+
+    // set the cc number for updateing play prob
+    void setPlayProbCC(int ccNum);
 private: // private fields for PluginProcessor
     int midiOutChannel{1};
     int midiInChannel{0}; 
     bool clearMidiBuffer{false};
     bool iAmTraining{true};
     bool iAmPlaying{true};
-    
+    // override for the playback probablity
+    double playbackProb{1};
+    int playbackProbCC{1};// default to mod wheel
+    juce::Random rng;
+    void handleCC(MidiMessage& ccMsg);
 
     //ThreadedImprovisor threadedImprovisor;
     /** initialise a polylead follow*/    
